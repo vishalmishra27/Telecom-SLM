@@ -1,0 +1,100 @@
+[
+  {
+    "Probable Cause": "fiber_cut",
+    "Domain": "Transport/Optical",
+    "Default Severity": "Critical",
+    "Definition": "Fiber cut or break",
+    "Recommended First Check": "Check fiber route, optical power, affected downstream sites"
+  },
+  {
+    "Probable Cause": "fiber_degradation",
+    "Domain": "Transport/Optical",
+    "Default Severity": "Major",
+    "Definition": "Degraded fiber or connector",
+    "Recommended First Check": "Check optical RX/TX power, CRC errors, flaps"
+  },
+  {
+    "Probable Cause": "optical_power_low",
+    "Domain": "Optical",
+    "Default Severity": "Major",
+    "Definition": "Optical receive power below threshold",
+    "Recommended First Check": "Check SFP/optic, patch panel, connector, fiber span"
+  },
+  {
+    "Probable Cause": "router_interface_down",
+    "Domain": "Transport/Core",
+    "Default Severity": "Critical",
+    "Definition": "Router interface operationally down",
+    "Recommended First Check": "Check interface state, link partner, optics, recent config"
+  },
+  {
+    "Probable Cause": "bgp_neighbor_down",
+    "Domain": "Core/Transport",
+    "Default Severity": "Major",
+    "Definition": "BGP peer down",
+    "Recommended First Check": "Check reachability, routing policy, session logs"
+  },
+  {
+    "Probable Cause": "ospf_neighbor_down",
+    "Domain": "Core/Transport",
+    "Default Severity": "Major",
+    "Definition": "OSPF adjacency down",
+    "Recommended First Check": "Check interface, MTU, timers, reachability"
+  },
+  {
+    "Probable Cause": "high_packet_loss",
+    "Domain": "Transport/RAN/Core",
+    "Default Severity": "Major",
+    "Definition": "Packet loss above threshold",
+    "Recommended First Check": "Correlate with CRC, utilization, queue drops, radio KPIs"
+  },
+  {
+    "Probable Cause": "high_latency",
+    "Domain": "Transport/RAN/Core",
+    "Default Severity": "Major",
+    "Definition": "Latency above threshold",
+    "Recommended First Check": "Correlate with utilization, route changes, queueing"
+  },
+  {
+    "Probable Cause": "transport_congestion",
+    "Domain": "Transport",
+    "Default Severity": "Major",
+    "Definition": "Backhaul transport congestion",
+    "Recommended First Check": "Check utilization, queue drops, throughput, reroutes"
+  },
+  {
+    "Probable Cause": "radio_congestion",
+    "Domain": "RAN",
+    "Default Severity": "Major",
+    "Definition": "RAN resource congestion",
+    "Recommended First Check": "Check PRB utilization, RRC success, throughput, call drops"
+  },
+  {
+    "Probable Cause": "cell_unavailable",
+    "Domain": "RAN",
+    "Default Severity": "Critical",
+    "Definition": "Cell unavailable/down",
+    "Recommended First Check": "Check gNodeB, power, transport, alarms, config"
+  },
+  {
+    "Probable Cause": "handover_failure",
+    "Domain": "RAN",
+    "Default Severity": "Major",
+    "Definition": "Mobility/handover degradation",
+    "Recommended First Check": "Check neighbor relations, coverage, config, congestion"
+  },
+  {
+    "Probable Cause": "configuration_mismatch",
+    "Domain": "Config",
+    "Default Severity": "Major",
+    "Definition": "Recent or incorrect configuration",
+    "Recommended First Check": "Check change records, rollback, diff against golden config"
+  },
+  {
+    "Probable Cause": "power_failure",
+    "Domain": "Power/Site",
+    "Default Severity": "Critical",
+    "Definition": "Power source failure",
+    "Recommended First Check": "Check rectifier, battery, UPS/generator, site alarms"
+  }
+]

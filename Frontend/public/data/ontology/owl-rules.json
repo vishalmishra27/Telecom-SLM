@@ -1,0 +1,122 @@
+[
+  {
+    "Setting": "Ontology IRI",
+    "Value": "urn:kpmg:telecom:ontology",
+    "Implementation meaning": "IRI identifying the ontology document."
+  },
+  {
+    "Setting": "Version IRI",
+    "Value": "urn:kpmg:telecom:ontology:1.0.0",
+    "Implementation meaning": "Version-specific ontology IRI."
+  },
+  {
+    "Setting": "Entity base IRI",
+    "Value": "urn:kpmg:telecom:ontology:",
+    "Implementation meaning": "Append the local class, property, or individual name."
+  },
+  {
+    "Setting": "Preferred prefix",
+    "Value": "telco",
+    "Implementation meaning": "Prefix used in Turtle and SPARQL."
+  },
+  {
+    "Setting": "Version",
+    "Value": "1.0.0",
+    "Implementation meaning": "Initial semantic version for the OWL release."
+  },
+  {
+    "Setting": "Default language",
+    "Value": "en",
+    "Implementation meaning": "Language tag for labels and definitions."
+  },
+  {
+    "Setting": "Level 2 hierarchy",
+    "Value": "Sub-Class / Node rdfs:subClassOf Top Class rdfs:subClassOf Top Domain",
+    "Implementation meaning": "Create a valid intermediate Top Class when it differs from the child."
+  },
+  {
+    "Setting": "Top Domain handling",
+    "Value": "OWL class",
+    "Implementation meaning": "Customer, Service, Process, People, and Product are upper classes."
+  },
+  {
+    "Setting": "Top Class handling",
+    "Value": "OWL intermediate class",
+    "Implementation meaning": "Create valid local-name Top Class values as classes; attach them to Top Domain."
+  },
+  {
+    "Setting": "Master Concept handling",
+    "Value": "Annotation",
+    "Implementation meaning": "Emit telco:masterConcept literal unless the value is an absolute IRI."
+  },
+  {
+    "Setting": "Primary Standard handling",
+    "Value": "Annotation",
+    "Implementation meaning": "Emit dcterms:conformsTo as a literal until authoritative standard IRIs are curated."
+  },
+  {
+    "Setting": "Source System handling",
+    "Value": "Annotation",
+    "Implementation meaning": "Emit telco:sourceSystem as a literal."
+  },
+  {
+    "Setting": "Level 3 handling",
+    "Value": "OWL datatype property plus SHACL property shape",
+    "Implementation meaning": "Reuse the property IRI and validate its owning classes in SHACL."
+  },
+  {
+    "Setting": "Shared datatype-property domain",
+    "Value": "No narrow OWL domain",
+    "Implementation meaning": "Avoid accidental class intersections for common fields such as name and status."
+  },
+  {
+    "Setting": "Datatype-property range",
+    "Value": "Mapped XSD datatype",
+    "Implementation meaning": "Use the OWL Datatype Mapping sheet."
+  },
+  {
+    "Setting": "Object-property domain and range",
+    "Value": "owl:unionOf mapped source and target classes",
+    "Implementation meaning": "Aggregate all Relationship Mapping rows per predicate before emitting domain and range."
+  },
+  {
+    "Setting": "Object-property characteristics",
+    "Value": "None by default",
+    "Implementation meaning": "Do not infer inverse, symmetric, transitive, functional, or inverse-functional semantics without evidence."
+  },
+  {
+    "Setting": "Cardinality",
+    "Value": "No OWL cardinality by default",
+    "Implementation meaning": "The workbook does not declare required or maximum counts."
+  },
+  {
+    "Setting": "SHACL cardinality",
+    "Value": "No minCount or maxCount by default",
+    "Implementation meaning": "Add constraints only after source-system and business requirements are approved."
+  },
+  {
+    "Setting": "Enum handling",
+    "Value": "xsd:string plus optional sh:in",
+    "Implementation meaning": "Create sh:in only when an authoritative allowed-value catalog exists."
+  },
+  {
+    "Setting": "KPI catalog",
+    "Value": "Individuals of OSSKPI",
+    "Implementation meaning": "RCA KPI Catalog rows are reference individuals, not subclasses."
+  },
+  {
+    "Setting": "Alarm cause catalog",
+    "Value": "Individuals of AlarmProbableCause",
+    "Implementation meaning": "RCA Alarm Cause Catalog rows are reference individuals."
+  },
+  {
+    "Setting": "Synthetic data",
+    "Value": "Separate ABox graph",
+    "Implementation meaning": "Do not embed test observations in the schema ontology."
+  },
+  {
+    "Setting": "Imports",
+    "Value": "None for initial release",
+    "Implementation meaning": "External standards remain annotations until their ontology IRIs and licensing are confirmed."
+  }
+]

@@ -1,0 +1,3053 @@
+[
+  {
+    "Relationship (KG Style)": "CARRIEDON",
+    "Original Predicate": "carriedOn",
+    "Definition / Meaning": "link on optical",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "CARRIEDOVER",
+    "Original Predicate": "carriedOver",
+    "Definition / Meaning": "fiber carries optical; microwave transport; GTP-U on UPF",
+    "Occurrences": 3,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "CARRIES",
+    "Original Predicate": "carries",
+    "Definition / Meaning": "PDU carries QoS flow; cable link",
+    "Occurrences": 2,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "CAUSES",
+    "Original Predicate": "causes",
+    "Definition / Meaning": "impact; fraud leakage",
+    "Occurrences": 2,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "CONNECTEDTO",
+    "Original Predicate": "connectedTo",
+    "Definition / Meaning": "topology link; SGW-PGW (4G)",
+    "Occurrences": 2,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "CONTAINS",
+    "Original Predicate": "contains",
+    "Definition / Meaning": "DC racks; site buildings; room racks",
+    "Occurrences": 4,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "CONTAINSIDENTITY",
+    "Original Predicate": "containsIdentity",
+    "Definition / Meaning": "SIM holds IMSI",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "CONTAINSITEM",
+    "Original Predicate": "containsItem",
+    "Definition / Meaning": "order line item; service order item",
+    "Occurrences": 2,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "CONTAINSPROFILE",
+    "Original Predicate": "containsProfile",
+    "Definition / Meaning": "SIM profile",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "CORRESPONDSTO",
+    "Original Predicate": "correspondsTo",
+    "Definition / Meaning": "physical to logical site",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "GROUPEDIN",
+    "Original Predicate": "groupedIn",
+    "Definition / Meaning": "device group",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "GUIDES",
+    "Original Predicate": "guides",
+    "Definition / Meaning": "digital strategy guides op model",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "HASCAPABILITY",
+    "Original Predicate": "hasCapability",
+    "Definition / Meaning": "device capability",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "HASIDENTITY",
+    "Original Predicate": "hasIdentity",
+    "Definition / Meaning": "device identity; IoT identity",
+    "Occurrences": 2,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "HASPROFILE",
+    "Original Predicate": "hasProfile",
+    "Definition / Meaning": "customer profile; device profile",
+    "Occurrences": 2,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "HASSIM",
+    "Original Predicate": "hasSIM",
+    "Definition / Meaning": "device SIM",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "HASSTATUS",
+    "Original Predicate": "hasStatus",
+    "Definition / Meaning": "lifecycle status; device lifecycle; lifecycle state",
+    "Occurrences": 3,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "HASTWIN",
+    "Original Predicate": "hasTwin",
+    "Definition / Meaning": "device twin",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "HOSTS",
+    "Original Predicate": "hosts",
+    "Definition / Meaning": "site hosts NE; server hosts VM",
+    "Occurrences": 2,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "IDENTIFIEDBY",
+    "Original Predicate": "identifiedBy",
+    "Definition / Meaning": "subscriber IMSI; subscriber MSISDN; device IMEI",
+    "Occurrences": 4,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "IDENTIFIES",
+    "Original Predicate": "identifies",
+    "Definition / Meaning": "identifier of NE; ECGI to cell",
+    "Occurrences": 2,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "IMPACTS",
+    "Original Predicate": "impacts",
+    "Definition / Meaning": "service impact; incident impacts process; incident impacts KPI",
+    "Occurrences": 3,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "INSTANCEOF",
+    "Original Predicate": "instanceOf",
+    "Definition / Meaning": "service instance; device model; fraud typing",
+    "Occurrences": 3,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "INTERCONNECTS",
+    "Original Predicate": "interconnects",
+    "Definition / Meaning": "transport link",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "JOINEDBY",
+    "Original Predicate": "joinedBy",
+    "Definition / Meaning": "fiber splice",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "LINKEDBY",
+    "Original Predicate": "linkedBy",
+    "Definition / Meaning": "physical connection",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "MAPPEDTO",
+    "Original Predicate": "mappedTo",
+    "Definition / Meaning": "standard mapping; SUPI contains IMSI",
+    "Occurrences": 2,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "MOUNTEDON",
+    "Original Predicate": "mountedOn",
+    "Definition / Meaning": "antenna on tower; BS on tower",
+    "Occurrences": 2,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "PASSESTHROUGH",
+    "Original Predicate": "passesThrough",
+    "Definition / Meaning": "fiber manhole",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "POWERS",
+    "Original Predicate": "powers",
+    "Definition / Meaning": "rack power; site power; energy harvesting",
+    "Occurrences": 3,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "ROOFHOSTS",
+    "Original Predicate": "roofHosts",
+    "Definition / Meaning": "rooftop site",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "ROUTES",
+    "Original Predicate": "routes",
+    "Definition / Meaning": "fiber duct",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "RUNSFIRMWARE",
+    "Original Predicate": "runsFirmware",
+    "Definition / Meaning": "device firmware; IoT firmware",
+    "Occurrences": 2,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "SERVEDBY",
+    "Original Predicate": "servedBy",
+    "Definition / Meaning": "cell antenna",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "SIMILARTO",
+    "Original Predicate": "similarTo",
+    "Definition / Meaning": "links to similar past problems [ADDED — remediation]",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "STRUCTURES",
+    "Original Predicate": "structures",
+    "Definition / Meaning": "op model structures units",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "SUPPORTS",
+    "Original Predicate": "supports",
+    "Definition / Meaning": "slice supports service; tower structure",
+    "Occurrences": 2,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "TERMINATESAT",
+    "Original Predicate": "terminatesAt",
+    "Definition / Meaning": "IP interface on router; patch panel",
+    "Occurrences": 2,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "TRACKEDIN",
+    "Original Predicate": "trackedIn",
+    "Definition / Meaning": "product inventory; SIM inventory",
+    "Occurrences": 2,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "USEDBY",
+    "Original Predicate": "usedBy",
+    "Definition / Meaning": "device used by subscriber",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "VARIANTOF",
+    "Original Predicate": "variantOf",
+    "Definition / Meaning": "USIM is SIM; eSIM is SIM; iSIM is SIM",
+    "Occurrences": 25,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "AFFECTS",
+    "Original Predicate": "affects",
+    "Definition / Meaning": "customer impact; fraud affects customer; incident affects resource (CI)",
+    "Occurrences": 4,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "AUTOMATEDBY",
+    "Original Predicate": "automatedBy",
+    "Definition / Meaning": "resolution -> auto-remediation playbook [ADDED — remediation]",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "CHANGES",
+    "Original Predicate": "changes",
+    "Definition / Meaning": "change mgmt",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "CORRELATEDBY",
+    "Original Predicate": "correlatedBy",
+    "Definition / Meaning": "alarm correlation",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "CORRELATESTO",
+    "Original Predicate": "correlatesTo",
+    "Definition / Meaning": "alarm correlation",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "CORRELATESWITH",
+    "Original Predicate": "correlatesWith",
+    "Definition / Meaning": "incident correlates with a recent change (change-induced) [ADDED]",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "ESCALATEDFROM",
+    "Original Predicate": "escalatedFrom",
+    "Definition / Meaning": "incident from alarm",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "ESCALATESTO",
+    "Original Predicate": "escalatesTo",
+    "Definition / Meaning": "event->incident",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "EVIDENCES",
+    "Original Predicate": "evidences",
+    "Definition / Meaning": "log is evidence for an incident [ADDED]",
+    "Occurrences": 2,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "EXECUTESSTEP",
+    "Original Predicate": "executesStep",
+    "Definition / Meaning": "action -> ordered steps [ADDED — remediation]",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "GUIDEDBYRUNBOOK",
+    "Original Predicate": "guidedByRunbook",
+    "Definition / Meaning": "resolution -> runbook/SOP [ADDED — remediation]",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "HASKNOWNERROR",
+    "Original Predicate": "hasKnownError",
+    "Definition / Meaning": "problem matches a known error [ADDED — remediation]",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "HASPROBLEM",
+    "Original Predicate": "hasProblem",
+    "Definition / Meaning": "service problem",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "HASWORKAROUND",
+    "Original Predicate": "hasWorkaround",
+    "Definition / Meaning": "known error -> temporary workaround [ADDED — remediation]",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "INTRODUCED",
+    "Original Predicate": "introduced",
+    "Definition / Meaning": "a change introduced a problem [ADDED]",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "INVOLVESVENDOR",
+    "Original Predicate": "involvesVendor",
+    "Definition / Meaning": "vendor",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "ONSERVER",
+    "Original Predicate": "onServer",
+    "Definition / Meaning": "incident located on a server/system [ADDED]",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "OPERATES",
+    "Original Predicate": "operates",
+    "Definition / Meaning": "operator runs network",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "RAISES",
+    "Original Predicate": "raises",
+    "Definition / Meaning": "customer complaint; IoT alarm; fault mgmt alarms",
+    "Occurrences": 6,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "RECOMMENDS",
+    "Original Predicate": "recommends",
+    "Definition / Meaning": "RCA -> SLM's ranked recommendation [ADDED — remediation]",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "RECORDEDAS",
+    "Original Predicate": "recordedAs",
+    "Definition / Meaning": "ticketing; problem ticketing",
+    "Occurrences": 3,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "RESTORES",
+    "Original Predicate": "restores",
+    "Definition / Meaning": "service restoration; remediation restores the service [ADDED — remediation]",
+    "Occurrences": 2,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "ROOTCAUSEIN",
+    "Original Predicate": "rootCauseIn",
+    "Definition / Meaning": "root cause locus; root cause located in element [ADDED — remediation]",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "SUPPLIEDBY",
+    "Original Predicate": "suppliedBy",
+    "Definition / Meaning": "NE vendor",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "TRIGGERS",
+    "Original Predicate": "triggers",
+    "Definition / Meaning": "incident->RFC; incident->action; incident to RFC",
+    "Occurrences": 3,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "VERIFIEDBY",
+    "Original Predicate": "verifiedBy",
+    "Definition / Meaning": "KYC verification; action -> verification it worked [ADDED — remediation]",
+    "Occurrences": 2,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "VERIFIES",
+    "Original Predicate": "verifies",
+    "Definition / Meaning": "credential verification",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "ASSESSEDBY",
+    "Original Predicate": "assessedBy",
+    "Definition / Meaning": "risk assessment",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Failure Prediction"
+  },
+  {
+    "Relationship (KG Style)": "ASSESSES",
+    "Original Predicate": "assesses",
+    "Definition / Meaning": "risk against objective; enterprise risk; regulatory risk",
+    "Occurrences": 3,
+    "RCA": "NA",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Failure Prediction"
+  },
+  {
+    "Relationship (KG Style)": "BREACHES",
+    "Original Predicate": "breaches",
+    "Definition / Meaning": "SLO breach",
+    "Occurrences": 2,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "COLLECTS",
+    "Original Predicate": "collects",
+    "Definition / Meaning": "PM counters",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Failure Prediction"
+  },
+  {
+    "Relationship (KG Style)": "COMPUTES",
+    "Original Predicate": "computes",
+    "Definition / Meaning": "KPI from counters; risk scoring; embeddings",
+    "Occurrences": 3,
+    "RCA": "NA",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Failure Prediction"
+  },
+  {
+    "Relationship (KG Style)": "DEFINEDBY",
+    "Original Predicate": "definedBy",
+    "Definition / Meaning": "revenue stream from model; SLA spec; standard spec",
+    "Occurrences": 4,
+    "RCA": "NA",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Failure Prediction"
+  },
+  {
+    "Relationship (KG Style)": "DETECTS",
+    "Original Predicate": "detects",
+    "Definition / Meaning": "IDS detection; anomaly detection",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Failure Prediction"
+  },
+  {
+    "Relationship (KG Style)": "ENABLES",
+    "Original Predicate": "enables",
+    "Definition / Meaning": "capability enables model; network as code",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Failure Prediction"
+  },
+  {
+    "Relationship (KG Style)": "FLAGS",
+    "Original Predicate": "flags",
+    "Definition / Meaning": "credit risk flag",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Failure Prediction"
+  },
+  {
+    "Relationship (KG Style)": "FORECASTS",
+    "Original Predicate": "forecasts",
+    "Definition / Meaning": "forecast of segment",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Failure Prediction"
+  },
+  {
+    "Relationship (KG Style)": "HASFEATURE",
+    "Original Predicate": "hasFeature",
+    "Definition / Meaning": "product feature",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Failure Prediction"
+  },
+  {
+    "Relationship (KG Style)": "MEASURES",
+    "Original Predicate": "measures",
+    "Definition / Meaning": "KPI target measures objective; service usage",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Failure Prediction"
+  },
+  {
+    "Relationship (KG Style)": "MITIGATES",
+    "Original Predicate": "mitigates",
+    "Definition / Meaning": "risk control",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Failure Prediction"
+  },
+  {
+    "Relationship (KG Style)": "MODELEDBY",
+    "Original Predicate": "modeledBy",
+    "Definition / Meaning": "YANG model",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Failure Prediction"
+  },
+  {
+    "Relationship (KG Style)": "PRODUCES",
+    "Original Predicate": "produces",
+    "Definition / Meaning": "rated event to charge; predictions",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Failure Prediction"
+  },
+  {
+    "Relationship (KG Style)": "PUTSATRISK",
+    "Original Predicate": "putsAtRisk",
+    "Definition / Meaning": "revenue at risk; fraud revenue risk",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Failure Prediction"
+  },
+  {
+    "Relationship (KG Style)": "REALIZEDBY",
+    "Original Predicate": "realizedBy",
+    "Definition / Meaning": "product realised by service; CFS by RFS; business model realises strategy",
+    "Occurrences": 5,
+    "RCA": "NA",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Failure Prediction"
+  },
+  {
+    "Relationship (KG Style)": "SCOREDBY",
+    "Original Predicate": "scoredBy",
+    "Definition / Meaning": "anomaly score",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Failure Prediction"
+  },
+  {
+    "Relationship (KG Style)": "SOURCEDFROM",
+    "Original Predicate": "sourcedFrom",
+    "Definition / Meaning": "dataset source",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Failure Prediction"
+  },
+  {
+    "Relationship (KG Style)": "STOREDIN",
+    "Original Predicate": "storedIn",
+    "Definition / Meaning": "feature store; data lake",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Failure Prediction"
+  },
+  {
+    "Relationship (KG Style)": "STREAMS",
+    "Original Predicate": "streams",
+    "Definition / Meaning": "telemetry",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Failure Prediction"
+  },
+  {
+    "Relationship (KG Style)": "TRACKS",
+    "Original Predicate": "tracks",
+    "Definition / Meaning": "scorecard tracks KPI; physical inventory; service inventory",
+    "Occurrences": 6,
+    "RCA": "NA",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Failure Prediction"
+  },
+  {
+    "Relationship (KG Style)": "VISUALIZES",
+    "Original Predicate": "visualizes",
+    "Definition / Meaning": "dashboard KPIs",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Failure Prediction"
+  },
+  {
+    "Relationship (KG Style)": "ACTIVATEDBY",
+    "Original Predicate": "activatedBy",
+    "Definition / Meaning": "service activation",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "ACTIVATES",
+    "Original Predicate": "activates",
+    "Definition / Meaning": "activation",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "ADDRESSES",
+    "Original Predicate": "addresses",
+    "Definition / Meaning": "value prop targets segment",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "AGGREGATEDINTO",
+    "Original Predicate": "aggregatedInto",
+    "Definition / Meaning": "aggregation",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "AGREES",
+    "Original Predicate": "agrees",
+    "Definition / Meaning": "wholesale",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "ALIGNEDWITH",
+    "Original Predicate": "alignedWith",
+    "Definition / Meaning": "SID alignment; O-RAN alignment",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "ALIGNSWITH",
+    "Original Predicate": "alignsWith",
+    "Definition / Meaning": "market to customer segment",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "ALLOCATEDFROM",
+    "Original Predicate": "allocatedFrom",
+    "Definition / Meaning": "VM allocation",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "ALLOCATEDTO",
+    "Original Predicate": "allocatedTo",
+    "Definition / Meaning": "cost centre",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "ALLOCATES",
+    "Original Predicate": "allocates",
+    "Definition / Meaning": "plan allocates cost",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "ANALYZEDBY",
+    "Original Predicate": "analyzedBy",
+    "Definition / Meaning": "RCA",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "ANCHOREDAT",
+    "Original Predicate": "anchoredAt",
+    "Definition / Meaning": "bearer anchor (4G)",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "ANNOTATEDBY",
+    "Original Predicate": "annotatedBy",
+    "Definition / Meaning": "note",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "APPLIEDTO",
+    "Original Predicate": "appliedTo",
+    "Definition / Meaning": "zero trust",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "APPLIESDISCOUNT",
+    "Original Predicate": "appliesDiscount",
+    "Definition / Meaning": "promotion discount",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "APPLIESTO",
+    "Original Predicate": "appliesTo",
+    "Definition / Meaning": "invoice adjustment; invoice discount; control on customer data",
+    "Occurrences": 3,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "ASSIGNEDTO",
+    "Original Predicate": "assignedTo",
+    "Definition / Meaning": "assignment; GUTI to UE",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "ASSIGNSVIA",
+    "Original Predicate": "assignsVia",
+    "Definition / Meaning": "workforce assignment",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "AUDITS",
+    "Original Predicate": "audits",
+    "Definition / Meaning": "regulatory audit",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "AUTHENTICATEDBY",
+    "Original Predicate": "authenticatedBy",
+    "Definition / Meaning": "authN; subscriber authN",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "AUTOMATES",
+    "Original Predicate": "automates",
+    "Definition / Meaning": "intent automation",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "BACKEDBY",
+    "Original Predicate": "backedBy",
+    "Definition / Meaning": "UPS backup; generator backup; battery backup",
+    "Occurrences": 3,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "BASEDON",
+    "Original Predicate": "basedOn",
+    "Definition / Meaning": "price from tariff",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "BELONGSTO",
+    "Original Predicate": "belongsTo",
+    "Definition / Meaning": "customer segment membership; subscriber belongs to customer",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "BENCHMARKS",
+    "Original Predicate": "benchmarks",
+    "Definition / Meaning": "telecom QA benchmark; O-RAN benchmark",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "BILLEDVIA",
+    "Original Predicate": "billedVia",
+    "Definition / Meaning": "billing; partner billing",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "BILLS",
+    "Original Predicate": "bills",
+    "Definition / Meaning": "billing for product",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "CARRIEDBY",
+    "Original Predicate": "carriedBy",
+    "Definition / Meaning": "HAPS in NTN",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "CATALOGEDIN",
+    "Original Predicate": "catalogedIn",
+    "Definition / Meaning": "data catalog",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "CATEGORIZEDAS",
+    "Original Predicate": "categorizedAs",
+    "Definition / Meaning": "offering category; service category; common category",
+    "Occurrences": 3,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "CHARGEDBY",
+    "Original Predicate": "chargedBy",
+    "Definition / Meaning": "recharge charged by OCS [ADDED]",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "CHARGEDTO",
+    "Original Predicate": "chargedTo",
+    "Definition / Meaning": "charge to account",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "CHECKS",
+    "Original Predicate": "checks",
+    "Definition / Meaning": "velocity check",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "COMPETESIN",
+    "Original Predicate": "competesIn",
+    "Definition / Meaning": "competitor in segment",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "COMPOSEDOF",
+    "Original Predicate": "composedOf",
+    "Definition / Meaning": "slice composition; bundle composition; service chain",
+    "Occurrences": 18,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "CONCEALEDAS",
+    "Original Predicate": "concealedAs",
+    "Definition / Meaning": "SUPI privacy",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "CONFIGUREDBY",
+    "Original Predicate": "configuredBy",
+    "Definition / Meaning": "service config",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "CONFORMSTO",
+    "Original Predicate": "conformsTo",
+    "Definition / Meaning": "standards conformance",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "CONNECTS",
+    "Original Predicate": "connects",
+    "Definition / Meaning": "ToR to fabric; topology edge",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "CONNECTSTHROUGH",
+    "Original Predicate": "connectsThrough",
+    "Definition / Meaning": "IoT via gateway",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "CONNECTSTO",
+    "Original Predicate": "connectsTo",
+    "Definition / Meaning": "UE to gNB",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "CONNECTSVIA",
+    "Original Predicate": "connectsVia",
+    "Definition / Meaning": "IoT connectivity; NTN gateway",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "CONSUMES",
+    "Original Predicate": "consumes",
+    "Definition / Meaning": "resource consumption",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "CONTACTABLEVIA",
+    "Original Predicate": "contactableVia",
+    "Definition / Meaning": "contact medium",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "CONTACTVIA",
+    "Original Predicate": "contactVia",
+    "Definition / Meaning": "partner contact",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "CONTAINSTASK",
+    "Original Predicate": "containsTask",
+    "Definition / Meaning": "work order tasks",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "CONTROLLEDBY",
+    "Original Predicate": "controlledBy",
+    "Definition / Meaning": "actuator command",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "CONTROLS",
+    "Original Predicate": "controls",
+    "Definition / Meaning": "RIC controls RU; PCRF policy (4G); SDN control",
+    "Occurrences": 3,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "CONVERTSTO",
+    "Original Predicate": "convertsTo",
+    "Definition / Meaning": "prospect conversion",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "COOLS",
+    "Original Predicate": "cools",
+    "Definition / Meaning": "rack cooling",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "DEFINES",
+    "Original Predicate": "defines",
+    "Definition / Meaning": "strategy sets objectives; numbering plan",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "DEGRADES",
+    "Original Predicate": "degrades",
+    "Definition / Meaning": "CX degradation",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "DELIVERS",
+    "Original Predicate": "delivers",
+    "Definition / Meaning": "delivery",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "DEPENDSON",
+    "Original Predicate": "dependsOn",
+    "Definition / Meaning": "service dependency",
+    "Occurrences": 5,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "DEPLOYEDAS",
+    "Original Predicate": "deployedAs",
+    "Definition / Meaning": "private 5G slice",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "DEPLOYEDON",
+    "Original Predicate": "deployedOn",
+    "Definition / Meaning": "MEC on edge",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "DERIVEDFROM",
+    "Original Predicate": "derivedFrom",
+    "Definition / Meaning": "base type",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "DESCRIBEDBY",
+    "Original Predicate": "describedBy",
+    "Definition / Meaning": "service profile; VNFD; NSD",
+    "Occurrences": 6,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "DESCRIBES",
+    "Original Predicate": "describes",
+    "Definition / Meaning": "IoT service profile; GSMA telecom KG",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "DETECTEDBY",
+    "Original Predicate": "detectedBy",
+    "Definition / Meaning": "threat detection; fraud detection",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "DISCOVERS",
+    "Original Predicate": "discovers",
+    "Definition / Meaning": "discovery",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "DISTRIBUTESPOWER",
+    "Original Predicate": "distributesPower",
+    "Definition / Meaning": "PDU power",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "DOCUMENTEDBY",
+    "Original Predicate": "documentedBy",
+    "Definition / Meaning": "common document",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "EMBEDS",
+    "Original Predicate": "embeds",
+    "Definition / Meaning": "AI-native",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "EMITS",
+    "Original Predicate": "emits",
+    "Definition / Meaning": "fault emission; sensor reading",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "EMITTEDBY",
+    "Original Predicate": "emittedBy",
+    "Definition / Meaning": "log -> the system that emitted it [ADDED]",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "ENFORCEDBY",
+    "Original Predicate": "enforcedBy",
+    "Definition / Meaning": "firewall enforcement; ACL enforcement",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "ENHANCES",
+    "Original Predicate": "enhances",
+    "Definition / Meaning": "RIS",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "ENROLLEDIN",
+    "Original Predicate": "enrolledIn",
+    "Definition / Meaning": "loyalty enrolment",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "ESCALATESVIA",
+    "Original Predicate": "escalatesVia",
+    "Definition / Meaning": "dunning escalation",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "ESTABLISHES",
+    "Original Predicate": "establishes",
+    "Definition / Meaning": "VPN zone",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "EVIDENCEDBY",
+    "Original Predicate": "evidencedBy",
+    "Definition / Meaning": "compliance evidence",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "EVOLVESFROM",
+    "Original Predicate": "evolvesFrom",
+    "Definition / Meaning": "6G evolution; advanced O-RAN",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "EXPERIENCES",
+    "Original Predicate": "experiences",
+    "Definition / Meaning": "customer journey",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "EXPLOITS",
+    "Original Predicate": "exploits",
+    "Definition / Meaning": "threat exploits vuln",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "EXPOSES",
+    "Original Predicate": "exposes",
+    "Definition / Meaning": "API exposure; partner API",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "EXPOSESVIA",
+    "Original Predicate": "exposesVia",
+    "Definition / Meaning": "NEF API exposure",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "FEEDS",
+    "Original Predicate": "feeds",
+    "Definition / Meaning": "threat intel; data pipeline",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "FILES",
+    "Original Predicate": "files",
+    "Definition / Meaning": "regulatory filing",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "FULFILLEDBY",
+    "Original Predicate": "fulfilledBy",
+    "Definition / Meaning": "obligation control",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "FUNDEDBY",
+    "Original Predicate": "fundedBy",
+    "Definition / Meaning": "initiative funded by plan; budget",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "GENERATES",
+    "Original Predicate": "generates",
+    "Definition / Meaning": "performance data; analytics report",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "GOVERNEDBY",
+    "Original Predicate": "governedBy",
+    "Definition / Meaning": "SLA governance; commercial terms; roaming governance",
+    "Occurrences": 6,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "GOVERNS",
+    "Original Predicate": "governs",
+    "Definition / Meaning": "PCF policy on QoS; QoS regulation; tariff regulation",
+    "Occurrences": 5,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "GRANTS",
+    "Original Predicate": "grants",
+    "Definition / Meaning": "customer consent; authZ grants identity; spectrum license",
+    "Occurrences": 4,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "GROUNDEDIN",
+    "Original Predicate": "groundedIn",
+    "Definition / Meaning": "grounding; RAG grounding",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "GROUNDS",
+    "Original Predicate": "grounds",
+    "Definition / Meaning": "grounding",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "GUIDEDBY",
+    "Original Predicate": "guidedBy",
+    "Definition / Meaning": "partnership strategy",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "HASACCOUNT",
+    "Original Predicate": "hasAccount",
+    "Definition / Meaning": "billing account",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "HASATTACHMENT",
+    "Original Predicate": "hasAttachment",
+    "Definition / Meaning": "attachment",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "HASCATEGORY",
+    "Original Predicate": "hasCategory",
+    "Definition / Meaning": "common status",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "HASCHARACTERISTIC",
+    "Original Predicate": "hasCharacteristic",
+    "Definition / Meaning": "service characteristic; entity characteristic",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "HASCOMPETENCY",
+    "Original Predicate": "hasCompetency",
+    "Definition / Meaning": "competency",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "HASCOORDINATE",
+    "Original Predicate": "hasCoordinate",
+    "Definition / Meaning": "GPS coordinate",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "HASCREDIT",
+    "Original Predicate": "hasCredit",
+    "Definition / Meaning": "credit standing",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "HASDEPENDENCY",
+    "Original Predicate": "hasDependency",
+    "Definition / Meaning": "service dependency",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "HASINTERACTION",
+    "Original Predicate": "hasInteraction",
+    "Definition / Meaning": "customer interaction",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "HASLOCATION",
+    "Original Predicate": "hasLocation",
+    "Definition / Meaning": "place location",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "HASPRIVACYPROFILE",
+    "Original Predicate": "hasPrivacyProfile",
+    "Definition / Meaning": "privacy profile",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "HASQUALITY",
+    "Original Predicate": "hasQuality",
+    "Definition / Meaning": "quality",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "HASQUANTITY",
+    "Original Predicate": "hasQuantity",
+    "Definition / Meaning": "characteristic quantity",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "HASRATEPLAN",
+    "Original Predicate": "hasRatePlan",
+    "Definition / Meaning": "product rate plan",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "HASSKILL",
+    "Original Predicate": "hasSkill",
+    "Definition / Meaning": "employee skill",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "HASSLICE",
+    "Original Predicate": "hasSlice",
+    "Definition / Meaning": "slice binding",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "HASTOPOLOGY",
+    "Original Predicate": "hasTopology",
+    "Definition / Meaning": "service topology",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "HOLDS",
+    "Original Predicate": "holds",
+    "Definition / Meaning": "account holding; wallet balance",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "HOLDSROLE",
+    "Original Predicate": "holdsRole",
+    "Definition / Meaning": "enterprise role",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "HOSTEDAT",
+    "Original Predicate": "hostedAt",
+    "Definition / Meaning": "MEC app hosting",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "HOSTEDON",
+    "Original Predicate": "hostedOn",
+    "Definition / Meaning": "virtual hosting",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "HOUSEDIN",
+    "Original Predicate": "housedIn",
+    "Definition / Meaning": "cabinet in facility",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "HOUSES",
+    "Original Predicate": "houses",
+    "Definition / Meaning": "equipment room",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "INCLUDEDIN",
+    "Original Predicate": "includedIn",
+    "Definition / Meaning": "addon in bundle",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "INCLUDES",
+    "Original Predicate": "includes",
+    "Definition / Meaning": "value chain of capabilities; CRAC unit; chiller",
+    "Occurrences": 3,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "INDEXEDIN",
+    "Original Predicate": "indexedIn",
+    "Definition / Meaning": "vector index",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "INSPECTS",
+    "Original Predicate": "inspects",
+    "Definition / Meaning": "IPS inspection",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "INSTANTIATES",
+    "Original Predicate": "instantiates",
+    "Definition / Meaning": "instance of offering",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "INTEGRATES",
+    "Original Predicate": "integrates",
+    "Definition / Meaning": "ISAC",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "INTEGRATESVIA",
+    "Original Predicate": "integratesVia",
+    "Definition / Meaning": "SI integration",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "INTERCONNECTSWITH",
+    "Original Predicate": "interconnectsWith",
+    "Definition / Meaning": "interconnect",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "INVESTIGATEDBY",
+    "Original Predicate": "investigatedBy",
+    "Definition / Meaning": "investigation",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "ISSUEDTO",
+    "Original Predicate": "issuedTo",
+    "Definition / Meaning": "billing target; PO supplier",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "ISSUES",
+    "Original Predicate": "issues",
+    "Definition / Meaning": "cert issues credential; license issuance; regulation issuance",
+    "Occurrences": 3,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "LISTEDIN",
+    "Original Predicate": "listedIn",
+    "Definition / Meaning": "catalog listing; service catalog; blacklist",
+    "Occurrences": 4,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "LOCATEDAT",
+    "Original Predicate": "locatedAt",
+    "Definition / Meaning": "location; leakage locus; employee facility",
+    "Occurrences": 5,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "LOGSTIME",
+    "Original Predicate": "logsTime",
+    "Definition / Meaning": "timesheet",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "LOGSTO",
+    "Original Predicate": "logsTo",
+    "Definition / Meaning": "audit logging",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "MANAGEDAS",
+    "Original Predicate": "managedAs",
+    "Definition / Meaning": "IoT asset",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "MANAGEDBY",
+    "Original Predicate": "managedBy",
+    "Definition / Meaning": "brand managed by unit; VNF lifecycle mgmt; IoT platform mgmt",
+    "Occurrences": 4,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "MANAGES",
+    "Original Predicate": "manages",
+    "Definition / Meaning": "management; SMF manages PDU session; VIM manages pool",
+    "Occurrences": 4,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "MANDATES",
+    "Original Predicate": "mandates",
+    "Definition / Meaning": "LI obligation; regulatory mandate; GDPR control",
+    "Occurrences": 6,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "MAPPEDTOBEARER",
+    "Original Predicate": "mappedToBearer",
+    "Definition / Meaning": "QoS to bearer",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "MAPS",
+    "Original Predicate": "maps",
+    "Definition / Meaning": "topology mgmt",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "MAPSTO",
+    "Original Predicate": "mapsTo",
+    "Definition / Meaning": "domain map to capability",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "MEASUREDBY",
+    "Original Predicate": "measuredBy",
+    "Definition / Meaning": "quality metric; product usage",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "MEASUREDIN",
+    "Original Predicate": "measuredIn",
+    "Definition / Meaning": "quantity unit",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "MEMBEROF",
+    "Original Predicate": "memberOf",
+    "Definition / Meaning": "household membership; team membership",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "MIRRORS",
+    "Original Predicate": "mirrors",
+    "Definition / Meaning": "digital twin",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "MITIGATEDBY",
+    "Original Predicate": "mitigatedBy",
+    "Definition / Meaning": "fraud control; vuln mitigation",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "MONITOREDBY",
+    "Original Predicate": "monitoredBy",
+    "Definition / Meaning": "env monitoring",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "MONITORS",
+    "Original Predicate": "monitors",
+    "Definition / Meaning": "RA; RA on charges",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "MOUNTEDIN",
+    "Original Predicate": "mountedIn",
+    "Definition / Meaning": "server in rack",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "OCCUPIES",
+    "Original Predicate": "occupies",
+    "Definition / Meaning": "floor space",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "OFFERS",
+    "Original Predicate": "offers",
+    "Definition / Meaning": "partner product; operator offers product",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "ONBOARDEDVIA",
+    "Original Predicate": "onboardedVia",
+    "Definition / Meaning": "onboarding",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "OPENSCASE",
+    "Original Predicate": "opensCase",
+    "Definition / Meaning": "fraud case",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "OPTIMIZES",
+    "Original Predicate": "optimizes",
+    "Definition / Meaning": "AI optimises healing",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "ORCHESTRATES",
+    "Original Predicate": "orchestrates",
+    "Definition / Meaning": "NFV orchestration; NFVO orchestrates NS; agentic RAG",
+    "Occurrences": 3,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "ORDEREDVIA",
+    "Original Predicate": "orderedVia",
+    "Definition / Meaning": "product order; service order",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "ORDERSVIA",
+    "Original Predicate": "ordersVia",
+    "Definition / Meaning": "OSS order to work order",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "OVERLAIDBY",
+    "Original Predicate": "overlaidBy",
+    "Definition / Meaning": "overlay",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "OWNS",
+    "Original Predicate": "owns",
+    "Definition / Meaning": "commercial ownership; enterprise asset",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "PAIDVIA",
+    "Original Predicate": "paidVia",
+    "Definition / Meaning": "recharge paid via a payment [ADDED]",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "PARTOF",
+    "Original Predicate": "partOf",
+    "Definition / Meaning": "composition; initiative part of plan; customer hierarchy",
+    "Occurrences": 15,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "PERFORMEDON",
+    "Original Predicate": "performedOn",
+    "Definition / Meaning": "work target",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "PERFORMS",
+    "Original Predicate": "performs",
+    "Definition / Meaning": "convergent charging; task interaction",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "PLACESORDER",
+    "Original Predicate": "placesOrder",
+    "Definition / Meaning": "partner order",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "PLANS",
+    "Original Predicate": "plans",
+    "Definition / Meaning": "network planning; workforce planning",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "PLAYSROLE",
+    "Original Predicate": "playsRole",
+    "Definition / Meaning": "ecosystem role",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "POSITIONS",
+    "Original Predicate": "positions",
+    "Definition / Meaning": "GTM positions value prop",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "PRICEDBY",
+    "Original Predicate": "pricedBy",
+    "Definition / Meaning": "offering price",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "PRICEDBYRULE",
+    "Original Predicate": "pricedByRule",
+    "Definition / Meaning": "price rule",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "PRICEDIN",
+    "Original Predicate": "pricedIn",
+    "Definition / Meaning": "money unit",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "PROCESSEDBY",
+    "Original Predicate": "processedBy",
+    "Definition / Meaning": "edge analytics",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "PROCESSES",
+    "Original Predicate": "processes",
+    "Definition / Meaning": "refund of payment",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "PROCURESVIA",
+    "Original Predicate": "procuresVia",
+    "Definition / Meaning": "procurement",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "PROTECTEDBY",
+    "Original Predicate": "protectedBy",
+    "Definition / Meaning": "fire suppression",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "PROTECTS",
+    "Original Predicate": "protects",
+    "Definition / Meaning": "security; policy protects service",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "PROTECTSAGAINST",
+    "Original Predicate": "protectsAgainst",
+    "Definition / Meaning": "DDoS protection",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "PROVIDES",
+    "Original Predicate": "provides",
+    "Definition / Meaning": "customer feedback; storage provisioning; storage volumes",
+    "Occurrences": 3,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "PROVISIONS",
+    "Original Predicate": "provisions",
+    "Definition / Meaning": "provisioning",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "PUBLISHES",
+    "Original Predicate": "publishes",
+    "Definition / Meaning": "ODA APIs",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "PURSUES",
+    "Original Predicate": "pursues",
+    "Definition / Meaning": "unit pursues objective; collections",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "QUOTEDBY",
+    "Original Predicate": "quotedBy",
+    "Definition / Meaning": "order quote",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "RATEDINTO",
+    "Original Predicate": "ratedInto",
+    "Definition / Meaning": "rating",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "RATES",
+    "Original Predicate": "rates",
+    "Definition / Meaning": "rating produces rated event",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "REALIZEDAS",
+    "Original Predicate": "realizedAs",
+    "Definition / Meaning": "CNF as container",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "REALIZES",
+    "Original Predicate": "realizes",
+    "Definition / Meaning": "CFS realises service; VNF realises NF; self healing",
+    "Occurrences": 5,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "RECONCILES",
+    "Original Predicate": "reconciles",
+    "Definition / Meaning": "inventory reconcile; usage reconcile",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "RECORDEDFOR",
+    "Original Predicate": "recordedFor",
+    "Definition / Meaning": "dispute",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "RECORDEDIN",
+    "Original Predicate": "recordedIn",
+    "Definition / Meaning": "DCIM record; HR record",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "RECORDS",
+    "Original Predicate": "records",
+    "Definition / Meaning": "event interaction",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "REDEEMS",
+    "Original Predicate": "redeems",
+    "Definition / Meaning": "voucher redemption",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "REFERENCES",
+    "Original Predicate": "references",
+    "Definition / Meaning": "external id",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "REGISTERSVIA",
+    "Original Predicate": "registersVia",
+    "Definition / Meaning": "UE registration",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "REGISTERSWITH",
+    "Original Predicate": "registersWith",
+    "Definition / Meaning": "5GC SBA",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "RELATEDTO",
+    "Original Predicate": "relatedTo",
+    "Definition / Meaning": "cross-standard",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "RELATES",
+    "Original Predicate": "relates",
+    "Definition / Meaning": "product relationship",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "REPORTEDBY",
+    "Original Predicate": "reportedBy",
+    "Definition / Meaning": "reporter",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "REPORTS",
+    "Original Predicate": "reports",
+    "Definition / Meaning": "compliance status",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "REQUIRES",
+    "Original Predicate": "requires",
+    "Definition / Meaning": "data retention; accessibility; LI mandate",
+    "Occurrences": 3,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "RETRIEVES",
+    "Original Predicate": "retrieves",
+    "Definition / Meaning": "RAG retrieval",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "RETRIEVESFROM",
+    "Original Predicate": "retrievesFrom",
+    "Definition / Meaning": "UDM reads UDR",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "ROAMSON",
+    "Original Predicate": "roamsOn",
+    "Definition / Meaning": "roaming",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "ROAMSVIA",
+    "Original Predicate": "roamsVia",
+    "Definition / Meaning": "operator roaming",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "ROUTEDTHROUGH",
+    "Original Predicate": "routedThrough",
+    "Definition / Meaning": "user plane through UPF",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "ROUTESCABLING",
+    "Original Predicate": "routesCabling",
+    "Definition / Meaning": "cabling",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "RUNS",
+    "Original Predicate": "runs",
+    "Definition / Meaning": "IoT app",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "RUNSIN",
+    "Original Predicate": "runsIn",
+    "Definition / Meaning": "container in pod",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "RUNSON",
+    "Original Predicate": "runsOn",
+    "Definition / Meaning": "service on resource; VM on hypervisor; VNFC on VM",
+    "Occurrences": 3,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "SCHEDULEDBY",
+    "Original Predicate": "scheduledBy",
+    "Definition / Meaning": "pod scheduling",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "SECUREDBY",
+    "Original Predicate": "securedBy",
+    "Definition / Meaning": "IoT security",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "SECURES",
+    "Original Predicate": "secures",
+    "Definition / Meaning": "encryption keys; QKD keys",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "SELECTS",
+    "Original Predicate": "selects",
+    "Definition / Meaning": "AMF selects SMF; NSSF slice selection",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "SERVEDVIA",
+    "Original Predicate": "servedVia",
+    "Definition / Meaning": "inference serving",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "SERVES",
+    "Original Predicate": "serves",
+    "Definition / Meaning": "AMF serves UE; MME serves UE (4G)",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "SETSGOAL",
+    "Original Predicate": "setsGoal",
+    "Definition / Meaning": "sustainability goal",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "SETTLES",
+    "Original Predicate": "settles",
+    "Definition / Meaning": "payment",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "SETTLESVIA",
+    "Original Predicate": "settlesVia",
+    "Definition / Meaning": "partner settlement",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "SETTLESWITH",
+    "Original Predicate": "settlesWith",
+    "Definition / Meaning": "interconnect settlement; roaming settlement",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "SHELTERS",
+    "Original Predicate": "shelters",
+    "Definition / Meaning": "equipment shelter",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "SIGNS",
+    "Original Predicate": "signs",
+    "Definition / Meaning": "customer signs contract; customer signs agreement; partner agreement",
+    "Occurrences": 3,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "SPECIFIEDBY",
+    "Original Predicate": "specifiedBy",
+    "Definition / Meaning": "offering spec; service spec",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "SPECIFIES",
+    "Original Predicate": "specifies",
+    "Definition / Meaning": "SLS to SLO; NFV specifies NFVO; ZSM automation",
+    "Occurrences": 12,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "STANDARDIZES",
+    "Original Predicate": "standardizes",
+    "Definition / Meaning": "eTOM processes",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "SUBSCRIBEDVIA",
+    "Original Predicate": "subscribedVia",
+    "Definition / Meaning": "IoT subscription",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "SUBSCRIBESTO",
+    "Original Predicate": "subscribesTo",
+    "Definition / Meaning": "subscription",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "SUMMARIZEDIN",
+    "Original Predicate": "summarizedIn",
+    "Definition / Meaning": "invoice to bill",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "SUPPLIESPOWER",
+    "Original Predicate": "suppliesPower",
+    "Definition / Meaning": "busbar to PDU",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "TARGETS",
+    "Original Predicate": "targets",
+    "Definition / Meaning": "plan targets segment; threat targets NE",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "TESTEDBY",
+    "Original Predicate": "testedBy",
+    "Definition / Meaning": "service test",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "TIEREDAS",
+    "Original Predicate": "tieredAs",
+    "Definition / Meaning": "partner tier",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "TOPPEDUPBY",
+    "Original Predicate": "toppedUpBy",
+    "Definition / Meaning": "balance top-up",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "TRAINEDBY",
+    "Original Predicate": "trainedBy",
+    "Definition / Meaning": "training job",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "TRAINEDON",
+    "Original Predicate": "trainedOn",
+    "Definition / Meaning": "training data",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "TRAINEDVIA",
+    "Original Predicate": "trainedVia",
+    "Definition / Meaning": "training",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "TRANSMITSON",
+    "Original Predicate": "transmitsOn",
+    "Definition / Meaning": "carrier on band",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "TRANSPORTEDOVER",
+    "Original Predicate": "transportedOver",
+    "Definition / Meaning": "OTN over optical",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "USES",
+    "Original Predicate": "uses",
+    "Definition / Meaning": "user uses service; prompt template; N2 uses NGAP",
+    "Occurrences": 8,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "USESBAND",
+    "Original Predicate": "usesBand",
+    "Definition / Meaning": "THz band",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "USESBEARER",
+    "Original Predicate": "usesBearer",
+    "Definition / Meaning": "NB-IoT bearer; LTE-M bearer; LPWAN bearer",
+    "Occurrences": 3,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "USESPROTOCOL",
+    "Original Predicate": "usesProtocol",
+    "Definition / Meaning": "Diameter (4G); SIP signalling",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "USESQOS",
+    "Original Predicate": "usesQoS",
+    "Definition / Meaning": "QoS",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "VALIDATEDBY",
+    "Original Predicate": "validatedBy",
+    "Definition / Meaning": "validation; data quality",
+    "Occurrences": 2,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "VALIDFOR",
+    "Original Predicate": "validFor",
+    "Definition / Meaning": "agreement period",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "WORKSSHIFT",
+    "Original Predicate": "worksShift",
+    "Definition / Meaning": "shift",
+    "Occurrences": 1,
+    "RCA": "NA",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "NA"
+  },
+  {
+    "Relationship (KG Style)": "HAS_ROOT_CAUSE",
+    "Original Predicate": "hasRootCause",
+    "Definition / Meaning": "Links an incident or service problem to its root cause analysis.",
+    "Occurrences": 2,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "RESOLVED_BY",
+    "Original Predicate": "resolvedBy",
+    "Definition / Meaning": "Links an incident, root cause, problem, or ticket to its confirmed resolution.",
+    "Occurrences": 3,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "REMEDIATED_BY",
+    "Original Predicate": "remediatedBy",
+    "Definition / Meaning": "Links an incident or problem to remediation actions taken to restore service.",
+    "Occurrences": 2,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "ABOUT",
+    "Original Predicate": "about",
+    "Definition / Meaning": "complaint or issue is about a service or customer-facing service",
+    "Occurrences": 2,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "RELATESTO",
+    "Original Predicate": "relatesTo",
+    "Definition / Meaning": "complaint relates to a service problem",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "NA",
+    "Use Case Relevance": "RCA"
+  },
+  {
+    "Relationship (KG Style)": "OBSERVEDAS",
+    "Original Predicate": "observedAs",
+    "Definition / Meaning": "symptom or complaint is observed through a KPI/metric",
+    "Occurrences": 2,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "ADJACENT_TO",
+    "Original Predicate": "adjacentTo",
+    "Definition / Meaning": "cell/site/resource adjacency for neighborhood RCA",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "SHARES_RESOURCE_WITH",
+    "Original Predicate": "sharesResourceWith",
+    "Definition / Meaning": "cells or services share a common dependent resource",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "HAS_INTERFACE",
+    "Original Predicate": "hasInterface",
+    "Definition / Meaning": "network element has an interface",
+    "Occurrences": 1,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "TERMINATES",
+    "Original Predicate": "terminates",
+    "Definition / Meaning": "interface terminates transport or physical link",
+    "Occurrences": 2,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "MEASURED_ON",
+    "Original Predicate": "measuredOn",
+    "Definition / Meaning": "KPI observation measured on resource/service/cell/site",
+    "Occurrences": 3,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "CLASSIFIED_AS",
+    "Original Predicate": "classifiedAs",
+    "Definition / Meaning": "alarm classified by probable cause",
+    "Occurrences": 3,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  },
+  {
+    "Relationship (KG Style)": "INDICATES",
+    "Original Predicate": "indicates",
+    "Definition / Meaning": "KPI or alarm indicates issue/hypothesis",
+    "Occurrences": 2,
+    "RCA": "Yes",
+    "Failure Prediction": "Yes",
+    "Use Case Relevance": "Both"
+  }
+]

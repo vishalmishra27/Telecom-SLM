@@ -1,0 +1,135 @@
+[
+  {
+    "KPI Name": "packet_loss_rate",
+    "Domain": "Transport/Core/RAN",
+    "Unit": "percent",
+    "RCA Usage": "High packet loss symptom; compare with interface errors and congestion",
+    "Possible RCA Hypotheses": "Backhaul congestion, fiber impairment, radio interference, queue drops"
+  },
+  {
+    "KPI Name": "latency_ms",
+    "Domain": "Transport/Core/RAN",
+    "Unit": "ms",
+    "RCA Usage": "High latency symptom; compare with packet loss and utilization",
+    "Possible RCA Hypotheses": "Backhaul congestion, routing issue, transport impairment"
+  },
+  {
+    "KPI Name": "jitter_ms",
+    "Domain": "Transport/Core",
+    "Unit": "ms",
+    "RCA Usage": "Voice quality instability evidence",
+    "Possible RCA Hypotheses": "Congestion, unstable transport, routing changes"
+  },
+  {
+    "KPI Name": "call_drop_rate",
+    "Domain": "RAN/Service",
+    "Unit": "percent",
+    "RCA Usage": "Dropped voice/session KPI",
+    "Possible RCA Hypotheses": "Radio congestion, handover failure, transport instability, cell outage"
+  },
+  {
+    "KPI Name": "retransmission_rate",
+    "Domain": "RAN/Transport",
+    "Unit": "percent",
+    "RCA Usage": "Retransmission evidence",
+    "Possible RCA Hypotheses": "Radio interference, poor signal, packet loss, congestion"
+  },
+  {
+    "KPI Name": "throughput_dl_mbps",
+    "Domain": "RAN/Transport",
+    "Unit": "Mbps",
+    "RCA Usage": "Downlink capacity/performance evidence",
+    "Possible RCA Hypotheses": "Congestion, throttling, backhaul bottleneck"
+  },
+  {
+    "KPI Name": "throughput_ul_mbps",
+    "Domain": "RAN/Transport",
+    "Unit": "Mbps",
+    "RCA Usage": "Uplink capacity/performance evidence",
+    "Possible RCA Hypotheses": "Congestion, radio issue, backhaul bottleneck"
+  },
+  {
+    "KPI Name": "interface_utilization_percent",
+    "Domain": "Transport",
+    "Unit": "percent",
+    "RCA Usage": "Backhaul/router interface saturation evidence",
+    "Possible RCA Hypotheses": "Transport congestion"
+  },
+  {
+    "KPI Name": "queue_drop_rate",
+    "Domain": "Transport/Core",
+    "Unit": "drops/sec",
+    "RCA Usage": "Router/interface queue loss evidence",
+    "Possible RCA Hypotheses": "Congestion or QoS misconfiguration"
+  },
+  {
+    "KPI Name": "crc_error_rate",
+    "Domain": "Transport/Optical",
+    "Unit": "errors/sec",
+    "RCA Usage": "Physical/optical link error evidence",
+    "Possible RCA Hypotheses": "Fiber degradation, bad optic, connector issue"
+  },
+  {
+    "KPI Name": "optical_rx_power_dbm",
+    "Domain": "Optical",
+    "Unit": "dBm",
+    "RCA Usage": "Optical receive power evidence",
+    "Possible RCA Hypotheses": "Fiber degradation, connector issue, fiber cut"
+  },
+  {
+    "KPI Name": "optical_tx_power_dbm",
+    "Domain": "Optical",
+    "Unit": "dBm",
+    "RCA Usage": "Optical transmit power evidence",
+    "Possible RCA Hypotheses": "Optic/fiber issue"
+  },
+  {
+    "KPI Name": "cpu_utilization_percent",
+    "Domain": "Router/gNodeB/Core",
+    "Unit": "percent",
+    "RCA Usage": "Compute saturation evidence",
+    "Possible RCA Hypotheses": "Device overload or process issue"
+  },
+  {
+    "KPI Name": "memory_utilization_percent",
+    "Domain": "Router/gNodeB/Core",
+    "Unit": "percent",
+    "RCA Usage": "Memory saturation evidence",
+    "Possible RCA Hypotheses": "Device overload or leak"
+  },
+  {
+    "KPI Name": "prb_utilization_dl_percent",
+    "Domain": "RAN",
+    "Unit": "percent",
+    "RCA Usage": "Downlink radio resource saturation evidence",
+    "Possible RCA Hypotheses": "Radio congestion"
+  },
+  {
+    "KPI Name": "prb_utilization_ul_percent",
+    "Domain": "RAN",
+    "Unit": "percent",
+    "RCA Usage": "Uplink radio resource saturation evidence",
+    "Possible RCA Hypotheses": "Radio congestion"
+  },
+  {
+    "KPI Name": "rrc_setup_success_rate",
+    "Domain": "RAN",
+    "Unit": "percent",
+    "RCA Usage": "Access setup success evidence",
+    "Possible RCA Hypotheses": "Radio congestion, signaling issue"
+  },
+  {
+    "KPI Name": "erab_drop_rate",
+    "Domain": "LTE/RAN",
+    "Unit": "percent",
+    "RCA Usage": "Bearer/session drop evidence",
+    "Possible RCA Hypotheses": "RAN issue, transport issue, core issue"
+  },
+  {
+    "KPI Name": "handover_success_rate",
+    "Domain": "RAN",
+    "Unit": "percent",
+    "RCA Usage": "Mobility performance evidence",
+    "Possible RCA Hypotheses": "Neighbor config issue, coverage issue, congestion"
+  }
+]

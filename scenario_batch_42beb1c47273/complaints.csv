@@ -1,0 +1,228 @@
+customer_id,account_id,charge_id,dispute_id,reason,status,raised_date,resolution_details
+CUST-4367,ACC-4367,CHG-GEN-D4FE85,DSP-GEN-54B8A5,Disputes SMS bundle overage,RESOLVED,2026-09-04,Investigated bundle consumption. Found system double-counted 12 SMS messages. Corrected charge and issued partial refund of $13.44.
+CUST-3963,ACC-3963,CHG-GEN-F48A39,DSP-GEN-4A5B48,Believes plan discount was not applied,IN_REVIEW,2026-09-16,
+CUST-6134,ACC-6134,CHG-GEN-C28FC7,DSP-GEN-4826A5,Disputes SMS bundle overage,RESOLVED,2026-08-30,Investigated bundle consumption. Found system double-counted 12 SMS messages. Corrected charge and issued partial refund of $42.97.
+CUST-2384,ACC-2384,CHG-GEN-5AB5CF,DSP-GEN-A7A3B6,Believes plan discount was not applied,RESOLVED,2026-08-30,Confirmed plan discount was active but applied to next billing cycle. Prorated discount of $23.35 credited to current invoice.
+CUST-6462,ACC-6462,CHG-GEN-569876,DSP-GEN-96CB40,Disputes late/duplicate data top-up charge,OPEN,2026-08-28,
+CUST-6659,ACC-6659,CHG-GEN-A56F10,DSP-GEN-053BB3,Disputes SMS bundle overage,RESOLVED,2026-08-29,Investigated bundle consumption. Found system double-counted 12 SMS messages. Corrected charge and issued partial refund of $87.50.
+CUST-8022,ACC-8022,CHG-GEN-21B018,DSP-GEN-94B8AF,Customer disputes roaming charge amount,RESOLVED,2026-09-12,Found partner API timeout caused re-rating at higher default rate. Corrected to contracted rate. Credit of $96.76 issued.
+CUST-3004,ACC-3004,CHG-GEN-E83063,DSP-GEN-787551,Disputes SMS bundle overage,RESOLVED,2026-09-11,Reviewed usage records. SMS bundle was consumed on 2026-09-17. Overage charges are valid per plan terms. Explained breakdown to customer. Dispute closed.
+CUST-8199,ACC-8199,CHG-GEN-710E0F,DSP-GEN-C0C66E,Customer disputes roaming charge amount,RESOLVED,2026-09-13,Found partner API timeout caused re-rating at higher default rate. Corrected to contracted rate. Credit of $39.61 issued.
+CUST-2499,ACC-2499,CHG-GEN-5587C1,DSP-GEN-9D3C51,Customer disputes roaming charge amount,RESOLVED,2026-09-02,Found partner API timeout caused re-rating at higher default rate. Corrected to contracted rate. Credit of $28.14 issued.
+CUST-4193,ACC-4193,CHG-GEN-C11D64,DSP-GEN-122166,Customer disputes roaming charge amount,RESOLVED,2026-09-06,Found partner API timeout caused re-rating at higher default rate. Corrected to contracted rate. Credit of $65.36 issued.
+CUST-2219,ACC-2219,CHG-GEN-EEFE71,DSP-GEN-F9F23E,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-13,Confirmed data top-up was triggered by session retries during cell outage. Credited full amount of $38.95 as outage-related.
+CUST-7352,ACC-7352,CHG-GEN-993E12,DSP-GEN-783852,Believes plan discount was not applied,OPEN,2026-09-10,
+CUST-4680,ACC-4680,CHG-GEN-2D5D15,DSP-GEN-A49902,Customer disputes roaming charge amount,RESOLVED,2026-09-09,Found partner API timeout caused re-rating at higher default rate. Corrected to contracted rate. Credit of $100.80 issued.
+CUST-7330,ACC-7330,CHG-GEN-4AA5A6,DSP-GEN-BBE935,Disputes SMS bundle overage,IN_REVIEW,2026-09-12,
+CUST-3371,ACC-3371,CHG-GEN-D07EA8,DSP-GEN-56A06F,Disputes SMS bundle overage,RESOLVED,2026-09-03,Reviewed usage records. SMS bundle was consumed on 2026-09-07. Overage charges are valid per plan terms. Explained breakdown to customer. Dispute closed.
+CUST-2280,ACC-2280,CHG-GEN-9CD03F,DSP-GEN-14CB42,Customer disputes roaming charge amount,RESOLVED,2026-09-11,Roaming charges confirmed valid per roaming agreement. Provided itemized roaming usage breakdown to customer.
+CUST-2343,ACC-2343,CHG-GEN-65E976,DSP-GEN-30559C,Disputes late/duplicate data top-up charge,IN_REVIEW,2026-08-29,
+CUST-2615,ACC-2615,CHG-GEN-425084,DSP-GEN-FBAF5D,Disputes SMS bundle overage,RESOLVED,2026-08-30,Investigated bundle consumption. Found system double-counted 12 SMS messages. Corrected charge and issued partial refund of $44.21.
+CUST-9950,ACC-9950,CHG-GEN-E9003F,DSP-GEN-DFE6BF,Customer disputes roaming charge amount,RESOLVED,2026-09-02,Verified roaming usage against partner TAP records. Charges match rated CDRs at agreed inter-operator rate. Dispute closed as valid.
+CUST-5436,ACC-5436,CHG-GEN-789AAB,DSP-GEN-94AAFB,Disputes late/duplicate data top-up charge,OPEN,2026-09-05,
+CUST-9378,ACC-9378,CHG-GEN-C60F9D,DSP-GEN-47CEE9,Disputes SMS bundle overage,OPEN,2026-09-05,
+CUST-8245,ACC-8245,CHG-GEN-6367DE,DSP-GEN-EB0C9F,Disputes SMS bundle overage,RESOLVED,2026-09-04,Reviewed usage records. SMS bundle was consumed on 2026-09-02. Overage charges are valid per plan terms. Explained breakdown to customer. Dispute closed.
+CUST-4858,ACC-4858,CHG-GEN-882898,DSP-GEN-471E6F,Believes plan discount was not applied,RESOLVED,2026-08-27,Verified promotional discount expired on previous cycle. Customer was notified 30 days prior. Dispute closed.
+CUST-8004,ACC-8004,CHG-GEN-D83BE4,DSP-GEN-627C76,Customer disputes roaming charge amount,RESOLVED,2026-09-03,Verified roaming usage against partner TAP records. Charges match rated CDRs at agreed inter-operator rate. Dispute closed as valid.
+CUST-2354,ACC-2354,CHG-GEN-341B56,DSP-GEN-F5FBDD,Believes plan discount was not applied,RESOLVED,2026-08-28,System error: discount code was not applied at rating. Manual adjustment of $82.48 credited. Root cause escalated to BSS team.
+CUST-7951,ACC-7951,CHG-GEN-AB491C,DSP-GEN-9283FC,Believes plan discount was not applied,RESOLVED,2026-09-13,Verified promotional discount expired on previous cycle. Customer was notified 30 days prior. Dispute closed.
+CUST-9795,ACC-9795,CHG-GEN-9BCB44,DSP-GEN-6F1AA6,Disputes SMS bundle overage,RESOLVED,2026-08-30,Confirmed SMS overage. Applied one-time courtesy credit of $39.55. Customer accepted resolution.
+CUST-2495,ACC-2495,CHG-GEN-52E023,DSP-GEN-FCBC29,Believes plan discount was not applied,IN_REVIEW,2026-09-02,
+CUST-4875,ACC-4875,CHG-GEN-61D735,DSP-GEN-95C011,Disputes SMS bundle overage,RESOLVED,2026-08-31,Confirmed SMS overage. Applied one-time courtesy credit of $69.34. Customer accepted resolution.
+CUST-6221,ACC-6221,CHG-GEN-8CFBD6,DSP-GEN-F6AC0D,Disputes SMS bundle overage,RESOLVED,2026-08-31,Reviewed usage records. SMS bundle was consumed on 2026-09-13. Overage charges are valid per plan terms. Explained breakdown to customer. Dispute closed.
+CUST-3116,ACC-3116,CHG-GEN-EEC510,DSP-GEN-D04994,Customer disputes roaming charge amount,RESOLVED,2026-09-18,Roaming charges confirmed valid per roaming agreement. Provided itemized roaming usage breakdown to customer.
+CUST-6338,ACC-6338,CHG-GEN-FC1F46,DSP-GEN-1ABE64,Believes plan discount was not applied,OPEN,2026-09-17,
+CUST-8964,ACC-8964,CHG-GEN-81E16E,DSP-GEN-161FB1,Disputes SMS bundle overage,OPEN,2026-09-03,
+CUST-4561,ACC-4561,CHG-GEN-617CB9,DSP-GEN-1A671E,Customer disputes roaming charge amount,RESOLVED,2026-09-02,Verified roaming usage against partner TAP records. Charges match rated CDRs at agreed inter-operator rate. Dispute closed as valid.
+CUST-4829,ACC-4829,CHG-GEN-193C0C,DSP-GEN-833B54,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-11,Reviewed data usage logs. Top-up was validly triggered by exceeding data cap. Provided usage timeline to customer. Dispute closed.
+CUST-6609,ACC-6609,CHG-GEN-06EAF3,DSP-GEN-8429B3,Disputes SMS bundle overage,RESOLVED,2026-09-14,Confirmed SMS overage. Applied one-time courtesy credit of $49.85. Customer accepted resolution.
+CUST-5843,ACC-5843,CHG-GEN-CD8044,DSP-GEN-71325F,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-04,Found duplicate charge due to rating engine retry during billing-gateway backlog. Reversed duplicate charge of $66.04.
+CUST-6707,ACC-6707,CHG-GEN-1796C3,DSP-GEN-A86E23,Disputes late/duplicate data top-up charge,IN_REVIEW,2026-09-03,
+CUST-3739,ACC-3739,CHG-GEN-852423,DSP-GEN-25B705,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-05,Found duplicate charge due to rating engine retry during billing-gateway backlog. Reversed duplicate charge of $103.75.
+CUST-2855,ACC-2855,CHG-GEN-BB41D3,DSP-GEN-865F07,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-02,Reviewed data usage logs. Top-up was validly triggered by exceeding data cap. Provided usage timeline to customer. Dispute closed.
+CUST-8087,ACC-8087,CHG-GEN-FE135C,DSP-GEN-76EA55,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-11,Reviewed data usage logs. Top-up was validly triggered by exceeding data cap. Provided usage timeline to customer. Dispute closed.
+CUST-8883,ACC-8883,CHG-GEN-EECBA0,DSP-GEN-576447,Disputes late/duplicate data top-up charge,IN_REVIEW,2026-09-04,
+CUST-3864,ACC-3864,CHG-GEN-0A7968,DSP-GEN-0860AB,Disputes SMS bundle overage,RESOLVED,2026-09-17,Investigated bundle consumption. Found system double-counted 12 SMS messages. Corrected charge and issued partial refund of $41.42.
+CUST-4255,ACC-4255,CHG-GEN-1532A3,DSP-GEN-56EE61,Customer disputes roaming charge amount,IN_REVIEW,2026-09-08,
+CUST-8758,ACC-8758,CHG-GEN-6F539A,DSP-GEN-985E88,Disputes SMS bundle overage,RESOLVED,2026-08-30,Confirmed SMS overage. Applied one-time courtesy credit of $15.43. Customer accepted resolution.
+CUST-2177,ACC-2177,CHG-GEN-C576C4,DSP-GEN-23ACE8,Believes plan discount was not applied,IN_REVIEW,2026-09-10,
+CUST-9988,ACC-9988,CHG-GEN-164900,DSP-GEN-FB77F3,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-19,Found duplicate charge due to rating engine retry during billing-gateway backlog. Reversed duplicate charge of $127.95.
+CUST-9373,ACC-9373,CHG-GEN-5E5C73,DSP-GEN-7AC27A,Disputes late/duplicate data top-up charge,OPEN,2026-09-03,
+CUST-9035,ACC-9035,CHG-GEN-A4EB06,DSP-GEN-915C3F,Disputes late/duplicate data top-up charge,IN_REVIEW,2026-09-01,
+CUST-5268,ACC-5268,CHG-GEN-77FD63,DSP-GEN-C4A3D6,Believes plan discount was not applied,RESOLVED,2026-09-18,Confirmed plan discount was active but applied to next billing cycle. Prorated discount of $153.85 credited to current invoice.
+CUST-3052,ACC-3052,CHG-GEN-8CFDDB,DSP-GEN-28C065,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-09,Reviewed data usage logs. Top-up was validly triggered by exceeding data cap. Provided usage timeline to customer. Dispute closed.
+CUST-9799,ACC-9799,CHG-GEN-BC8D24,DSP-GEN-9603F3,Disputes SMS bundle overage,RESOLVED,2026-08-30,Investigated bundle consumption. Found system double-counted 12 SMS messages. Corrected charge and issued partial refund of $100.26.
+CUST-3532,ACC-3532,CHG-GEN-E02810,DSP-GEN-F7376C,Customer disputes roaming charge amount,RESOLVED,2026-09-07,Roaming charges confirmed valid per roaming agreement. Provided itemized roaming usage breakdown to customer.
+CUST-3907,ACC-3907,CHG-GEN-88C9BD,DSP-GEN-1650F0,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-11,Confirmed data top-up was triggered by session retries during cell outage. Credited full amount of $41.62 as outage-related.
+CUST-7156,ACC-7156,CHG-GEN-E8CDE1,DSP-GEN-90A786,Disputes SMS bundle overage,IN_REVIEW,2026-09-09,
+CUST-3880,ACC-3880,CHG-GEN-34FCF8,DSP-GEN-B1BF7D,Disputes late/duplicate data top-up charge,RESOLVED,2026-08-29,Found duplicate charge due to rating engine retry during billing-gateway backlog. Reversed duplicate charge of $17.53.
+CUST-3071,ACC-3071,CHG-GEN-BE7B46,DSP-GEN-B99371,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-11,Confirmed data top-up was triggered by session retries during cell outage. Credited full amount of $27.99 as outage-related.
+CUST-4047,ACC-4047,CHG-GEN-833A26,DSP-GEN-E73817,Believes plan discount was not applied,IN_REVIEW,2026-09-12,
+CUST-3941,ACC-3941,CHG-GEN-A687C4,DSP-GEN-D515A0,Disputes SMS bundle overage,IN_REVIEW,2026-09-19,
+CUST-4080,ACC-4080,CHG-GEN-29B761,DSP-GEN-D3F9CE,Disputes late/duplicate data top-up charge,OPEN,2026-09-11,
+CUST-4703,ACC-4703,CHG-GEN-77FFDF,DSP-GEN-C87AA8,Customer disputes roaming charge amount,IN_REVIEW,2026-09-14,
+CUST-2688,ACC-2688,CHG-GEN-0FFE4A,DSP-GEN-99489F,Customer disputes roaming charge amount,RESOLVED,2026-09-19,Verified roaming usage against partner TAP records. Charges match rated CDRs at agreed inter-operator rate. Dispute closed as valid.
+CUST-3889,ACC-3889,CHG-GEN-75E877,DSP-GEN-CF62DC,Disputes late/duplicate data top-up charge,RESOLVED,2026-08-29,Confirmed data top-up was triggered by session retries during cell outage. Credited full amount of $53.54 as outage-related.
+CUST-8239,ACC-8239,CHG-GEN-2C51FE,DSP-GEN-2D81B5,Believes plan discount was not applied,RESOLVED,2026-08-30,Confirmed plan discount was active but applied to next billing cycle. Prorated discount of $34.78 credited to current invoice.
+CUST-4830,ACC-4830,CHG-GEN-D5FABA,DSP-GEN-5DCDC7,Customer disputes roaming charge amount,RESOLVED,2026-09-08,Roaming charges confirmed valid per roaming agreement. Provided itemized roaming usage breakdown to customer.
+CUST-3175,ACC-3175,CHG-GEN-805912,DSP-GEN-5F7B11,Believes plan discount was not applied,RESOLVED,2026-08-31,Verified promotional discount expired on previous cycle. Customer was notified 30 days prior. Dispute closed.
+CUST-3452,ACC-3452,CHG-GEN-5F4151,DSP-GEN-88251C,Customer disputes roaming charge amount,RESOLVED,2026-08-31,Roaming charges confirmed valid per roaming agreement. Provided itemized roaming usage breakdown to customer.
+CUST-4514,ACC-4514,CHG-GEN-D9E37B,DSP-GEN-D31F62,Customer disputes roaming charge amount,RESOLVED,2026-09-06,Roaming charges confirmed valid per roaming agreement. Provided itemized roaming usage breakdown to customer.
+CUST-6368,ACC-6368,CHG-GEN-791F82,DSP-GEN-3278A0,Disputes late/duplicate data top-up charge,RESOLVED,2026-08-30,Found duplicate charge due to rating engine retry during billing-gateway backlog. Reversed duplicate charge of $52.46.
+CUST-3258,ACC-3258,CHG-GEN-DC3527,DSP-GEN-87B734,Believes plan discount was not applied,RESOLVED,2026-09-05,Verified promotional discount expired on previous cycle. Customer was notified 30 days prior. Dispute closed.
+CUST-5299,ACC-5299,CHG-GEN-4047F1,DSP-GEN-5BA33C,Disputes SMS bundle overage,RESOLVED,2026-08-28,Confirmed SMS overage. Applied one-time courtesy credit of $35.60. Customer accepted resolution.
+CUST-3735,ACC-3735,CHG-GEN-60F952,DSP-GEN-9F6692,Believes plan discount was not applied,IN_REVIEW,2026-09-07,
+CUST-5847,ACC-5847,CHG-GEN-C1D906,DSP-GEN-235F35,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-11,Reviewed data usage logs. Top-up was validly triggered by exceeding data cap. Provided usage timeline to customer. Dispute closed.
+CUST-6602,ACC-6602,CHG-GEN-3F5632,DSP-GEN-C7CD58,Customer disputes roaming charge amount,RESOLVED,2026-09-03,Found partner API timeout caused re-rating at higher default rate. Corrected to contracted rate. Credit of $56.41 issued.
+CUST-4820,ACC-4820,CHG-GEN-34EDF1,DSP-GEN-92BF58,Customer disputes roaming charge amount,OPEN,2026-09-11,
+CUST-2804,ACC-2804,CHG-GEN-8BB91F,DSP-GEN-782886,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-14,Found duplicate charge due to rating engine retry during billing-gateway backlog. Reversed duplicate charge of $42.86.
+CUST-6676,ACC-6676,CHG-GEN-047F6C,DSP-GEN-34A565,Customer disputes roaming charge amount,RESOLVED,2026-09-13,Roaming charges confirmed valid per roaming agreement. Provided itemized roaming usage breakdown to customer.
+CUST-9376,ACC-9376,CHG-GEN-27B874,DSP-GEN-4B26A4,Customer disputes roaming charge amount,IN_REVIEW,2026-09-02,
+CUST-9294,ACC-9294,CHG-GEN-250D55,DSP-GEN-DF1F1E,Disputes SMS bundle overage,RESOLVED,2026-08-28,Reviewed usage records. SMS bundle was consumed on 2026-09-06. Overage charges are valid per plan terms. Explained breakdown to customer. Dispute closed.
+CUST-9349,ACC-9349,CHG-GEN-F17FCB,DSP-GEN-C602B2,Disputes late/duplicate data top-up charge,OPEN,2026-09-02,
+CUST-8702,ACC-8702,CHG-GEN-AD7634,DSP-GEN-61E7DA,Disputes SMS bundle overage,RESOLVED,2026-09-11,Confirmed SMS overage. Applied one-time courtesy credit of $32.64. Customer accepted resolution.
+CUST-8570,ACC-8570,CHG-GEN-4A6585,DSP-GEN-2D99D4,Customer disputes roaming charge amount,RESOLVED,2026-09-11,Found partner API timeout caused re-rating at higher default rate. Corrected to contracted rate. Credit of $15.54 issued.
+CUST-6468,ACC-6468,CHG-GEN-FEF262,DSP-GEN-17CEFF,Disputes late/duplicate data top-up charge,OPEN,2026-08-30,
+CUST-3145,ACC-3145,CHG-GEN-3BEF2C,DSP-GEN-3AE8B4,Disputes late/duplicate data top-up charge,OPEN,2026-09-12,
+CUST-6715,ACC-6715,CHG-GEN-B0DC57,DSP-GEN-F02202,Disputes late/duplicate data top-up charge,IN_REVIEW,2026-09-11,
+CUST-9977,ACC-9977,CHG-GEN-074F3D,DSP-GEN-86DBFB,Disputes SMS bundle overage,RESOLVED,2026-09-04,Reviewed usage records. SMS bundle was consumed on 2026-09-10. Overage charges are valid per plan terms. Explained breakdown to customer. Dispute closed.
+CUST-5729,ACC-5729,CHG-GEN-2C668C,DSP-GEN-3FB8C3,Disputes SMS bundle overage,RESOLVED,2026-09-05,Confirmed SMS overage. Applied one-time courtesy credit of $36.81. Customer accepted resolution.
+CUST-5906,ACC-5906,CHG-GEN-543417,DSP-GEN-186D40,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-09,Found duplicate charge due to rating engine retry during billing-gateway backlog. Reversed duplicate charge of $87.31.
+CUST-2287,ACC-2287,CHG-GEN-DE6D42,DSP-GEN-CD3AA6,Disputes SMS bundle overage,RESOLVED,2026-08-31,Investigated bundle consumption. Found system double-counted 12 SMS messages. Corrected charge and issued partial refund of $28.52.
+CUST-4537,ACC-4537,CHG-GEN-6EA4EF,DSP-GEN-12C657,Customer disputes roaming charge amount,OPEN,2026-09-16,
+CUST-5075,ACC-5075,CHG-GEN-B9115C,DSP-GEN-C3194F,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-14,Confirmed data top-up was triggered by session retries during cell outage. Credited full amount of $69.07 as outage-related.
+CUST-4802,ACC-4802,CHG-GEN-AD05FB,DSP-GEN-9CB7E7,Believes plan discount was not applied,IN_REVIEW,2026-09-04,
+CUST-5655,ACC-5655,CHG-GEN-259D23,DSP-GEN-B150AE,Disputes SMS bundle overage,RESOLVED,2026-08-30,Reviewed usage records. SMS bundle was consumed on 2026-09-07. Overage charges are valid per plan terms. Explained breakdown to customer. Dispute closed.
+CUST-2861,ACC-2861,CHG-GEN-8779FD,DSP-GEN-33F5EC,Customer disputes roaming charge amount,RESOLVED,2026-09-03,Found partner API timeout caused re-rating at higher default rate. Corrected to contracted rate. Credit of $76.45 issued.
+CUST-8231,ACC-8231,CHG-GEN-EB8DBB,DSP-GEN-D32C4E,Disputes late/duplicate data top-up charge,IN_REVIEW,2026-08-30,
+CUST-7943,ACC-7943,CHG-GEN-238BB9,DSP-GEN-8DEF40,Believes plan discount was not applied,IN_REVIEW,2026-09-17,
+CUST-2621,ACC-2621,CHG-GEN-37EE54,DSP-GEN-CCB275,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-13,Found duplicate charge due to rating engine retry during billing-gateway backlog. Reversed duplicate charge of $21.29.
+CUST-6812,ACC-6812,CHG-GEN-C075AD,DSP-GEN-16C07D,Disputes SMS bundle overage,RESOLVED,2026-09-14,Confirmed SMS overage. Applied one-time courtesy credit of $18.76. Customer accepted resolution.
+CUST-5471,ACC-5471,CHG-GEN-0DD590,DSP-GEN-7B6401,Disputes SMS bundle overage,RESOLVED,2026-09-10,Confirmed SMS overage. Applied one-time courtesy credit of $82.05. Customer accepted resolution.
+CUST-2435,ACC-2435,CHG-GEN-7A7155,DSP-GEN-BF6692,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-04,Reviewed data usage logs. Top-up was validly triggered by exceeding data cap. Provided usage timeline to customer. Dispute closed.
+CUST-4839,ACC-4839,CHG-GEN-BE4CD2,DSP-GEN-FFDA8A,Disputes SMS bundle overage,RESOLVED,2026-09-15,Reviewed usage records. SMS bundle was consumed on 2026-09-25. Overage charges are valid per plan terms. Explained breakdown to customer. Dispute closed.
+CUST-7359,ACC-7359,CHG-GEN-855774,DSP-GEN-CF892D,Believes plan discount was not applied,RESOLVED,2026-09-09,Verified promotional discount expired on previous cycle. Customer was notified 30 days prior. Dispute closed.
+CUST-3179,ACC-3179,CHG-GEN-CBD2DA,DSP-GEN-024B8A,Customer disputes roaming charge amount,IN_REVIEW,2026-09-14,
+CUST-3006,ACC-3006,CHG-GEN-62E0CE,DSP-GEN-DDA921,Customer disputes roaming charge amount,RESOLVED,2026-08-29,Roaming charges confirmed valid per roaming agreement. Provided itemized roaming usage breakdown to customer.
+CUST-8033,ACC-8033,CHG-GEN-A6082B,DSP-GEN-2434A8,Disputes SMS bundle overage,RESOLVED,2026-09-18,Confirmed SMS overage. Applied one-time courtesy credit of $152.51. Customer accepted resolution.
+CUST-7518,ACC-7518,CHG-GEN-1C4829,DSP-GEN-E5C5BE,Customer disputes roaming charge amount,OPEN,2026-09-19,
+CUST-4965,ACC-4965,CHG-GEN-1B8EBA,DSP-GEN-EA2A06,Believes plan discount was not applied,RESOLVED,2026-09-01,Confirmed plan discount was active but applied to next billing cycle. Prorated discount of $121.65 credited to current invoice.
+CUST-9555,ACC-9555,CHG-GEN-38282A,DSP-GEN-5F2A35,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-01,Confirmed data top-up was triggered by session retries during cell outage. Credited full amount of $141.37 as outage-related.
+CUST-4168,ACC-4168,CHG-GEN-48D1E4,DSP-GEN-CA112A,Disputes SMS bundle overage,RESOLVED,2026-08-31,Investigated bundle consumption. Found system double-counted 12 SMS messages. Corrected charge and issued partial refund of $41.81.
+CUST-2139,ACC-2139,CHG-GEN-B95265,DSP-GEN-3CC0F2,Believes plan discount was not applied,RESOLVED,2026-08-30,Confirmed plan discount was active but applied to next billing cycle. Prorated discount of $40.86 credited to current invoice.
+CUST-7984,ACC-7984,CHG-GEN-6ECE17,DSP-GEN-53A79C,Disputes late/duplicate data top-up charge,RESOLVED,2026-08-27,Found duplicate charge due to rating engine retry during billing-gateway backlog. Reversed duplicate charge of $54.60.
+CUST-4040,ACC-4040,CHG-GEN-F5A4CD,DSP-GEN-2614F8,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-17,Confirmed data top-up was triggered by session retries during cell outage. Credited full amount of $65.15 as outage-related.
+CUST-9889,ACC-9889,CHG-GEN-3358F7,DSP-GEN-A815B9,Disputes SMS bundle overage,RESOLVED,2026-09-06,Reviewed usage records. SMS bundle was consumed on 2026-09-15. Overage charges are valid per plan terms. Explained breakdown to customer. Dispute closed.
+CUST-5561,ACC-5561,CHG-GEN-D68272,DSP-GEN-3CCA40,Customer disputes roaming charge amount,OPEN,2026-09-10,
+CUST-3374,ACC-3374,CHG-GEN-708A4D,DSP-GEN-285E06,Disputes SMS bundle overage,RESOLVED,2026-09-05,Confirmed SMS overage. Applied one-time courtesy credit of $20.12. Customer accepted resolution.
+CUST-9529,ACC-9529,CHG-GEN-7634CF,DSP-GEN-9F5657,Believes plan discount was not applied,RESOLVED,2026-09-14,Verified promotional discount expired on previous cycle. Customer was notified 30 days prior. Dispute closed.
+CUST-8699,ACC-8699,CHG-GEN-90BB3C,DSP-GEN-1FA87D,Disputes SMS bundle overage,RESOLVED,2026-09-08,Reviewed usage records. SMS bundle was consumed on 2026-09-12. Overage charges are valid per plan terms. Explained breakdown to customer. Dispute closed.
+CUST-3193,ACC-3193,CHG-GEN-D539A7,DSP-GEN-B14FB5,Believes plan discount was not applied,RESOLVED,2026-09-16,Verified promotional discount expired on previous cycle. Customer was notified 30 days prior. Dispute closed.
+CUST-3792,ACC-3792,CHG-GEN-6A6C05,DSP-GEN-90BE8D,Believes plan discount was not applied,RESOLVED,2026-09-08,Verified promotional discount expired on previous cycle. Customer was notified 30 days prior. Dispute closed.
+CUST-3757,ACC-3757,CHG-GEN-4E12CA,DSP-GEN-726417,Disputes SMS bundle overage,RESOLVED,2026-09-16,Investigated bundle consumption. Found system double-counted 12 SMS messages. Corrected charge and issued partial refund of $114.56.
+CUST-3196,ACC-3196,CHG-GEN-042322,DSP-GEN-02E0B8,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-06,Reviewed data usage logs. Top-up was validly triggered by exceeding data cap. Provided usage timeline to customer. Dispute closed.
+CUST-3764,ACC-3764,CHG-GEN-9192E6,DSP-GEN-FF5E65,Customer disputes roaming charge amount,IN_REVIEW,2026-09-15,
+CUST-4862,ACC-4862,CHG-GEN-CD519F,DSP-GEN-923C33,Disputes late/duplicate data top-up charge,OPEN,2026-09-05,
+CUST-6822,ACC-6822,CHG-GEN-20C85F,DSP-GEN-854CA0,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-03,Found duplicate charge due to rating engine retry during billing-gateway backlog. Reversed duplicate charge of $36.72.
+CUST-2160,ACC-2160,CHG-GEN-6DCC8C,DSP-GEN-D14493,Disputes late/duplicate data top-up charge,RESOLVED,2026-08-28,Reviewed data usage logs. Top-up was validly triggered by exceeding data cap. Provided usage timeline to customer. Dispute closed.
+CUST-7150,ACC-7150,CHG-GEN-3B8BFF,DSP-GEN-5D27F9,Disputes SMS bundle overage,OPEN,2026-08-30,
+CUST-4715,ACC-4715,CHG-GEN-F6998E,DSP-GEN-1D966E,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-03,Confirmed data top-up was triggered by session retries during cell outage. Credited full amount of $25.51 as outage-related.
+CUST-4317,ACC-4317,CHG-GEN-275EA0,DSP-GEN-03F084,Customer disputes roaming charge amount,RESOLVED,2026-09-14,Found partner API timeout caused re-rating at higher default rate. Corrected to contracted rate. Credit of $51.10 issued.
+CUST-2557,ACC-2557,CHG-GEN-95A904,DSP-GEN-C393BC,Believes plan discount was not applied,RESOLVED,2026-09-02,Verified promotional discount expired on previous cycle. Customer was notified 30 days prior. Dispute closed.
+CUST-6922,ACC-6922,CHG-GEN-6269D3,DSP-GEN-116B2A,Disputes SMS bundle overage,RESOLVED,2026-09-09,Confirmed SMS overage. Applied one-time courtesy credit of $44.63. Customer accepted resolution.
+CUST-7731,ACC-7731,CHG-GEN-1D83C8,DSP-GEN-2295C5,Believes plan discount was not applied,RESOLVED,2026-08-30,System error: discount code was not applied at rating. Manual adjustment of $95.84 credited. Root cause escalated to BSS team.
+CUST-9851,ACC-9851,CHG-GEN-E6478F,DSP-GEN-52366F,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-17,Reviewed data usage logs. Top-up was validly triggered by exceeding data cap. Provided usage timeline to customer. Dispute closed.
+CUST-2388,ACC-2388,CHG-GEN-8F1157,DSP-GEN-DAC925,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-07,Found duplicate charge due to rating engine retry during billing-gateway backlog. Reversed duplicate charge of $69.18.
+CUST-9345,ACC-9345,CHG-GEN-855C23,DSP-GEN-8B5909,Believes plan discount was not applied,RESOLVED,2026-09-09,System error: discount code was not applied at rating. Manual adjustment of $68.84 credited. Root cause escalated to BSS team.
+CUST-4574,ACC-4574,CHG-GEN-76C922,DSP-GEN-C2B899,Disputes SMS bundle overage,RESOLVED,2026-09-18,Confirmed SMS overage. Applied one-time courtesy credit of $53.60. Customer accepted resolution.
+CUST-5016,ACC-5016,CHG-GEN-0220CB,DSP-GEN-1E4732,Customer disputes roaming charge amount,OPEN,2026-09-15,
+CUST-4368,ACC-4368,CHG-GEN-16B71B,DSP-GEN-AA7883,Customer disputes roaming charge amount,RESOLVED,2026-09-02,Roaming charges confirmed valid per roaming agreement. Provided itemized roaming usage breakdown to customer.
+CUST-2545,ACC-2545,CHG-GEN-BA2351,DSP-GEN-B1C83F,Believes plan discount was not applied,RESOLVED,2026-09-14,System error: discount code was not applied at rating. Manual adjustment of $73.92 credited. Root cause escalated to BSS team.
+CUST-4241,ACC-4241,CHG-GEN-AF9D22,DSP-GEN-7F2603,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-05,Found duplicate charge due to rating engine retry during billing-gateway backlog. Reversed duplicate charge of $76.96.
+CUST-8638,ACC-8638,CHG-GEN-B80372,DSP-GEN-5EF04B,Believes plan discount was not applied,RESOLVED,2026-08-31,Confirmed plan discount was active but applied to next billing cycle. Prorated discount of $49.14 credited to current invoice.
+CUST-7196,ACC-7196,CHG-GEN-BB81F8,DSP-GEN-91DB1D,Believes plan discount was not applied,RESOLVED,2026-09-07,Confirmed plan discount was active but applied to next billing cycle. Prorated discount of $104.98 credited to current invoice.
+CUST-3734,ACC-3734,CHG-GEN-33CEC9,DSP-GEN-D48DCA,Customer disputes roaming charge amount,RESOLVED,2026-08-31,Verified roaming usage against partner TAP records. Charges match rated CDRs at agreed inter-operator rate. Dispute closed as valid.
+CUST-2683,ACC-2683,CHG-GEN-C07632,DSP-GEN-CD840D,Disputes late/duplicate data top-up charge,RESOLVED,2026-08-28,Reviewed data usage logs. Top-up was validly triggered by exceeding data cap. Provided usage timeline to customer. Dispute closed.
+CUST-6784,ACC-6784,CHG-GEN-054787,DSP-GEN-39A7E9,Believes plan discount was not applied,RESOLVED,2026-09-15,Verified promotional discount expired on previous cycle. Customer was notified 30 days prior. Dispute closed.
+CUST-2077,ACC-2077,CHG-GEN-B5AE68,DSP-GEN-009AFC,Believes plan discount was not applied,OPEN,2026-09-01,
+CUST-4534,ACC-4534,CHG-GEN-914180,DSP-GEN-4D0E3A,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-03,Found duplicate charge due to rating engine retry during billing-gateway backlog. Reversed duplicate charge of $27.26.
+CUST-9446,ACC-9446,CHG-GEN-F4EF80,DSP-GEN-D4A27B,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-08,Reviewed data usage logs. Top-up was validly triggered by exceeding data cap. Provided usage timeline to customer. Dispute closed.
+CUST-9550,ACC-9550,CHG-GEN-83F677,DSP-GEN-57EAE6,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-17,Reviewed data usage logs. Top-up was validly triggered by exceeding data cap. Provided usage timeline to customer. Dispute closed.
+CUST-4377,ACC-4377,CHG-GEN-320070,DSP-GEN-833670,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-06,Found duplicate charge due to rating engine retry during billing-gateway backlog. Reversed duplicate charge of $116.85.
+CUST-7704,ACC-7704,CHG-GEN-F4567B,DSP-GEN-9A5196,Believes plan discount was not applied,RESOLVED,2026-08-30,System error: discount code was not applied at rating. Manual adjustment of $42.39 credited. Root cause escalated to BSS team.
+CUST-9804,ACC-9804,CHG-GEN-3C5281,DSP-GEN-069854,Disputes late/duplicate data top-up charge,OPEN,2026-09-04,
+CUST-8100,ACC-8100,CHG-GEN-28667F,DSP-GEN-A6FA3E,Believes plan discount was not applied,RESOLVED,2026-09-10,Verified promotional discount expired on previous cycle. Customer was notified 30 days prior. Dispute closed.
+CUST-4002,ACC-4002,CHG-GEN-AA0025,DSP-GEN-395410,Disputes SMS bundle overage,RESOLVED,2026-09-08,Confirmed SMS overage. Applied one-time courtesy credit of $44.42. Customer accepted resolution.
+CUST-7174,ACC-7174,CHG-GEN-BA906C,DSP-GEN-32C2E2,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-12,Confirmed data top-up was triggered by session retries during cell outage. Credited full amount of $80.01 as outage-related.
+CUST-2464,ACC-2464,CHG-GEN-E92C13,DSP-GEN-80A11E,Disputes SMS bundle overage,RESOLVED,2026-09-14,Investigated bundle consumption. Found system double-counted 12 SMS messages. Corrected charge and issued partial refund of $79.79.
+CUST-5364,ACC-5364,CHG-GEN-2C5F86,DSP-GEN-8BA04F,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-10,Reviewed data usage logs. Top-up was validly triggered by exceeding data cap. Provided usage timeline to customer. Dispute closed.
+CUST-4330,ACC-4330,CHG-GEN-1489B2,DSP-GEN-2CBD2F,Believes plan discount was not applied,RESOLVED,2026-09-08,Confirmed plan discount was active but applied to next billing cycle. Prorated discount of $82.88 credited to current invoice.
+CUST-8984,ACC-8984,CHG-GEN-10F6C0,DSP-GEN-E65972,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-17,Confirmed data top-up was triggered by session retries during cell outage. Credited full amount of $67.95 as outage-related.
+CUST-6681,ACC-6681,CHG-GEN-D32DBA,DSP-GEN-68C024,Disputes SMS bundle overage,RESOLVED,2026-09-10,Reviewed usage records. SMS bundle was consumed on 2026-09-11. Overage charges are valid per plan terms. Explained breakdown to customer. Dispute closed.
+CUST-3553,ACC-3553,CHG-GEN-2FA7D6,DSP-GEN-D8678E,Disputes SMS bundle overage,RESOLVED,2026-08-29,Reviewed usage records. SMS bundle was consumed on 2026-08-31. Overage charges are valid per plan terms. Explained breakdown to customer. Dispute closed.
+CUST-5069,ACC-5069,CHG-GEN-CD1828,DSP-GEN-B8FB42,Believes plan discount was not applied,RESOLVED,2026-09-13,Verified promotional discount expired on previous cycle. Customer was notified 30 days prior. Dispute closed.
+CUST-3079,ACC-3079,CHG-GEN-9CE2AC,DSP-GEN-60FBFF,Believes plan discount was not applied,RESOLVED,2026-08-29,Verified promotional discount expired on previous cycle. Customer was notified 30 days prior. Dispute closed.
+CUST-3217,ACC-3217,CHG-GEN-C1DABC,DSP-GEN-A2DABC,Customer disputes roaming charge amount,RESOLVED,2026-09-11,Roaming charges confirmed valid per roaming agreement. Provided itemized roaming usage breakdown to customer.
+CUST-4719,ACC-4719,CHG-GEN-F1D6B3,DSP-GEN-A1DA59,Believes plan discount was not applied,RESOLVED,2026-09-12,Verified promotional discount expired on previous cycle. Customer was notified 30 days prior. Dispute closed.
+CUST-5264,ACC-5264,CHG-GEN-239067,DSP-GEN-6811D3,Disputes SMS bundle overage,OPEN,2026-09-17,
+CUST-2968,ACC-2968,CHG-GEN-DF1FB2,DSP-GEN-F11C1E,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-02,Confirmed data top-up was triggered by session retries during cell outage. Credited full amount of $78.28 as outage-related.
+CUST-8017,ACC-8017,CHG-GEN-5AE752,DSP-GEN-3B3DAD,Disputes late/duplicate data top-up charge,RESOLVED,2026-08-30,Reviewed data usage logs. Top-up was validly triggered by exceeding data cap. Provided usage timeline to customer. Dispute closed.
+CUST-9425,ACC-9425,CHG-GEN-75BDA3,DSP-GEN-35D5D8,Disputes late/duplicate data top-up charge,RESOLVED,2026-08-31,Found duplicate charge due to rating engine retry during billing-gateway backlog. Reversed duplicate charge of $16.28.
+CUST-4747,ACC-4747,CHG-GEN-DB09BC,DSP-GEN-861828,Disputes SMS bundle overage,OPEN,2026-09-16,
+CUST-4629,ACC-4629,CHG-GEN-9E7C1F,DSP-GEN-550A19,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-19,Confirmed data top-up was triggered by session retries during cell outage. Credited full amount of $56.53 as outage-related.
+CUST-8258,ACC-8258,CHG-GEN-0E3114,DSP-GEN-8254CB,Customer disputes roaming charge amount,RESOLVED,2026-08-30,Found partner API timeout caused re-rating at higher default rate. Corrected to contracted rate. Credit of $138.98 issued.
+CUST-6585,ACC-6585,CHG-GEN-7A6817,DSP-GEN-5B9054,Customer disputes roaming charge amount,RESOLVED,2026-09-12,Found partner API timeout caused re-rating at higher default rate. Corrected to contracted rate. Credit of $81.81 issued.
+CUST-7506,ACC-7506,CHG-GEN-EFDDAD,DSP-GEN-63B091,Customer disputes roaming charge amount,RESOLVED,2026-08-27,Verified roaming usage against partner TAP records. Charges match rated CDRs at agreed inter-operator rate. Dispute closed as valid.
+CUST-5616,ACC-5616,CHG-GEN-50FD24,DSP-GEN-8DEF14,Customer disputes roaming charge amount,RESOLVED,2026-09-17,Found partner API timeout caused re-rating at higher default rate. Corrected to contracted rate. Credit of $59.60 issued.
+CUST-6252,ACC-6252,CHG-GEN-F88805,DSP-GEN-2C83AB,Disputes late/duplicate data top-up charge,IN_REVIEW,2026-09-08,
+CUST-7124,ACC-7124,CHG-GEN-8CA409,DSP-GEN-12DD52,Disputes SMS bundle overage,RESOLVED,2026-09-01,Confirmed SMS overage. Applied one-time courtesy credit of $88.19. Customer accepted resolution.
+CUST-9579,ACC-9579,CHG-GEN-93B1AD,DSP-GEN-FDC1F6,Believes plan discount was not applied,RESOLVED,2026-09-09,Confirmed plan discount was active but applied to next billing cycle. Prorated discount of $76.00 credited to current invoice.
+CUST-9395,ACC-9395,CHG-GEN-69DCA7,DSP-GEN-81FC5B,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-09,Reviewed data usage logs. Top-up was validly triggered by exceeding data cap. Provided usage timeline to customer. Dispute closed.
+CUST-5059,ACC-5059,CHG-GEN-8D817E,DSP-GEN-879A75,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-16,Found duplicate charge due to rating engine retry during billing-gateway backlog. Reversed duplicate charge of $148.57.
+CUST-5091,ACC-5091,CHG-GEN-516928,DSP-GEN-9CBAE0,Believes plan discount was not applied,RESOLVED,2026-09-19,Confirmed plan discount was active but applied to next billing cycle. Prorated discount of $68.55 credited to current invoice.
+CUST-3402,ACC-3402,CHG-GEN-22F534,DSP-GEN-19D571,Believes plan discount was not applied,RESOLVED,2026-09-10,Confirmed plan discount was active but applied to next billing cycle. Prorated discount of $125.40 credited to current invoice.
+CUST-4330,ACC-4330,CHG-GEN-966D53,DSP-GEN-14A503,Believes plan discount was not applied,RESOLVED,2026-09-11,Confirmed plan discount was active but applied to next billing cycle. Prorated discount of $97.33 credited to current invoice.
+CUST-2229,ACC-2229,CHG-GEN-8A1846,DSP-GEN-47611B,Customer disputes roaming charge amount,RESOLVED,2026-09-02,Verified roaming usage against partner TAP records. Charges match rated CDRs at agreed inter-operator rate. Dispute closed as valid.
+CUST-7382,ACC-7382,CHG-GEN-04E04D,DSP-GEN-1BBE4F,Disputes SMS bundle overage,OPEN,2026-09-12,
+CUST-2176,ACC-2176,CHG-GEN-61FC30,DSP-GEN-793234,Disputes late/duplicate data top-up charge,RESOLVED,2026-08-28,Reviewed data usage logs. Top-up was validly triggered by exceeding data cap. Provided usage timeline to customer. Dispute closed.
+CUST-3329,ACC-3329,CHG-GEN-42EC0C,DSP-GEN-3B5D36,Disputes late/duplicate data top-up charge,IN_REVIEW,2026-09-15,
+CUST-3969,ACC-3969,CHG-GEN-2C41DA,DSP-GEN-F6ADE4,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-16,Reviewed data usage logs. Top-up was validly triggered by exceeding data cap. Provided usage timeline to customer. Dispute closed.
+CUST-8204,ACC-8204,CHG-GEN-1E3193,DSP-GEN-9F009D,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-07,Reviewed data usage logs. Top-up was validly triggered by exceeding data cap. Provided usage timeline to customer. Dispute closed.
+CUST-2038,ACC-2038,CHG-GEN-F0AAD2,DSP-GEN-2785EE,Believes plan discount was not applied,RESOLVED,2026-09-08,System error: discount code was not applied at rating. Manual adjustment of $107.80 credited. Root cause escalated to BSS team.
+CUST-9613,ACC-9613,CHG-GEN-8FCBE9,DSP-GEN-443FBE,Disputes late/duplicate data top-up charge,IN_REVIEW,2026-09-08,
+CUST-9402,ACC-9402,CHG-GEN-2427B7,DSP-GEN-892A4F,Disputes SMS bundle overage,IN_REVIEW,2026-09-19,
+CUST-3122,ACC-3122,CHG-GEN-193195,DSP-GEN-1173C5,Customer disputes roaming charge amount,RESOLVED,2026-09-15,Verified roaming usage against partner TAP records. Charges match rated CDRs at agreed inter-operator rate. Dispute closed as valid.
+CUST-3318,ACC-3318,CHG-GEN-9B022A,DSP-GEN-B547EE,Disputes SMS bundle overage,OPEN,2026-09-15,
+CUST-6094,ACC-6094,CHG-GEN-A54655,DSP-GEN-824B3E,Customer disputes roaming charge amount,RESOLVED,2026-09-17,Verified roaming usage against partner TAP records. Charges match rated CDRs at agreed inter-operator rate. Dispute closed as valid.
+CUST-9142,ACC-9142,CHG-GEN-E65CB7,DSP-GEN-724175,Disputes SMS bundle overage,OPEN,2026-09-04,
+CUST-6406,ACC-6406,CHG-GEN-77C049,DSP-GEN-ED6ECD,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-02,Confirmed data top-up was triggered by session retries during cell outage. Credited full amount of $101.47 as outage-related.
+CUST-7570,ACC-7570,CHG-GEN-30159E,DSP-GEN-F24231,Disputes SMS bundle overage,RESOLVED,2026-09-09,Investigated bundle consumption. Found system double-counted 12 SMS messages. Corrected charge and issued partial refund of $115.81.
+CUST-5722,ACC-5722,CHG-GEN-2A91AA,DSP-GEN-24C369,Believes plan discount was not applied,IN_REVIEW,2026-09-01,
+CUST-7635,ACC-7635,CHG-GEN-4D144B,DSP-GEN-689BC6,Disputes SMS bundle overage,RESOLVED,2026-09-07,Confirmed SMS overage. Applied one-time courtesy credit of $87.50. Customer accepted resolution.
+CUST-5927,ACC-5927,CHG-GEN-104A03,DSP-GEN-99548D,Believes plan discount was not applied,IN_REVIEW,2026-09-04,
+CUST-8152,ACC-8152,CHG-GEN-2DFFC1,DSP-GEN-52A766,Disputes late/duplicate data top-up charge,OPEN,2026-09-06,
+CUST-3956,ACC-3956,CHG-GEN-092874,DSP-GEN-318B9F,Customer disputes roaming charge amount,RESOLVED,2026-09-13,Roaming charges confirmed valid per roaming agreement. Provided itemized roaming usage breakdown to customer.
+CUST-7363,ACC-7363,CHG-GEN-C021FC,DSP-GEN-4CD266,Customer disputes roaming charge amount,RESOLVED,2026-09-11,Found partner API timeout caused re-rating at higher default rate. Corrected to contracted rate. Credit of $90.20 issued.
+CUST-8593,ACC-8593,CHG-GEN-00DD80,DSP-GEN-142FD6,Disputes SMS bundle overage,RESOLVED,2026-09-18,Confirmed SMS overage. Applied one-time courtesy credit of $95.90. Customer accepted resolution.
+CUST-6895,ACC-6895,CHG-GEN-E6F7E3,DSP-GEN-FE2843,Believes plan discount was not applied,RESOLVED,2026-08-29,System error: discount code was not applied at rating. Manual adjustment of $122.10 credited. Root cause escalated to BSS team.
+CUST-8824,ACC-8824,CHG-GEN-412240,DSP-GEN-D14C58,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-12,Reviewed data usage logs. Top-up was validly triggered by exceeding data cap. Provided usage timeline to customer. Dispute closed.
+CUST-6151,ACC-6151,CHG-GEN-08B9C9,DSP-GEN-499794,Customer disputes roaming charge amount,RESOLVED,2026-09-13,Found partner API timeout caused re-rating at higher default rate. Corrected to contracted rate. Credit of $103.37 issued.
+CUST-5008,ACC-5008,CHG-GEN-F980F7,DSP-GEN-49C85A,Believes plan discount was not applied,RESOLVED,2026-09-15,Verified promotional discount expired on previous cycle. Customer was notified 30 days prior. Dispute closed.
+CUST-4477,ACC-4477,CHG-GEN-B30681,DSP-GEN-1BD6DF,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-06,Confirmed data top-up was triggered by session retries during cell outage. Credited full amount of $82.27 as outage-related.
+CUST-8211,ACC-8211,CHG-GEN-51CEB9,DSP-GEN-3CD899,Disputes SMS bundle overage,OPEN,2026-09-09,
+CUST-3057,ACC-3057,CHG-GEN-D28148,DSP-GEN-5BE29B,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-05,Confirmed data top-up was triggered by session retries during cell outage. Credited full amount of $87.29 as outage-related.
+CUST-8344,ACC-8344,CHG-GEN-9F92BB,DSP-GEN-B91193,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-01,Confirmed data top-up was triggered by session retries during cell outage. Credited full amount of $48.80 as outage-related.
+CUST-7843,ACC-7843,CHG-GEN-E85800,DSP-GEN-BC31CA,Customer disputes roaming charge amount,RESOLVED,2026-09-13,Found partner API timeout caused re-rating at higher default rate. Corrected to contracted rate. Credit of $37.17 issued.
+CUST-4681,ACC-4681,CHG-GEN-C5DBAB,DSP-GEN-92F179,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-08,Found duplicate charge due to rating engine retry during billing-gateway backlog. Reversed duplicate charge of $42.34.
+CUST-7488,ACC-7488,CHG-GEN-D69B3E,DSP-GEN-42B9CD,Customer disputes roaming charge amount,IN_REVIEW,2026-08-28,
+CUST-9025,ACC-9025,CHG-GEN-DAA6E3,DSP-GEN-DD81D7,Customer disputes roaming charge amount,RESOLVED,2026-09-06,Verified roaming usage against partner TAP records. Charges match rated CDRs at agreed inter-operator rate. Dispute closed as valid.
+CUST-4216,ACC-4216,CHG-GEN-ADE5E0,DSP-GEN-BDCCE1,Customer disputes roaming charge amount,RESOLVED,2026-09-11,Found partner API timeout caused re-rating at higher default rate. Corrected to contracted rate. Credit of $87.16 issued.
+CUST-9301,ACC-9301,CHG-GEN-6B2594,DSP-GEN-0258DA,Disputes SMS bundle overage,RESOLVED,2026-09-12,Confirmed SMS overage. Applied one-time courtesy credit of $130.94. Customer accepted resolution.
+CUST-5571,ACC-5571,CHG-GEN-64B315,DSP-GEN-FFE356,Believes plan discount was not applied,RESOLVED,2026-09-09,Confirmed plan discount was active but applied to next billing cycle. Prorated discount of $32.62 credited to current invoice.
+CUST-2666,ACC-2666,CHG-GEN-1FF019,DSP-GEN-69F302,Disputes SMS bundle overage,RESOLVED,2026-08-28,Reviewed usage records. SMS bundle was consumed on 2026-08-31. Overage charges are valid per plan terms. Explained breakdown to customer. Dispute closed.
+CUST-6762,ACC-6762,CHG-GEN-75C75D,DSP-GEN-2DD02B,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-11,Confirmed data top-up was triggered by session retries during cell outage. Credited full amount of $45.22 as outage-related.
+CUST-3992,ACC-3992,CHG-GEN-C4E5C7,DSP-GEN-CE8EFE,Disputes late/duplicate data top-up charge,IN_REVIEW,2026-09-01,
+CUST-9043,ACC-9043,CHG-GEN-029A5D,DSP-GEN-C2B13A,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-18,Confirmed data top-up was triggered by session retries during cell outage. Credited full amount of $19.72 as outage-related.
+CUST-2343,ACC-2343,CHG-GEN-F7807A,DSP-GEN-EEDA5E,Disputes late/duplicate data top-up charge,RESOLVED,2026-09-15,Confirmed data top-up was triggered by session retries during cell outage. Credited full amount of $74.88 as outage-related.
+CUST-2681,ACC-2681,CHG-GEN-35253E,DSP-GEN-48A38C,Customer disputes roaming charge amount,RESOLVED,2026-09-01,Verified roaming usage against partner TAP records. Charges match rated CDRs at agreed inter-operator rate. Dispute closed as valid.
+CUST-3799,ACC-3799,CHG-GEN-FF3948,DSP-GEN-6399D8,Believes plan discount was not applied,RESOLVED,2026-09-03,Verified promotional discount expired on previous cycle. Customer was notified 30 days prior. Dispute closed.

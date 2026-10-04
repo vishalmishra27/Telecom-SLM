@@ -1,0 +1,28 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# Node
+node_modules/
+dist/
+
+# Environment files
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# Project-specific
+.chroma_conversations/
+.vector_store/
+artifacts/

@@ -1,0 +1,338 @@
+{
+  "version": "1.0.0",
+  "iri": "urn:kpmg:telecom:ontology",
+  "topLevelClasses": 5,
+  "domains": 24,
+  "classes": 630,
+  "fields": 8583,
+  "relationshipTypes": 339,
+  "relationshipMappings": 603,
+  "rca": {
+    "classes": 163,
+    "relationshipTypes": 85
+  },
+  "byDomain": [
+    {
+      "code": "01",
+      "name": "01 Business & Strategy",
+      "classes": 25,
+      "rcaClasses": 0
+    },
+    {
+      "code": "02",
+      "name": "02 Customer",
+      "classes": 25,
+      "rcaClasses": 4
+    },
+    {
+      "code": "03",
+      "name": "03 Product & Commercial",
+      "classes": 25,
+      "rcaClasses": 1
+    },
+    {
+      "code": "04",
+      "name": "04 Service",
+      "classes": 28,
+      "rcaClasses": 7
+    },
+    {
+      "code": "05",
+      "name": "05 Network",
+      "classes": 55,
+      "rcaClasses": 15
+    },
+    {
+      "code": "06",
+      "name": "06 Cloud & Virtualisation",
+      "classes": 25,
+      "rcaClasses": 1
+    },
+    {
+      "code": "07",
+      "name": "07 Data Centre",
+      "classes": 25,
+      "rcaClasses": 2
+    },
+    {
+      "code": "08",
+      "name": "08 Device / SIM / Endpoint",
+      "classes": 25,
+      "rcaClasses": 25
+    },
+    {
+      "code": "09",
+      "name": "09 IoT",
+      "classes": 25,
+      "rcaClasses": 25
+    },
+    {
+      "code": "10",
+      "name": "10 OSS",
+      "classes": 43,
+      "rcaClasses": 42
+    },
+    {
+      "code": "11",
+      "name": "11 BSS",
+      "classes": 26,
+      "rcaClasses": 0
+    },
+    {
+      "code": "12",
+      "name": "12 Fraud, Risk & Revenue Assurance",
+      "classes": 25,
+      "rcaClasses": 1
+    },
+    {
+      "code": "13",
+      "name": "13 Security",
+      "classes": 27,
+      "rcaClasses": 1
+    },
+    {
+      "code": "14",
+      "name": "14 AI, Data & Analytics",
+      "classes": 25,
+      "rcaClasses": 1
+    },
+    {
+      "code": "15",
+      "name": "15 Partner, Vendor & Ecosystem",
+      "classes": 26,
+      "rcaClasses": 26
+    },
+    {
+      "code": "16",
+      "name": "16 Workforce & Enterprise",
+      "classes": 25,
+      "rcaClasses": 1
+    },
+    {
+      "code": "17",
+      "name": "17 Regulatory & Compliance",
+      "classes": 25,
+      "rcaClasses": 1
+    },
+    {
+      "code": "18",
+      "name": "18 Physical Infrastructure & Topology",
+      "classes": 25,
+      "rcaClasses": 6
+    },
+    {
+      "code": "19",
+      "name": "19 Standards, Protocols & Identifiers",
+      "classes": 25,
+      "rcaClasses": 0
+    },
+    {
+      "code": "20",
+      "name": "20 Future Networks",
+      "classes": 25,
+      "rcaClasses": 2
+    },
+    {
+      "code": "21",
+      "name": "21 Common Entity & Information Model",
+      "classes": 27,
+      "rcaClasses": 0
+    },
+    {
+      "code": "22",
+      "name": "22 Reference Ontologies & Telecom AI Sources",
+      "classes": 30,
+      "rcaClasses": 2
+    },
+    {
+      "code": "23",
+      "name": "23 Persona & Custodianship",
+      "classes": 8,
+      "rcaClasses": 0
+    },
+    {
+      "code": "24",
+      "name": "24 Process & Authoritative Inputs",
+      "classes": 10,
+      "rcaClasses": 0
+    }
+  ],
+  "standards": [
+    {
+      "value": "3GPP NRM (TS 28.541) / O-RAN",
+      "count": 52
+    },
+    {
+      "value": "TM Forum SID Common / W3C",
+      "count": 27
+    },
+    {
+      "value": "TM Forum SID + eTOM (OSS)",
+      "count": 25
+    },
+    {
+      "value": "W3C / ML standards + GSMA Open Telco",
+      "count": 25
+    },
+    {
+      "value": "MEF LSO / TM Forum",
+      "count": 25
+    },
+    {
+      "value": "TM Forum SID (Product)",
+      "count": 25
+    },
+    {
+      "value": "ETSI NFV / ONF",
+      "count": 25
+    },
+    {
+      "value": "Open Compute / DCIM",
+      "count": 25
+    },
+    {
+      "value": "3GPP (23.003) / GSMA",
+      "count": 25
+    },
+    {
+      "value": "oneM2M / SAREF",
+      "count": 25
+    },
+    {
+      "value": "TM Forum / RA-fraud",
+      "count": 25
+    },
+    {
+      "value": "TM Forum Resource / GIS",
+      "count": 25
+    },
+    {
+      "value": "3GPP Rel-19+ / O-RAN / ITU",
+      "count": 25
+    },
+    {
+      "value": "TM Forum SID (Service)",
+      "count": 25
+    },
+    {
+      "value": "3GPP TS 33.x / NIST",
+      "count": 25
+    },
+    {
+      "value": "Regulatory (TRAI/DoT/GDPR/DPDP)",
+      "count": 25
+    },
+    {
+      "value": "TM Forum Enterprise",
+      "count": 25
+    },
+    {
+      "value": "TM Forum ODA / eTOM",
+      "count": 25
+    },
+    {
+      "value": "Reference standards & GSMA Open Telco AI",
+      "count": 25
+    },
+    {
+      "value": "3GPP / IETF / TM Forum Open APIs",
+      "count": 25
+    },
+    {
+      "value": "TM Forum SID (Party/Customer)",
+      "count": 25
+    },
+    {
+      "value": "TM Forum SID + eTOM (BSS)",
+      "count": 25
+    },
+    {
+      "value": "Kronos / SAP / ServiceNow / research",
+      "count": 10
+    },
+    {
+      "value": "KPMG service-line / RACI",
+      "count": 8
+    },
+    {
+      "value": "ITIL 4 / TM Forum eTOM",
+      "count": 7
+    },
+    {
+      "value": "ITIL 4",
+      "count": 4
+    },
+    {
+      "value": "GSMA Open Telco / vendor model",
+      "count": 2
+    },
+    {
+      "value": "3GPP TS 33.x / NIST CSF",
+      "count": 2
+    },
+    {
+      "value": "TM Forum SID + eTOM (OSS) / 3GPP PM",
+      "count": 2
+    },
+    {
+      "value": "TM Forum SID",
+      "count": 2
+    },
+    {
+      "value": "General LLM",
+      "count": 1
+    },
+    {
+      "value": "ITIL 4 / TMF SID",
+      "count": 1
+    },
+    {
+      "value": "OpenTelemetry / ITIL 4",
+      "count": 1
+    },
+    {
+      "value": "TMF SID / GSMA",
+      "count": 1
+    },
+    {
+      "value": "ITIL 4 / TM Forum Autonomous Networks",
+      "count": 1
+    },
+    {
+      "value": "TM Forum SID / ITIL 4",
+      "count": 1
+    },
+    {
+      "value": "TM Forum SID (Service) / 3GPP service assurance",
+      "count": 1
+    },
+    {
+      "value": "TM Forum SID + eTOM (OSS) / 3GPP service assurance",
+      "count": 1
+    },
+    {
+      "value": "3GPP fault management / TM Forum SID",
+      "count": 1
+    },
+    {
+      "value": "3GPP service assurance / TM Forum SID",
+      "count": 1
+    },
+    {
+      "value": "3GPP RAN assurance / O-RAN",
+      "count": 1
+    },
+    {
+      "value": "TM Forum SID / 3GPP NRM",
+      "count": 1
+    },
+    {
+      "value": "W3C OWL 2",
+      "count": 1
+    },
+    {
+      "value": "W3C SHACL",
+      "count": 1
+    }
+  ]
+}

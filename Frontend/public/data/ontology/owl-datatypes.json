@@ -1,0 +1,44 @@
+[
+  {
+    "Workbook Type": "string",
+    "OWL/XSD Range": "xsd:string",
+    "SHACL Datatype": "xsd:string",
+    "Notes": "Free text or identifiers."
+  },
+  {
+    "Workbook Type": "enum",
+    "OWL/XSD Range": "xsd:string",
+    "SHACL Datatype": "xsd:string",
+    "Notes": "Use sh:in only when allowed values are available."
+  },
+  {
+    "Workbook Type": "datetime",
+    "OWL/XSD Range": "xsd:dateTime",
+    "SHACL Datatype": "xsd:dateTime",
+    "Notes": "ISO 8601 lexical form with timezone where available."
+  },
+  {
+    "Workbook Type": "float",
+    "OWL/XSD Range": "xsd:double",
+    "SHACL Datatype": "xsd:double",
+    "Notes": "Numeric KPI or measurement value."
+  },
+  {
+    "Workbook Type": "bool",
+    "OWL/XSD Range": "xsd:boolean",
+    "SHACL Datatype": "xsd:boolean",
+    "Notes": "Use true or false lexical values."
+  },
+  {
+    "Workbook Type": "money",
+    "OWL/XSD Range": "xsd:decimal",
+    "SHACL Datatype": "xsd:decimal",
+    "Notes": "Represent currency separately when available."
+  },
+  {
+    "Workbook Type": "integer",
+    "OWL/XSD Range": "xsd:integer",
+    "SHACL Datatype": "xsd:integer",
+    "Notes": "Whole-number value."
+  }
+]

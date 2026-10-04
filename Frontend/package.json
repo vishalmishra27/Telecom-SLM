@@ -1,0 +1,28 @@
+{
+  "name": "telecom-rca-workspace",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build:ontology": "node scripts/build-ontology.js",
+    "predev": "npm run build:ontology",
+    "prebuild": "npm run build:ontology",
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "latest",
+    "d3": "latest",
+    "lucide-react": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-markdown": "latest",
+    "rehype-raw": "^7.0.0",
+    "vite": "latest"
+  },
+  "devDependencies": {
+    "playwright": "^1.62.1",
+    "xlsx": "^0.18.5"
+  }
+}

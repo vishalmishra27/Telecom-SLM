@@ -1,0 +1,47 @@
+[
+  {
+    "Level": "1",
+    "Layer": "Conceptual Business Lens",
+    "Class": "Customer",
+    "Definition": "Party/account/subscriber/customer-impact layer.",
+    "Example / Sample Data": "Customer, Subscriber, CustomerAccount, SLA, Complaint",
+    "RCA Role": "Impact, SLA exposure, customer context",
+    "Failure Prediction Role": "Potential impact and prioritization"
+  },
+  {
+    "Level": "2",
+    "Layer": null,
+    "Class": "Service",
+    "Definition": "Delivered telecom capability and service assurance layer.",
+    "Example / Sample Data": "Service, Customer Facing Service, Resource Facing Service, ServiceProblem, Key Quality Indicator",
+    "RCA Role": "Service degradation, outage, restoration",
+    "Failure Prediction Role": "Predicted service degradation"
+  },
+  {
+    "Level": "3",
+    "Layer": null,
+    "Class": "Process",
+    "Definition": "Operational, assurance, remediation, prediction and governance layer.",
+    "Example / Sample Data": "Alarm, Incident, Root Cause Analysis, Resolution, KPI, FailureRisk",
+    "RCA Role": "RCA chain and remediation workflow",
+    "Failure Prediction Role": "Telemetry, anomaly, risk and preventive action"
+  },
+  {
+    "Level": "4",
+    "Layer": null,
+    "Class": "People",
+    "Definition": "Ownership, support, vendor, custodian and escalation layer.",
+    "Example / Sample Data": "Network Operations Center, SupportTeam, FieldTechnician, Vendor, SME",
+    "RCA Role": "Assignment, escalation, remediation owner",
+    "Failure Prediction Role": "Preventive owner and approval"
+  },
+  {
+    "Level": "5",
+    "Layer": null,
+    "Class": "Product",
+    "Definition": "Commercial product plus technical resource/device/infrastructure layer.",
+    "Example / Sample Data": "Product, NetworkElement, Device, SIM, Cell, Site, Link",
+    "RCA Role": "Fault location and product/resource impact",
+    "Failure Prediction Role": "At-risk element/device/resource"
+  }
+]

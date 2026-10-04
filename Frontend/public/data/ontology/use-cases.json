@@ -1,0 +1,38 @@
+[
+  {
+    "Use Case ID": "UC001",
+    "Use Case": "RCA",
+    "Definition": "Match incident context to historical Alarm -> Incident -> RCA -> Resolution.",
+    "Conceptual Traversal": "Alarm -> Incident/ServiceProblem -> RootCauseAnalysis -> Resolution -> RemediationAction -> VerificationCheck",
+    "Primary Domains": "10 OSS / 08 Device-SIM-Endpoint",
+    "Supporting Domains": "04 Service / 05 Network / 02 Customer / 15-16-23 People",
+    "Current Relevance": "Yes"
+  },
+  {
+    "Use Case ID": "UC002",
+    "Use Case": "Failure Prediction",
+    "Definition": "Identify likely element/service/device failure before incident occurs.",
+    "Conceptual Traversal": "PMCounter/KPI -> Threshold/Anomaly -> FailureRiskModel -> FailureRisk -> PreventiveAction",
+    "Primary Domains": "10 OSS / 08 Device-SIM-Endpoint / 05 Network / 14 AI-Data",
+    "Supporting Domains": "04 Service / 02 Customer / People",
+    "Current Relevance": "Yes"
+  },
+  {
+    "Use Case ID": "UC003",
+    "Use Case": "Network Assurance",
+    "Definition": "Umbrella assurance view combining alarms, KPI, topology, RCA, prediction and action.",
+    "Conceptual Traversal": "Topology + KPI + Alarm + Incident + ServiceImpact + Action",
+    "Primary Domains": "10 OSS / 05 Network / 04 Service / 08 Device",
+    "Supporting Domains": "02 Customer / People / Product",
+    "Current Relevance": "Yes"
+  },
+  {
+    "Use Case ID": "UC004",
+    "Use Case": "NA / Future Use Cases",
+    "Definition": "Everything not currently mapped to RCA or Failure Prediction remains preserved for future use cases.",
+    "Conceptual Traversal": "No deletion. Keep exhaustive ontology and mark use-case relevance as NA.",
+    "Primary Domains": "All other telecom domains",
+    "Supporting Domains": "All",
+    "Current Relevance": "NA"
+  }
+]
