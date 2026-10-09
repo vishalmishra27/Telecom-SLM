@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+neo4j
+openai
+anthropic
+pydantic-settings
+python-dotenv
+openpyxl
+python-multipart
