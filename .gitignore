@@ -26,3 +26,5 @@ dist/
 .chroma_conversations/
 .vector_store/
 artifacts/
+.vercel
+.env*
