@@ -1,6 +1,8 @@
 Backend/.venv
 Backend/venv
 Backend/.env
+Frontend/.env
+Frontend/.env.local
 .venv
 venv
 .chroma_conversations
