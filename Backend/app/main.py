@@ -43,7 +43,10 @@ from .nl_query_service import NLQueryService
 from .qa_service import QAService
 from .rca_retrieval_service import RCARetrievalService
 from .repository import DemoRepository
-from .vector_service import VectorService
+try:
+    from .vector_service import VectorService
+except ImportError:
+    VectorService = None
 from .kg_explorer_service import KGExplorerService
 from . import rca_pipeline
 from . import intent_cascade
@@ -58,10 +61,13 @@ ingestion_service = ExcelIngestionService(PROJECT_ROOT, PROJECT_ROOT / "schema.j
 evaluation_service = ManualEvaluationService(qa_service)
 llm_service = LLMService(settings, PROJECT_ROOT)
 
-# Vector embedding service (all-MiniLM-L6-v2 + ChromaDB)
-vector_service: VectorService | None = None
-if settings.vector_embedding_enabled:
-    vector_service = VectorService(persist_dir=settings.vector_store_dir)
+# Vector embedding service (all-MiniLM-L6-v2 + ChromaDB) — optional, heavy deps
+vector_service = None
+if settings.vector_embedding_enabled and VectorService is not None:
+    try:
+        vector_service = VectorService(persist_dir=settings.vector_store_dir)
+    except Exception:
+        vector_service = None
 
 # CSV ingestion pipeline (now with vector embedding step)
 csv_ingestion_service = CSVIngestionService(

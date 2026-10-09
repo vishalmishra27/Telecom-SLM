@@ -45,7 +45,7 @@ class Settings(BaseSettings):
     rca_data_dir: Path = PROJECT_ROOT / "RCA2"
 
     model_config = SettingsConfigDict(
-        env_file=BACKEND_ROOT / ".env",
+        env_file=BACKEND_ROOT / ".env" if (BACKEND_ROOT / ".env").exists() else None,
         env_file_encoding="utf-8",
         extra="ignore",
     )
