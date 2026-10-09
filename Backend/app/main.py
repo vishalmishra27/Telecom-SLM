@@ -3,6 +3,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, File, Form, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import Response
 
 from .config import PROJECT_ROOT, get_settings
 from .csv_ingestion_service import CSVIngestionService
@@ -10,6 +11,8 @@ from .evaluation_service import ManualEvaluationService
 from .ingestion_service import ExcelIngestionService
 from .llm_service import LLMService
 from .models import (
+    AssistantChatRequest,
+    AssistantChatResponse,
     CSVBatchIngestionResponse,
     CSVIngestionStats,
     ChatRequest,
@@ -19,12 +22,16 @@ from .models import (
     GraphPayload,
     GraphVerificationResponse,
     IngestionResponse,
+    KGCategorySubgraphRequest,
+    KGSearchRequest,
     LLMAnswerRequest,
     LLMAnswerResponse,
     ManualEvaluationRequest,
     ManualEvaluationResponse,
     NLQueryRequest,
     NLQueryResponse,
+    RCARequest,
+    RCAResponse,
     SchemaSetupResponse,
     VectorSearchHit,
     VectorSearchRequest,
@@ -37,6 +44,10 @@ from .qa_service import QAService
 from .rca_retrieval_service import RCARetrievalService
 from .repository import DemoRepository
 from .vector_service import VectorService
+from .kg_explorer_service import KGExplorerService
+from . import rca_pipeline
+from . import intent_cascade
+from . import schema_registry
 
 
 settings = get_settings()
@@ -78,7 +89,19 @@ nl_query_service = NLQueryService(
     groq_api_key=settings.groq_api_key,
     groq_model=settings.groq_model,
     groq_enabled=settings.groq_enabled,
+    huggingface_api_key=settings.huggingface_api_key,
+    huggingface_model=settings.huggingface_model,
+    huggingface_provider=settings.huggingface_provider,
+    huggingface_enabled=settings.huggingface_enabled,
     temperature=settings.openai_temperature,
+)
+
+# KG Explorer service
+kg_explorer_service = KGExplorerService(
+    neo4j_uri=settings.neo4j_uri,
+    neo4j_user=settings.neo4j_username,
+    neo4j_password=settings.neo4j_password,
+    neo4j_database=settings.neo4j_database,
 )
 
 
@@ -89,6 +112,7 @@ async def lifespan(_: FastAPI):
         neo4j_service._driver.close()
     csv_ingestion_service.close()
     rca_retrieval_service.close()
+    kg_explorer_service.close()
 
 
 app = FastAPI(title=settings.app_name, version="1.0.0", lifespan=lifespan)
@@ -114,6 +138,8 @@ def health() -> dict:
         "lmstudio_model": nl_query_service._lmstudio_model if settings.lmstudio_configured else None,
         "groq": "configured" if settings.groq_configured else "unconfigured",
         "groq_model": settings.groq_model if settings.groq_configured else None,
+        "huggingface": "configured" if settings.huggingface_configured else "unconfigured",
+        "huggingface_model": settings.huggingface_model if settings.huggingface_configured else None,
         "answer_llm": "configured" if settings.answer_llm_configured or settings.lmstudio_configured or settings.groq_configured else "kg",
         "vector_store": "enabled" if vector_service is not None else "disabled",
         "embedding_model": "all-MiniLM-L6-v2" if vector_service is not None else None,
@@ -373,6 +399,67 @@ def verify_graph() -> GraphVerificationResponse:
         raise HTTPException(status_code=500, detail=f"Verification failed: {exc}") from exc
 
 
+@app.get("/api/v1/synthetic/generate")
+def generate_synthetic_data(
+    num_customers: int = Query(default=10, ge=1, le=200),
+    events_per_customer: int = Query(default=5, ge=1, le=50),
+) -> Response:
+    """Generate a ZIP of synthetic CSV data for all 9 domains."""
+    from .synthetic_data import generate_zip
+
+    zip_bytes = generate_zip(num_customers, events_per_customer)
+    return Response(
+        content=zip_bytes,
+        media_type="application/zip",
+        headers={"Content-Disposition": "attachment; filename=synthetic_telecom_data.zip"},
+    )
+
+
+@app.post("/api/v1/synthetic/generate-and-ingest")
+def generate_and_ingest(
+    num_customers: int = Query(default=10, ge=1, le=200),
+    events_per_customer: int = Query(default=5, ge=1, le=50),
+) -> dict:
+    """Generate synthetic data and ingest it directly into Neo4j."""
+    from .synthetic_data import generate_synthetic_data as gen_data
+
+    csvs = gen_data(num_customers, events_per_customer)
+    results = {}
+    errors = []
+    for domain, csv_content in csvs.items():
+        try:
+            stats = csv_ingestion_service.ingest_domain(domain, csv_content)
+            results[domain] = {
+                "nodes_created": stats.nodes_created,
+                "relationships_created": stats.relationships_created,
+                "rows_received": stats.rows_received,
+                "rows_rejected": stats.rows_rejected,
+            }
+        except Exception as exc:
+            errors.append({"domain": domain, "error": str(exc)})
+
+    # Create cross-domain links
+    cross_links = {}
+    try:
+        cross_links = csv_ingestion_service.create_cross_domain_relationships()
+    except Exception as exc:
+        errors.append({"domain": "cross-links", "error": str(exc)})
+
+    total_nodes = sum(r.get("nodes_created", 0) for r in results.values())
+    total_rels = sum(r.get("relationships_created", 0) for r in results.values())
+    return {
+        "status": "completed",
+        "num_customers": num_customers,
+        "events_per_customer": events_per_customer,
+        "domains_ingested": list(results.keys()),
+        "domain_stats": results,
+        "cross_links": cross_links,
+        "total_nodes_created": total_nodes,
+        "total_relationships_created": total_rels,
+        "errors": errors,
+    }
+
+
 # ===========================================================================
 # Customer & RCA Queries (Ontology Spec Section 4)
 # ===========================================================================
@@ -557,3 +644,368 @@ def vector_clear() -> dict:
         return {"deleted_chunks": count}
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Vector clear failed: {exc}") from exc
+
+
+# ===========================================================================
+# RCA Pipeline (Retrieval Pipeline Spec Section 8, 14.2)
+# ===========================================================================
+
+@app.post("/api/v1/rca")
+def rca_analyze(request: RCARequest) -> dict:
+    """Run the multi-step RCA pipeline for one customer or ALL (Sections 8-9)."""
+    try:
+        # Build vector search function if available
+        vs_fn = None
+        if vector_service is not None:
+            def _vs(query, customer_id=None, top_k=10):
+                hits = vector_service.search(query=query, customer_id=customer_id, top_k=top_k)
+                return hits
+            vs_fn = _vs
+
+        specialists = intent_cascade.dispatch_specialists(request.billing_issue_description or "full investigation")
+
+        # Build narrator function from the NL query service's LLM
+        narrator = nl_query_service.narrate
+
+        result = rca_pipeline.run_rca_pipeline(
+            retrieval=rca_retrieval_service,
+            customer_id=request.customer_id,
+            question=request.billing_issue_description or "What is the root cause?",
+            specialists_to_dispatch=specialists,
+            vector_search_fn=vs_fn,
+            narrator_fn=narrator,
+            debug=request.debug,
+        )
+        return result
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"RCA pipeline failed: {exc}") from exc
+
+
+@app.get("/api/v1/rca/history")
+def rca_history(
+    mode: str | None = Query(default=None),
+    customer_id: str | None = Query(default=None),
+    limit: int = Query(default=50, ge=1, le=200),
+) -> dict:
+    """List past RCA runs, filterable by mode/customer."""
+    results = rca_pipeline.get_rca_history(mode=mode, customer_id=customer_id, limit=limit)
+    return {"total": len(results), "history": results}
+
+
+@app.get("/api/v1/rca/history/{request_id}")
+def rca_history_detail(request_id: str) -> dict:
+    """Fetch one saved RCA history entry."""
+    result = rca_pipeline.get_rca_by_id(request_id)
+    if not result:
+        raise HTTPException(status_code=404, detail=f"RCA request {request_id} not found")
+    return result
+
+
+@app.get("/api/v1/rca/{request_id}/evidence/{entity_id}")
+def rca_evidence_entity(request_id: str, entity_id: str) -> dict:
+    """Look up one specific evidence entity from a past RCA response."""
+    result = rca_pipeline.get_rca_evidence_entity(request_id, entity_id)
+    if not result:
+        raise HTTPException(status_code=404, detail=f"Evidence entity {entity_id} not found in RCA {request_id}")
+    return result
+
+
+@app.post("/api/v1/rca/compare-models")
+def rca_compare_models(request: RCARequest) -> dict:
+    """Run the same RCA through multiple models for comparison."""
+    try:
+        results = {}
+        for model_id in ["deterministic", "claude", "openai", "huggingface"]:
+            try:
+                # Use the NL query service with each model
+                result = nl_query_service.query(
+                    question=request.billing_issue_description or "What is the root cause?",
+                    customer_id=request.customer_id,
+                    model=model_id,
+                )
+                results[model_id] = {
+                    "answer": result.get("answer", ""),
+                    "model_used": result.get("model_used", model_id),
+                    "confidence": result.get("confidence", "low"),
+                    "response_time_ms": result.get("response_time_ms", 0),
+                }
+            except Exception as exc:
+                results[model_id] = {"error": str(exc)}
+        return {"customer_id": request.customer_id, "comparisons": results}
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Model comparison failed: {exc}") from exc
+
+
+# ===========================================================================
+# Assistant Chat (Retrieval Pipeline Spec Section 12.4, 14.1)
+# ===========================================================================
+
+@app.post("/api/v1/assistant/chat")
+def assistant_chat(request: AssistantChatRequest) -> dict:
+    """Conversational wrapper with grounding badges and reason_codes."""
+    import time as _time
+    start = _time.time()
+
+    try:
+        # Run intent cascade
+        intent_result = intent_cascade.detect_intent(request.question)
+
+        # Meta/capability questions — answer without model
+        if intent_result.is_meta:
+            badge = "About this app"
+            answer = (
+                "I'm the EzInsights Telecom RCA Assistant. I can help you with:\n\n"
+                "- **Invoice & billing questions** — totals, breakdowns, charge explanations\n"
+                "- **Root cause analysis** — why charges appeared, network/payment failures\n"
+                "- **Dispute & complaint status** — track open issues\n"
+                "- **KPI & performance** — threshold breaches, degradation\n"
+                "- **SLA credits** — compensation for service disruptions\n\n"
+                "Ask me anything about a specific customer (e.g., CUST-4367) or across all customers."
+            )
+            return {
+                "answer": answer,
+                "intent": "meta",
+                "customer_id": request.customer_id,
+                "evidence": [],
+                "reason_codes": intent_result.reason_codes,
+                "recommended_next_step": "Try asking about a specific customer's billing or network issues.",
+                "grounding_badge": badge,
+                "confidence": 1.0,
+                "requires_human_action": False,
+                "narrated_by": "deterministic",
+                "model_used": "none",
+                "response_time_ms": int((_time.time() - start) * 1000),
+                "token_usage": {},
+            }
+
+        # Open-domain chat fallback — model's own knowledge
+        if intent_result.is_open_domain:
+            history = [{"role": m.role, "content": m.content} for m in request.conversation_history] if request.conversation_history else []
+            result = nl_query_service.query(
+                request.question, request.customer_id, request.model,
+                conversation_history=history,
+            )
+            return {
+                **result,
+                "reason_codes": ["GENERAL_CHAT"],
+                "grounding_badge": "Model's own knowledge (not grounded in the KG)",
+                "recommended_next_step": "For grounded answers, ask about specific billing or network issues.",
+                "requires_human_action": False,
+                "narrator_error": None,
+            }
+
+        # Grounded query — run through NL query service
+        history = [{"role": m.role, "content": m.content} for m in request.conversation_history] if request.conversation_history else []
+        result = nl_query_service.query(
+            request.question, request.customer_id, request.model,
+            conversation_history=history,
+        )
+
+        # Determine grounding badge
+        evidence = result.get("evidence", {})
+        has_evidence = any(
+            (isinstance(v, list) and len(v) > 0) or (isinstance(v, dict) and v)
+            for v in evidence.values()
+        ) if isinstance(evidence, dict) else bool(evidence)
+
+        if has_evidence:
+            badge = "Grounded in Knowledge Graph"
+            reason_codes = [intent_result.intent.upper()]
+        else:
+            badge = "Knowledge Graph lookup — no matching data found"
+            reason_codes = ["NO_DATA_FOUND"]
+
+        # Confidence: cap at 0.4 when evidence is empty (Section 16)
+        confidence = 0.85 if has_evidence else 0.4
+        requires_human_action = not has_evidence
+
+        # Recommended next step
+        next_step = None
+        if not has_evidence:
+            next_step = "Try a more specific question or check the customer ID."
+        elif intent_result.is_investigative:
+            next_step = "Use the RCA pipeline for a deeper multi-step investigation."
+
+        return {
+            **result,
+            "reason_codes": reason_codes,
+            "grounding_badge": badge,
+            "recommended_next_step": next_step,
+            "confidence": confidence,
+            "requires_human_action": requires_human_action,
+            "narrator_error": None,
+        }
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Assistant chat failed: {exc}") from exc
+
+
+# ===========================================================================
+# KG Explorer (Retrieval Pipeline Spec Section 10, 14.3)
+# ===========================================================================
+
+@app.get("/api/v1/kg/search")
+def kg_search(
+    query: str = Query(default=""),
+    categories: str = Query(default=""),
+    customer_id: str | None = Query(default=None),
+    limit: int = Query(default=50, ge=1, le=200),
+) -> dict:
+    """KG Explorer text/category search (Section 10)."""
+    try:
+        cats = [c.strip() for c in categories.split(",") if c.strip()] if categories else None
+        return kg_explorer_service.search(query=query, categories=cats, customer_id=customer_id, limit=limit)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"KG search failed: {exc}") from exc
+
+
+@app.get("/api/v1/kg/neighborhood")
+def kg_neighborhood(
+    node_id: str = Query(..., min_length=1),
+    limit: int = Query(default=50, ge=1, le=200),
+) -> dict:
+    """1-hop drill-down from one node (Section 10)."""
+    try:
+        return kg_explorer_service.neighborhood(node_id=node_id, limit=limit)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"KG neighborhood failed: {exc}") from exc
+
+
+@app.get("/api/v1/kg/subgraph")
+def kg_subgraph(
+    entity_ids: str = Query(..., min_length=1),
+    limit: int = Query(default=100, ge=1, le=300),
+) -> dict:
+    """Merged 1-hop neighborhoods for a list of entity IDs (Section 10)."""
+    try:
+        ids = [eid.strip() for eid in entity_ids.split(",") if eid.strip()]
+        return kg_explorer_service.subgraph(entity_ids=ids, limit=limit)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"KG subgraph failed: {exc}") from exc
+
+
+@app.get("/api/v1/kg/category-subgraph")
+def kg_category_subgraph(
+    categories: str = Query(..., min_length=1),
+    customer_id: str | None = Query(default=None),
+    depth: int = Query(default=1, ge=1, le=4),
+    limit_per_root: int = Query(default=15, ge=1, le=50),
+    max_roots: int = Query(default=40, ge=1, le=100),
+) -> dict:
+    """Deep, user-adjustable multi-hop category filter (Section 10.1)."""
+    try:
+        cats = [c.strip() for c in categories.split(",") if c.strip()]
+        return kg_explorer_service.category_subgraph(
+            categories=cats, customer_id=customer_id,
+            depth=depth, limit_per_root=limit_per_root, max_roots=max_roots,
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"KG category subgraph failed: {exc}") from exc
+
+
+@app.get("/api/v1/kg/filter-categories")
+def kg_filter_categories() -> dict:
+    """The curated category list for the KG Explorer UI (Section 10.1)."""
+    return {"categories": KGExplorerService.filter_categories()}
+
+
+# ===========================================================================
+# Schema Registry (Retrieval Pipeline Spec Section 4.1)
+# ===========================================================================
+
+@app.get("/api/v1/schema/registry")
+def get_schema_registry() -> dict:
+    """Return the full schema registry for inspection/debugging."""
+    return schema_registry.registry_for_generation()
+
+
+# ===========================================================================
+# Semantic Search (Retrieval Pipeline Spec Section 11)
+# ===========================================================================
+
+@app.get("/api/v1/semantic-search")
+def semantic_search(
+    query: str = Query(..., min_length=2, max_length=500),
+    customer_id: str | None = Query(default=None),
+    limit: int = Query(default=10, ge=1, le=50),
+) -> dict:
+    """Standalone ontology vector search (Section 11)."""
+    if vector_service is None:
+        raise HTTPException(status_code=503, detail="Vector embedding is disabled")
+    try:
+        hits = vector_service.search(query=query, customer_id=customer_id, top_k=limit)
+        return {
+            "query": query,
+            "hits": hits,
+            "total_hits": len(hits),
+        }
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Semantic search failed: {exc}") from exc
+
+
+# ===========================================================================
+# Triage / Proactive Scan (Retrieval Pipeline Spec Section 14)
+# ===========================================================================
+
+@app.post("/api/v1/triage/scan")
+def triage_scan(
+    limit: int = Query(default=10, ge=1, le=50),
+) -> dict:
+    """Proactively scan for untriaged anomalies and run RCA on each."""
+    try:
+        # Find unresolved issues
+        unresolved = rca_retrieval_service.unresolved_issues()
+
+        # Run RCA on top issues
+        results = []
+        customers_seen = set()
+        for category in ["open_disputes", "past_due_invoices", "failed_payments"]:
+            items = unresolved.get(category, [])
+            for item in items[:limit]:
+                if isinstance(item, dict):
+                    cid = item.get("customer_id", "")
+                    if cid and cid not in customers_seen:
+                        customers_seen.add(cid)
+                        try:
+                            rca_result = rca_pipeline.run_rca_pipeline(
+                                retrieval=rca_retrieval_service,
+                                customer_id=cid,
+                                question="Proactive triage scan: what is the root cause of unresolved issues?",
+                            )
+                            results.append({
+                                "customer_id": cid,
+                                "trigger": category,
+                                "rca_result": rca_result,
+                            })
+                        except Exception:
+                            pass
+                if len(results) >= limit:
+                    break
+
+        return {"scanned": len(results), "triage_results": results}
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Triage scan failed: {exc}") from exc
+
+
+# ===========================================================================
+# Incidents Audit Trail (Retrieval Pipeline Spec Section 14)
+# ===========================================================================
+
+@app.get("/api/v1/incidents")
+def list_incidents(
+    limit: int = Query(default=50, ge=1, le=200),
+) -> dict:
+    """Audit trail of logged incidents (RCA requests + triage results)."""
+    # Use RCA history as the incident store (in-memory for PoC)
+    history = rca_pipeline.get_rca_history(limit=limit)
+    incidents = []
+    for h in history:
+        incidents.append({
+            "incident_id": h.get("request_id", ""),
+            "customer_id": h.get("customer_id", ""),
+            "type": "rca_request",
+            "primary_cause": h.get("primary_cause"),
+            "confidence": h.get("confidence", 0),
+            "requires_escalation": h.get("requires_human_escalation", False),
+            "timestamp": h.get("timestamp", ""),
+        })
+    return {"total": len(incidents), "incidents": incidents}

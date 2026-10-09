@@ -265,3 +265,109 @@ class VectorStatsResponse(BaseModel):
     embedding_model: str
     embedding_dim: int
     persist_dir: str
+
+
+# ---------------------------------------------------------------------------
+# RCA Pipeline Models (Retrieval Pipeline Spec Sections 8, 14.2)
+# ---------------------------------------------------------------------------
+
+class RCARequest(BaseModel):
+    customer_id: str = Field(min_length=1, max_length=100)
+    billing_issue_description: str = Field(default="", max_length=5000)
+    billing_period: str | None = None
+    debug: bool = False
+
+
+class RCAEvidenceItem(BaseModel):
+    entity_id: str
+    entity_type: str
+    fact: str
+    source_system: str = "Knowledge Graph"
+    similarity_score: float | None = None
+    remediation_status: str | None = None
+
+
+class RCARootCause(BaseModel):
+    cause_category: str
+    severity: str
+    evidence_entity_ids: list[str] = Field(default_factory=list)
+    description: str = ""
+    recommended_actions: list[str] = Field(default_factory=list)
+
+
+class RCAResponse(BaseModel):
+    request_id: str
+    customer_id: str
+    root_causes: list[RCARootCause] = Field(default_factory=list)
+    primary_cause: dict[str, Any] | None = None
+    recommended_actions: list[str] = Field(default_factory=list)
+    evidence: list[RCAEvidenceItem] = Field(default_factory=list)
+    narrative: str = ""
+    confidence: float = 0.0
+    requires_human_escalation: bool = False
+    narrated_by: str = "deterministic"
+    response_time_ms: int = 0
+    debug: dict[str, Any] | None = None
+
+
+# ---------------------------------------------------------------------------
+# Assistant Chat Models (Retrieval Pipeline Spec Section 12.4, 14.1)
+# ---------------------------------------------------------------------------
+
+class AssistantChatRequest(BaseModel):
+    question: str = Field(min_length=2, max_length=2000)
+    customer_id: str | None = None
+    model: str | None = None
+    conversation_history: list[ConversationMessage] = Field(default_factory=list)
+
+
+class AssistantChatResponse(BaseModel):
+    answer: str
+    intent: str
+    customer_id: str | None = None
+    evidence: list[dict[str, Any]] = Field(default_factory=list)
+    reason_codes: list[str] = Field(default_factory=list)
+    recommended_next_step: str | None = None
+    grounding_badge: str = "Grounded in Knowledge Graph"
+    confidence: float = 0.85
+    requires_human_action: bool = False
+    narrated_by: str = "deterministic"
+    model_used: str = ""
+    response_time_ms: int = 0
+    token_usage: dict[str, int] = Field(default_factory=dict)
+    narrator_error: str | None = None
+
+
+# ---------------------------------------------------------------------------
+# KG Explorer Models (Retrieval Pipeline Spec Section 10, 14.3)
+# ---------------------------------------------------------------------------
+
+class KGExplorerNode(BaseModel):
+    key: str
+    label: str
+    id: str
+    display: str
+    props: dict[str, Any] = Field(default_factory=dict)
+
+
+class KGExplorerEdge(BaseModel):
+    from_key: str = Field(alias="from")
+    to_key: str = Field(alias="to")
+    rel_type: str
+
+    model_config = {"populate_by_name": True}
+
+
+class KGSearchRequest(BaseModel):
+    query: str = Field(default="", max_length=500)
+    categories: list[str] = Field(default_factory=list)
+    customer_id: str | None = None
+    limit: int = Field(default=50, ge=1, le=200)
+
+
+class KGCategorySubgraphRequest(BaseModel):
+    categories: list[str] = Field(min_length=1)
+    customer_id: str | None = None
+    depth: int = Field(default=1, ge=1, le=4)
+    limit_per_root: int = Field(default=15, ge=1, le=50)
+    max_roots: int = Field(default=40, ge=1, le=100)

@@ -32,6 +32,10 @@ class Settings(BaseSettings):
     groq_api_key: str = "replace_me"
     groq_model: str = "llama-3.1-70b-versatile"
     groq_enabled: bool = False
+    huggingface_api_key: str = "replace_me"
+    huggingface_model: str = "openai/gpt-oss-120b"
+    huggingface_provider: str = "novita"
+    huggingface_enabled: bool = False
     allow_demo_fallback: bool = True
     conversation_memory_enabled: bool = True
     conversation_memory_dir: Path = PROJECT_ROOT / ".chroma_conversations"
@@ -83,6 +87,10 @@ class Settings(BaseSettings):
     @property
     def groq_configured(self) -> bool:
         return self.groq_enabled and bool(self.groq_api_key and self.groq_api_key != "replace_me")
+
+    @property
+    def huggingface_configured(self) -> bool:
+        return self.huggingface_enabled and bool(self.huggingface_api_key and self.huggingface_api_key != "replace_me")
 
     @property
     def answer_llm_configured(self) -> bool:

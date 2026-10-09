@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { AlertTriangle, CheckCircle2, Database, FileSpreadsheet, Loader, Network, Trash2, Upload } from 'lucide-react'
+import { AlertTriangle, CheckCircle2, Database, Download, FileSpreadsheet, Loader, Network, Sparkles, Trash2, Upload } from 'lucide-react'
 import { api } from '../api'
 
 const DOMAINS = [
@@ -81,6 +81,30 @@ export default function CSVIngestionPanel() {
   const [showClearConfirm, setShowClearConfirm] = useState(false)
   const [domainResults, setDomainResults] = useState({})
   const [error, setError] = useState('')
+  const [synthLoading, setSynthLoading] = useState(false)
+  const [synthResult, setSynthResult] = useState(null)
+  const [synthCustomers, setSynthCustomers] = useState(10)
+  const [synthEvents, setSynthEvents] = useState(5)
+
+  const generateAndIngest = async () => {
+    setSynthLoading(true)
+    setError('')
+    setSynthResult(null)
+    try {
+      const result = await api.generateAndIngest({ numCustomers: synthCustomers, eventsPerCustomer: synthEvents })
+      setSynthResult(result)
+      // Update domain results from synth stats
+      if (result.domain_stats) {
+        setDomainResults(result.domain_stats)
+      }
+    } catch (e) { setError(e.message) }
+    finally { setSynthLoading(false) }
+  }
+
+  const downloadSyntheticZip = () => {
+    const url = api.downloadSyntheticZip({ numCustomers: synthCustomers, eventsPerCustomer: synthEvents })
+    window.open(url, '_blank')
+  }
 
   const clearGraph = async () => {
     setClearLoading(true)
@@ -139,6 +163,42 @@ export default function CSVIngestionPanel() {
         </header>
 
         <section className="pipeline-steps">
+          <div className="pipeline-step synth-step">
+            <div className="step-number" style={{ background: '#7C3AED' }}>
+              <Sparkles size={14} />
+            </div>
+            <div className="step-content">
+              <h3>Generate Synthetic Data</h3>
+              <p>Create realistic correlated telecom data across all 9 domains and ingest directly into Neo4j. Alternatively, download as a ZIP of CSVs.</p>
+              <div className="synth-controls">
+                <label>
+                  Customers
+                  <input type="number" min={1} max={200} value={synthCustomers} onChange={(e) => setSynthCustomers(Math.max(1, Math.min(200, Number(e.target.value) || 1)))} />
+                </label>
+                <label>
+                  Events/customer
+                  <input type="number" min={1} max={50} value={synthEvents} onChange={(e) => setSynthEvents(Math.max(1, Math.min(50, Number(e.target.value) || 1)))} />
+                </label>
+                <button type="button" className="synth-btn" onClick={generateAndIngest} disabled={synthLoading}>
+                  {synthLoading ? <Loader size={14} className="spinning" /> : <Sparkles size={14} />}
+                  {synthLoading ? 'Generating & ingesting...' : 'Generate & Ingest'}
+                </button>
+                <button type="button" className="synth-download-btn" onClick={downloadSyntheticZip} disabled={synthLoading}>
+                  <Download size={14} />Download ZIP
+                </button>
+              </div>
+              {synthResult && (
+                <div className="synth-result">
+                  <CheckCircle2 size={14} />
+                  <div>
+                    <strong>{synthResult.total_nodes_created?.toLocaleString()}</strong> nodes, <strong>{synthResult.total_relationships_created?.toLocaleString()}</strong> relationships across <strong>{synthResult.domains_ingested?.length}</strong> domains
+                    {synthResult.errors?.length > 0 && <span className="synth-errors"> ({synthResult.errors.length} errors)</span>}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
           <div className="pipeline-step danger-step">
             <div className="step-number" style={{ background: '#e05d4f' }}>
               <Trash2 size={14} />

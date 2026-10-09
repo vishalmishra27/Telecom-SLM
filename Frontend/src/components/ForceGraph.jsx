@@ -6,32 +6,21 @@ import { LocateFixed, Minus, Plus, Maximize2 } from 'lucide-react'
 /*  Ontology colour palette                                           */
 /* ------------------------------------------------------------------ */
 const classColors = {
-  Incident: '#e05d4f', Alarm: '#f0a13a', AlarmProbableCause: '#d9465f',
-  KPIObservation: '#3e80c2', Service: '#0091DA', Subscriber: '#8b67bd',
-  Runbook: '#3c8c55', Resolution: '#237b65', RootCauseAnalysis: '#17201e',
-  FiberSpan: '#547486', PowerSystem: '#c68327', Generator: '#b27024',
-  BatteryBackup: '#888f41', Cell: '#5f9bb7', CellSite: '#8aa056',
-  gNodeB: '#486fb7', Router: '#6d7f8f', Tower: '#8a7962',
-  Threshold: '#9a9fa6', Product: '#5f77c8', Complaint: '#b55a8a',
-  ChangeRecord: '#6f6a90', System: '#58606a', CustomerFacingService: '#0091DA',
-  Device: '#536d79', IPInterface: '#3f83a8', ProcessStep: '#8c6a3d',
-  Employee: '#7a6ea8', Vendor: '#7d8150', DeviceModel: '#697b8f',
-  DeviceFirmware: '#8a7972', CommonPolicy: '#4f7c68', Customer: '#3e80c2',
-  BillingAccount: '#5f77c8', Invoice: '#c68327', ChargingRecord: '#b27024',
-  Payment: '#42c49e', Dunning: '#e05d4f', Adjustment: '#888f41',
-  LogEvent: '#58606a', PMCounter: '#547486', ServiceProblem: '#8b67bd',
+  Customer: '#3e80c2', Account: '#5f77c8', Invoice: '#c68327', Charge: '#b27024',
+  NetworkFailure: '#e05d4f', PaymentFailure: '#d9465f', Incident: '#f0a13a',
+  LogEvent: '#58606a', ApiKpiBreach: '#8b67bd', PmCounter: '#547486',
+  Dispute: '#b55a8a', SlaCredit: '#42c49e', Site: '#8aa056', Service: '#0091DA',
+  RootCause: '#e05d4f', Evidence: '#3c8c55',
   Entity: '#6d7b78',
 }
 const defaultColor = '#6d7b78'
 
 const classAbbrev = {
-  Customer: 'CUST', BillingAccount: 'ACCT', Invoice: 'INV', ChargingRecord: 'CHG',
-  Payment: 'PAY', Dunning: 'DUN', Adjustment: 'ADJ', Alarm: 'ALM',
-  KPIObservation: 'KPI', PMCounter: 'PM', ServiceProblem: 'SVC', Complaint: 'CMP',
-  LogEvent: 'LOG', RootCauseAnalysis: 'RCA', Incident: 'INC', Resolution: 'RES',
-  Runbook: 'RUN', CellSite: 'SITE', gNodeB: 'GNB', Cell: 'CELL', Router: 'RTR',
-  Tower: 'TWR', FiberSpan: 'FBR', PowerSystem: 'PWR', Generator: 'GEN',
-  BatteryBackup: 'BAT', Threshold: 'THR', ChangeRecord: 'CHR',
+  Customer: 'CUST', Account: 'ACCT', Invoice: 'INV', Charge: 'CHG',
+  NetworkFailure: 'NF', PaymentFailure: 'PF', Incident: 'INC',
+  LogEvent: 'LOG', ApiKpiBreach: 'KPI', PmCounter: 'PM',
+  Dispute: 'DSP', SlaCredit: 'SLA', Site: 'SITE', Service: 'SVC',
+  RootCause: 'ROOT', Evidence: 'EVD',
 }
 
 /* ------------------------------------------------------------------ */
@@ -43,8 +32,9 @@ function shortLabel(node) {
 }
 
 function nodeRadius(cls) {
-  if (cls === 'Customer' || cls === 'RootCauseAnalysis') return 24
-  if (cls === 'BillingAccount') return 20
+  if (cls === 'Customer' || cls === 'RootCause') return 24
+  if (cls === 'Account' || cls === 'Invoice') return 20
+  if (cls === 'NetworkFailure' || cls === 'Incident' || cls === 'PaymentFailure') return 18
   return 15
 }
 

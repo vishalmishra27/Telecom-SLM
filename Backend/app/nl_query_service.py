@@ -55,10 +55,10 @@ using ONLY the evidence retrieved from the Knowledge Graph.
 RULES:
 1. ONLY use facts from the provided graph evidence. Never invent or assume facts.
 2. Cite specific node IDs (e.g., NF-GEN-E4E3D5, INV-GEN-13D0FF) when referencing evidence.
-3. Describe the traversal path you followed through the graph.
-4. If the evidence is insufficient, say so explicitly — do not guess.
-5. Use a professional, concise tone appropriate for a telecom NOC operator.
-6. Structure your answer with: Summary, Evidence Chain, and Recommendation (if applicable).
+3. If the evidence is insufficient, say so explicitly — do not guess.
+4. Use a professional, concise tone appropriate for a telecom NOC operator.
+5. Keep answers short and focused. Do NOT output markdown tables. Use plain text with bullet points.
+6. Structure: brief Summary, then Key Findings (bullet points with IDs), then Recommendation if applicable.
 """
 
 
@@ -82,6 +82,11 @@ class NLQueryService:
         groq_api_key: str = "",
         groq_model: str = "llama-3.1-70b-versatile",
         groq_enabled: bool = False,
+        # HuggingFace Inference API (GPT-OSS-120B, OpenAI-compatible)
+        huggingface_api_key: str = "",
+        huggingface_model: str = "openai/gpt-oss-120b",
+        huggingface_provider: str = "novita",
+        huggingface_enabled: bool = False,
         # Shared
         temperature: float = 0.2,
     ):
@@ -121,6 +126,22 @@ class NLQueryService:
                 base_url="https://api.groq.com/openai/v1",
                 api_key=groq_api_key,
             )
+
+        # HuggingFace Inference API (OpenAI-compatible, routed via provider)
+        _HF_PROVIDER_URLS = {
+            "novita": "https://router.huggingface.co/novita/v3/openai",
+            "together": "https://router.huggingface.co/together/v1",
+            "fireworks-ai": "https://router.huggingface.co/fireworks-ai/inference/v1",
+            "cerebras": "https://router.huggingface.co/cerebras/v1",
+            "nscale": "https://router.huggingface.co/nscale/v1",
+        }
+        self._hf_model = huggingface_model
+        self._hf_provider = huggingface_provider
+        self._hf = None
+        if huggingface_enabled and huggingface_api_key and huggingface_api_key != "replace_me":
+            base_url = _HF_PROVIDER_URLS.get(huggingface_provider, _HF_PROVIDER_URLS["novita"])
+            self._hf = OpenAI(base_url=base_url, api_key=huggingface_api_key)
+            print(f"[HuggingFace] Configured: model={huggingface_model}, provider={huggingface_provider}")
 
     def _detect_lmstudio_model(self) -> str:
         """Query LM Studio /v1/models to find the currently loaded model."""
@@ -165,6 +186,13 @@ class NLQueryService:
                 "model_id": self._groq_model,
                 "available": True,
             })
+        if self._hf:
+            models.append({
+                "id": "huggingface",
+                "display_name": f"GPT-OSS-120B ({self._hf_provider})",
+                "model_id": self._hf_model,
+                "available": True,
+            })
         models.append({
             "id": "deterministic",
             "display_name": "KG Traversal",
@@ -172,6 +200,72 @@ class NLQueryService:
             "available": True,
         })
         return models
+
+    def narrate(self, prompt: str, model: str | None = None) -> str:
+        """Simple prompt-in → text-out call for RCA narration.
+
+        Uses the preferred model or falls through the configured chain.
+        Returns the raw LLM response text, or empty string on failure.
+        Has a 30s timeout to avoid blocking the RCA pipeline.
+        """
+        import concurrent.futures
+
+        def _call():
+            system = (
+                "You are a Telecom RCA expert. Produce clear, structured, evidence-grounded "
+                "root cause analysis reports. Only cite entity IDs present in the evidence. "
+                "Do not invent facts."
+            )
+            messages = [
+                {"role": "system", "content": system},
+                {"role": "user", "content": prompt},
+            ]
+
+            # Build ordered list of clients to try
+            clients = []
+            if model == "huggingface" or (model is None and self._hf):
+                clients.append(("huggingface", self._hf, self._hf_model))
+            if model == "groq" or (model is None and self._groq):
+                clients.append(("groq", self._groq, self._groq_model))
+            if model == "openai" or (model is None and self._openai):
+                clients.append(("openai", self._openai, self._openai_model))
+            if model == "lmstudio" or (model is None and self._lmstudio):
+                clients.append(("lmstudio", self._lmstudio, self._lmstudio_model))
+
+            # Claude uses a different API
+            if model == "claude" and self._claude:
+                resp = self._claude.messages.create(
+                    model=self._claude_model,
+                    max_tokens=1500,
+                    temperature=0.3,
+                    system=system,
+                    messages=[{"role": "user", "content": prompt}],
+                )
+                return resp.content[0].text
+
+            for name, client, model_id in clients:
+                if not client:
+                    continue
+                try:
+                    resp = client.chat.completions.create(
+                        model=model_id,
+                        temperature=0.3,
+                        messages=messages,
+                        max_tokens=1500,
+                    )
+                    return resp.choices[0].message.content
+                except Exception:
+                    continue
+
+            return ""
+
+        # Run with timeout so a slow LLM doesn't block the pipeline
+        try:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+                future = executor.submit(_call)
+                return future.result(timeout=30)
+        except (concurrent.futures.TimeoutError, Exception):
+            return ""
 
     def query(
         self,
@@ -300,31 +394,49 @@ class NLQueryService:
             citations = self._extract_citations_from_evidence(evidence)
             return answer, "deterministic", {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}, citations, "medium"
 
-        attempts = []
-        if preferred_model == "lmstudio" and self._lmstudio:
-            attempts.append(("lmstudio", self._generate_lmstudio))
-        elif preferred_model == "groq" and self._groq:
-            attempts.append(("groq", self._generate_groq))
-        elif preferred_model == "claude" and self._claude:
-            attempts.append(("claude", self._generate_claude))
-            if self._openai:
-                attempts.append(("openai", self._generate_openai))
-        elif preferred_model == "openai" and self._openai:
-            attempts.append(("openai", self._generate_openai))
-            if self._claude:
-                attempts.append(("claude", self._generate_claude))
-        else:
-            # No preference — try claude first (default per spec), then openai, then groq, then local
-            if self._claude:
-                attempts.append(("claude", self._generate_claude))
-            if self._openai:
-                attempts.append(("openai", self._generate_openai))
-            if self._groq:
-                attempts.append(("groq", self._generate_groq))
-            if self._lmstudio:
-                attempts.append(("lmstudio", self._generate_lmstudio))
+        # Map model names to their generators
+        _MODEL_MAP = {
+            "lmstudio": ("lmstudio", self._lmstudio, self._generate_lmstudio),
+            "groq": ("groq", self._groq, self._generate_groq),
+            "huggingface": ("huggingface", self._hf, self._generate_huggingface),
+            "claude": ("claude", self._claude, self._generate_claude),
+            "openai": ("openai", self._openai, self._generate_openai),
+        }
 
-        # Try each model with one retry per Spec Section 13
+        # If user explicitly selected a model, ONLY try that model — no silent fallback
+        if preferred_model and preferred_model in _MODEL_MAP:
+            model_name, client, generate_fn = _MODEL_MAP[preferred_model]
+            if not client:
+                error_msg = f"**{model_name}** is not configured. Check your .env file for the API key and enabled flag."
+                return error_msg, model_name, {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}, [], "low"
+            last_error = None
+            for retry in range(2):
+                try:
+                    answer, token_usage = generate_fn(question, customer_id, intent, evidence, conversation_history=conversation_history)
+                    citations = self._parse_citations(answer, evidence)
+                    confidence = "high" if citations else "medium"
+                    return answer, model_name, token_usage, citations, confidence
+                except Exception as exc:
+                    last_error = exc
+                    if retry == 0:
+                        continue
+            # Model explicitly selected but failed — return the error, don't fall back
+            error_msg = f"**{model_name}** failed after 2 attempts: {last_error}\n\nSelect a different model or use KG Traversal."
+            return error_msg, model_name, {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}, [], "low"
+
+        # No preference (Auto) — try fallback chain
+        attempts = []
+        if self._claude:
+            attempts.append(("claude", self._generate_claude))
+        if self._openai:
+            attempts.append(("openai", self._generate_openai))
+        if self._groq:
+            attempts.append(("groq", self._generate_groq))
+        if self._hf:
+            attempts.append(("huggingface", self._generate_huggingface))
+        if self._lmstudio:
+            attempts.append(("lmstudio", self._generate_lmstudio))
+
         for model_name, generate_fn in attempts:
             for retry in range(2):
                 try:
@@ -355,8 +467,8 @@ Detected Intent: {intent}
 Retrieved Graph Evidence:
 {evidence_text}
 
-Based on the evidence above, answer the customer's question. Follow the rules in your system prompt.
-Include the specific traversal path through the knowledge graph nodes."""
+Based on the evidence above, answer the customer's question concisely. Follow the rules in your system prompt.
+Do NOT use markdown tables. Use bullet points with entity IDs."""
 
     def _generate_claude(
         self, question: str, customer_id: str, intent: str, evidence: dict[str, Any], **kwargs
@@ -467,36 +579,28 @@ Include the specific traversal path through the knowledge graph nodes."""
         ).strip()
 
         if conversation_history:
-            # Multi-turn: rebuild the full conversation with data in the first message
-            messages = []
+            messages = [{"role": "system", "content": SYSTEM_PROMPT}]
             for i, msg in enumerate(conversation_history):
                 if i == 0 and msg["role"] == "user":
-                    # First user message — prepend KG data context
-                    messages.append({
-                        "role": "user",
-                        "content": f"Analyze the following telecom data:\n\n{template_text}\n\n{msg['content']}\n\nWhat is the root cause of these issues?\nWhat are your recommendations to resolve them?\nCite the specific IDs from the data in your answer."
-                    })
+                    messages.append({"role": "user", "content": f"Data:\n{template_text}\n\n{msg['content']}"})
                 else:
                     messages.append(msg)
-            # Add current question as new user message
             messages.append({"role": "user", "content": question})
         else:
-            # First message — send full data + question
             prompt = (
-                f"Analyze the following telecom data:\n\n"
-                f"{template_text}\n\n"
-                f"{question}\n\n"
-                f"What is the root cause of these issues?\n"
-                f"What are your recommendations to resolve them?\n"
-                f"Cite the specific IDs from the data in your answer."
+                f"Customer: {customer_id}\n\n"
+                f"KG Evidence:\n{template_text}\n\n"
+                f"Question: {question}\n\n"
+                f"Answer concisely with: Summary, Key Findings (bullet points with IDs), Recommendation. "
+                f"No markdown tables. Cite entity IDs."
             )
-            messages = [{"role": "user", "content": prompt}]
+            messages = [{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": prompt}]
 
         response = self._lmstudio.chat.completions.create(
             model=self._lmstudio_model,
             temperature=0.23,
             messages=messages,
-            max_tokens=4096,
+            max_tokens=1500,
         )
         answer = response.choices[0].message.content
         usage_obj = response.usage
@@ -520,7 +624,7 @@ Include the specific traversal path through the knowledge graph nodes."""
         ).strip()
 
         if conversation_history:
-            messages = [{"role": "system", "content": "You are a telecom network analyst. Use the data provided in the conversation to answer questions. Cite specific IDs."}]
+            messages = [{"role": "system", "content": "You are a telecom network analyst. Use the data provided to answer questions concisely. Cite specific IDs. No markdown tables — use bullet points."}]
             for i, msg in enumerate(conversation_history):
                 if i == 0 and msg["role"] == "user":
                     messages.append({"role": "user", "content": f"Data:\n{template_text}\n\n{msg['content']}"})
@@ -529,23 +633,64 @@ Include the specific traversal path through the knowledge graph nodes."""
             messages.append({"role": "user", "content": question})
         else:
             prompt = (
-                f"You are a telecom network analyst. Analyze the following Knowledge Graph evidence "
-                f"and provide a root cause analysis.\n\n"
                 f"Customer: {customer_id}\n\n"
-                f"Data:\n{template_text}\n\n"
-                f"{question}\n\n"
-                f"Provide:\n"
-                f"1. Root cause of these issues\n"
-                f"2. Recommendations to resolve them\n"
-                f"Cite the specific IDs from the data in your answer."
+                f"KG Evidence:\n{template_text}\n\n"
+                f"Question: {question}\n\n"
+                f"Answer concisely with: Summary, Key Findings (bullet points with IDs), Recommendation. "
+                f"No markdown tables. Cite entity IDs."
             )
-            messages = [{"role": "user", "content": prompt}]
+            messages = [{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": prompt}]
 
         response = self._groq.chat.completions.create(
             model=self._groq_model,
             temperature=0.3,
             messages=messages,
-            max_tokens=4096,
+            max_tokens=1500,
+        )
+        answer = response.choices[0].message.content
+        usage_obj = response.usage
+        usage = {
+            "input_tokens": getattr(usage_obj, "prompt_tokens", 0) or 0,
+            "output_tokens": getattr(usage_obj, "completion_tokens", 0) or 0,
+            "total_tokens": getattr(usage_obj, "total_tokens", 0) or 0,
+        }
+        return answer, usage
+
+    def _generate_huggingface(
+        self, question: str, customer_id: str, intent: str, evidence: dict[str, Any],
+        conversation_history: list[dict] | None = None, **kwargs
+    ) -> tuple[str, dict[str, int]]:
+        """Generate answer using HuggingFace Inference API (GPT-OSS-120B, OpenAI-compatible)."""
+        template_text = self._fallback_answer(customer_id, intent, evidence)
+        template_text = template_text.replace(
+            "\n---\n_Generated directly from Knowledge Graph traversal._", ""
+        ).replace(
+            "\n---\n_Generated by deterministic template — LLM narration unavailable._", ""
+        ).strip()
+
+        if conversation_history:
+            messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+            for i, msg in enumerate(conversation_history):
+                if i == 0 and msg["role"] == "user":
+                    messages.append({"role": "user", "content": f"Data:\n{template_text}\n\n{msg['content']}"})
+                else:
+                    messages.append(msg)
+            messages.append({"role": "user", "content": question})
+        else:
+            prompt = (
+                f"Customer: {customer_id}\n\n"
+                f"KG Evidence:\n{template_text}\n\n"
+                f"Question: {question}\n\n"
+                f"Answer concisely with: Summary, Key Findings (bullet points with IDs), Recommendation. "
+                f"No markdown tables. Cite entity IDs."
+            )
+            messages = [{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": prompt}]
+
+        response = self._hf.chat.completions.create(
+            model=self._hf_model,
+            temperature=0.3,
+            messages=messages,
+            max_tokens=1500,
         )
         answer = response.choices[0].message.content
         usage_obj = response.usage
@@ -658,211 +803,144 @@ Include the specific traversal path through the knowledge graph nodes."""
     def _retrieve_cross_customer_evidence(self, intent: str) -> dict[str, Any]:
         """Retrieve evidence across ALL customers (no customer_id filter)."""
         if intent == "network_rca":
-            return {"alarms": self.retrieval.all_alarms()}
+            return {"network_failures": self.retrieval.all_network_failures()}
         elif intent == "kpi_breach":
-            return {"kpi_breaches": self.retrieval.all_kpi_breaches()}
+            return {"network_failures": self.retrieval.all_network_failures()}
         elif intent == "dunning_chain":
-            return {"payments": self.retrieval.all_dunning()}
+            return {"payment_failures": self.retrieval.all_payment_failures()}
         elif intent == "sla_credit":
-            return {"service_disruptions": self.retrieval.all_service_disruptions()}
+            return {"incidents": self.retrieval.all_incidents()}
         elif intent == "system_error":
-            return {"system_errors": self.retrieval.all_system_errors()}
+            return {"log_errors": self.retrieval.all_log_errors()}
         elif intent == "complaint":
-            return {"complaints": self.retrieval.all_complaints()}
+            return {"disputes": self.retrieval.all_disputes()}
         elif intent == "financial_impact":
-            return {"billing": self.retrieval.all_billing()}
+            return {"network_failures": self.retrieval.all_network_failures(limit=20),
+                    "payment_failures": self.retrieval.all_payment_failures(limit=20)}
         elif intent == "unresolved":
-            return {"unresolved": self.retrieval.unresolved_issues()}
+            return self.retrieval.unresolved_issues()
         elif intent == "full_chain":
             return {
-                "alarms": self.retrieval.all_alarms(limit=20),
-                "kpi_breaches": self.retrieval.all_kpi_breaches(limit=20),
-                "complaints": self.retrieval.all_complaints(limit=20),
-                "billing": self.retrieval.all_billing(limit=20),
-                "payments": self.retrieval.all_dunning(limit=20),
-                "service_disruptions": self.retrieval.all_service_disruptions(limit=20),
-                "system_errors": self.retrieval.all_system_errors(limit=20),
+                "network_failures": self.retrieval.all_network_failures(limit=20),
+                "payment_failures": self.retrieval.all_payment_failures(limit=20),
+                "incidents": self.retrieval.all_incidents(limit=20),
+                "disputes": self.retrieval.all_disputes(limit=20),
+                "log_errors": self.retrieval.all_log_errors(limit=20),
             }
         else:
-            return {"customers": self.retrieval.all_customers_summary()}
+            return {"network_failures": self.retrieval.all_network_failures(limit=20)}
 
     def _retrieve_evidence(self, intent: str, customer_id: str, question: str) -> dict[str, Any]:
-        if intent == "full_chain":
-            return self.retrieval.rca_full_chain(customer_id)
-        elif intent == "network_rca":
-            chain = self.retrieval.rca_full_chain(customer_id)
-            return {
-                "alarms": chain.get("alarms", []),
-                "pm_counters": chain.get("pm_counters", []),
-                "kpi_observations": chain.get("kpi_observations", []),
-            }
-        elif intent == "kpi_breach":
-            return {"kpi_breaches": self.retrieval.kpi_breach_to_incident(customer_id)}
-        elif intent == "dunning_chain":
-            return {"dunning_chain": self.retrieval.dunning_chain(customer_id)}
-        elif intent == "sla_credit":
-            return {"sla_credits": self.retrieval.sla_credit_chain(customer_id)}
-        elif intent == "system_error":
-            return {"system_errors": self.retrieval.system_error_chain(customer_id)}
-        elif intent == "complaint":
-            chain = self.retrieval.rca_full_chain(customer_id)
-            return {"complaints": chain.get("complaints", [])}
-        elif intent == "financial_impact":
-            chain = self.retrieval.rca_full_chain(customer_id)
-            result: dict[str, Any] = {"impact_summary": self.retrieval.customer_impact(customer_id)}
-            # Include detail records so the model can cite specifics
-            for detail_key in ("invoices", "charges", "payments", "complaints", "adjustments"):
-                if chain.get(detail_key):
-                    result[detail_key] = chain[detail_key]
-            return result
-        elif intent == "unresolved":
-            return {"unresolved": self.retrieval.unresolved_issues()}
-        else:
-            return self.retrieval.rca_full_chain(customer_id)
+        # Check if the question mentions a specific entity ID — if so, route by prefix
+        entity_ids = self._extract_entity_ids(question)
+        for eid in entity_ids:
+            if not eid.startswith("CUST-"):
+                return self.retrieval.rca_by_id(eid)
+
+        # Otherwise use the customer-level full chain
+        return self.retrieval.rca_full_chain(customer_id)
 
     # -----------------------------------------------------------------
-    # Traversal metadata — Cypher queries and step-by-step path per intent
+    # Traversal metadata — Causal ontology paths
     # -----------------------------------------------------------------
     _INTENT_CYPHER: dict[str, dict] = {
         "full_chain": {
-            "description": "Full RCA Chain — Customer → Account → all connected evidence nodes",
+            "description": "Full Causal Chain — Root Causes → Charges → Invoice → Account → Customer",
             "cypher": (
-                "MATCH (c:Customer {canonical_id: $cid})-[:HAS_ACCOUNT]->(ba:BillingAccount)\n"
-                "OPTIONAL MATCH (ba)-[:HAS_ALARM]->(alarm:Alarm)\n"
-                "OPTIONAL MATCH (ba)-[:HAS_PM_COUNTER]->(pm:PMCounter)\n"
-                "OPTIONAL MATCH (ba)-[:HAS_KPI_OBSERVATION]->(kpi:KPIObservation)\n"
-                "OPTIONAL MATCH (ba)-[:HAS_DISRUPTION]->(sp:ServiceProblem)\n"
-                "OPTIONAL MATCH (ba)-[:HAS_LOG]->(log:LogEvent)\n"
-                "OPTIONAL MATCH (ba)-[:HAS_INVOICE]->(inv:Invoice)-[:CONTAINS]->(cr:ChargingRecord)\n"
-                "OPTIONAL MATCH (ba)-[:HAS_COMPLAINT]->(comp:Complaint)\n"
-                "OPTIONAL MATCH (ba)-[:HAS_ADJUSTMENT]->(adj:Adjustment)\n"
-                "OPTIONAL MATCH (ba)-[:HAS_PAYMENT]->(pay:Payment)\n"
-                "OPTIONAL MATCH (pay)-[:HAS_DUNNING]->(dun:Dunning)"
+                "MATCH (a:Account)-[:OWNED_BY]->(c:Customer {id: $cid})\n"
+                "MATCH (ch:Charge)-[:ON_INVOICE]->(inv:Invoice)-[:BILLED_TO]->(a)\n"
+                "OPTIONAL MATCH (root:RootCause)-[:CAUSED_CHARGE]->(ch)\n"
+                "OPTIONAL MATCH (pf:PaymentFailure)-[:FAILED_ON]->(inv)\n"
+                "OPTIONAL MATCH (d:Dispute)-[:DISPUTES]->(ch)\n"
+                "OPTIONAL MATCH (sc:SlaCredit)-[:COMPENSATES]->(inc:Incident)\n"
+                "OPTIONAL MATCH (pm:PmCounter)-[:CORROBORATES]->(nf:NetworkFailure)"
             ),
             "steps": [
-                {"order": 1, "from_class": "Customer", "rel": "HAS_ACCOUNT", "to_class": "BillingAccount", "explanation": "Anchor on the customer's billing account"},
-                {"order": 2, "from_class": "BillingAccount", "rel": "HAS_ALARM", "to_class": "Alarm", "explanation": "Retrieve network alarms"},
-                {"order": 3, "from_class": "BillingAccount", "rel": "HAS_PM_COUNTER", "to_class": "PMCounter", "explanation": "Retrieve performance counters"},
-                {"order": 4, "from_class": "BillingAccount", "rel": "HAS_KPI_OBSERVATION", "to_class": "KPIObservation", "explanation": "Retrieve KPI threshold breaches"},
-                {"order": 5, "from_class": "BillingAccount", "rel": "HAS_DISRUPTION", "to_class": "ServiceProblem", "explanation": "Retrieve service disruptions"},
-                {"order": 6, "from_class": "BillingAccount", "rel": "HAS_LOG", "to_class": "LogEvent", "explanation": "Retrieve system log events"},
-                {"order": 7, "from_class": "BillingAccount", "rel": "HAS_INVOICE → CONTAINS", "to_class": "Invoice → ChargingRecord", "explanation": "Retrieve billing chain"},
-                {"order": 8, "from_class": "BillingAccount", "rel": "HAS_COMPLAINT", "to_class": "Complaint", "explanation": "Retrieve complaints/disputes"},
-                {"order": 9, "from_class": "BillingAccount", "rel": "HAS_ADJUSTMENT", "to_class": "Adjustment", "explanation": "Retrieve SLA credits"},
-                {"order": 10, "from_class": "BillingAccount", "rel": "HAS_PAYMENT → HAS_DUNNING", "to_class": "Payment → Dunning", "explanation": "Retrieve payments and dunning failures"},
+                {"order": 1, "from_class": "RootCause", "rel": "CAUSED_CHARGE", "to_class": "Charge", "explanation": "Root cause event created the billing charge"},
+                {"order": 2, "from_class": "Charge", "rel": "ON_INVOICE", "to_class": "Invoice", "explanation": "Charge appears on an invoice"},
+                {"order": 3, "from_class": "Invoice", "rel": "BILLED_TO", "to_class": "Account", "explanation": "Invoice billed to customer account"},
+                {"order": 4, "from_class": "Account", "rel": "OWNED_BY", "to_class": "Customer", "explanation": "Account owned by the customer"},
+                {"order": 5, "from_class": "PmCounter", "rel": "CORROBORATES", "to_class": "NetworkFailure", "explanation": "PM counter evidence corroborates the failure"},
+                {"order": 6, "from_class": "Dispute", "rel": "DISPUTES", "to_class": "Charge", "explanation": "Customer disputes the charge"},
+                {"order": 7, "from_class": "SlaCredit", "rel": "COMPENSATES", "to_class": "Incident", "explanation": "SLA credit compensates the incident"},
             ],
         },
         "network_rca": {
-            "description": "Network RCA — Customer → Account → Alarms, PM Counters, KPI Observations",
+            "description": "Network RCA — NetworkFailure → CAUSED_CHARGE → Chain B + PM/API evidence",
             "cypher": (
-                "MATCH (c:Customer {canonical_id: $cid})-[:HAS_ACCOUNT]->(ba:BillingAccount)\n"
-                "OPTIONAL MATCH (ba)-[:HAS_ALARM]->(alarm:Alarm)\n"
-                "OPTIONAL MATCH (ba)-[:HAS_PM_COUNTER]->(pm:PMCounter)\n"
-                "OPTIONAL MATCH (ba)-[:HAS_KPI_OBSERVATION]->(kpi:KPIObservation)"
+                "MATCH (nf:NetworkFailure)-[:CAUSED_CHARGE]->(ch:Charge)\n"
+                "MATCH (ch)-[:ON_INVOICE]->(inv:Invoice)-[:BILLED_TO]->(a:Account)-[:OWNED_BY]->(c:Customer)\n"
+                "OPTIONAL MATCH (pm:PmCounter)-[:CORROBORATES]->(nf)\n"
+                "OPTIONAL MATCH (api:ApiKpiBreach)-[:CORROBORATES]->(nf)"
             ),
             "steps": [
-                {"order": 1, "from_class": "Customer", "rel": "HAS_ACCOUNT", "to_class": "BillingAccount", "explanation": "Anchor on the customer's billing account"},
-                {"order": 2, "from_class": "BillingAccount", "rel": "HAS_ALARM", "to_class": "Alarm", "explanation": "Retrieve cell outage and network alarms"},
-                {"order": 3, "from_class": "BillingAccount", "rel": "HAS_PM_COUNTER", "to_class": "PMCounter", "explanation": "Retrieve degraded performance counters"},
-                {"order": 4, "from_class": "BillingAccount", "rel": "HAS_KPI_OBSERVATION", "to_class": "KPIObservation", "explanation": "Retrieve KPI threshold breaches"},
-            ],
-        },
-        "kpi_breach": {
-            "description": "KPI Breach → Incident — Customer → Account → KPI breaches → correlated Alarms",
-            "cypher": (
-                "MATCH (c:Customer {canonical_id: $cid})-[:HAS_ACCOUNT]->(ba:BillingAccount)\n"
-                "MATCH (ba)-[:HAS_KPI_OBSERVATION]->(kpi:KPIObservation)\n"
-                "WHERE toFloat(kpi.kpi_value) > toFloat(kpi.threshold_value)\n"
-                "OPTIONAL MATCH (kpi)-[:CORRELATED_WITH]->(alarm:Alarm)\n"
-                "OPTIONAL MATCH (ba)-[:HAS_DISRUPTION]->(sp:ServiceProblem)"
-            ),
-            "steps": [
-                {"order": 1, "from_class": "Customer", "rel": "HAS_ACCOUNT", "to_class": "BillingAccount", "explanation": "Anchor on the customer's billing account"},
-                {"order": 2, "from_class": "BillingAccount", "rel": "HAS_KPI_OBSERVATION", "to_class": "KPIObservation", "explanation": "Find KPI values exceeding thresholds"},
-                {"order": 3, "from_class": "KPIObservation", "rel": "CORRELATED_WITH", "to_class": "Alarm", "explanation": "Link breaches to correlated alarms"},
-                {"order": 4, "from_class": "BillingAccount", "rel": "HAS_DISRUPTION", "to_class": "ServiceProblem", "explanation": "Find associated service disruptions"},
+                {"order": 1, "from_class": "NetworkFailure", "rel": "CAUSED_CHARGE", "to_class": "Charge", "explanation": "Network failure caused a billing charge"},
+                {"order": 2, "from_class": "Charge", "rel": "ON_INVOICE", "to_class": "Invoice", "explanation": "Charge on invoice"},
+                {"order": 3, "from_class": "PmCounter", "rel": "CORROBORATES", "to_class": "NetworkFailure", "explanation": "PM counter corroborates the failure"},
+                {"order": 4, "from_class": "ApiKpiBreach", "rel": "CORROBORATES", "to_class": "NetworkFailure", "explanation": "API KPI breach corroborates the failure"},
             ],
         },
         "dunning_chain": {
-            "description": "Dunning Chain — Customer → Account → Payment → Dunning → Invoice → Complaint",
+            "description": "Payment Failure → FAILED_ON → Invoice → Account → Customer",
             "cypher": (
-                "MATCH (c:Customer {canonical_id: $cid})-[:HAS_ACCOUNT]->(ba:BillingAccount)\n"
-                "MATCH (ba)-[:HAS_PAYMENT]->(pay:Payment)\n"
-                "OPTIONAL MATCH (pay)-[:HAS_DUNNING]->(dun:Dunning)\n"
-                "OPTIONAL MATCH (pay)-[:PAYMENT_FOR]->(inv:Invoice)\n"
-                "OPTIONAL MATCH (inv)-[:CONTAINS]->(cr:ChargingRecord)\n"
-                "OPTIONAL MATCH (comp:Complaint)-[:DISPUTES]->(cr)"
+                "MATCH (pf:PaymentFailure)-[:FAILED_ON]->(inv:Invoice)\n"
+                "MATCH (inv)-[:BILLED_TO]->(a:Account)-[:OWNED_BY]->(c:Customer)"
             ),
             "steps": [
-                {"order": 1, "from_class": "Customer", "rel": "HAS_ACCOUNT", "to_class": "BillingAccount", "explanation": "Anchor on the customer's billing account"},
-                {"order": 2, "from_class": "BillingAccount", "rel": "HAS_PAYMENT", "to_class": "Payment", "explanation": "Retrieve payment records"},
-                {"order": 3, "from_class": "Payment", "rel": "HAS_DUNNING", "to_class": "Dunning", "explanation": "Find dunning / payment failures"},
-                {"order": 4, "from_class": "Payment", "rel": "PAYMENT_FOR", "to_class": "Invoice", "explanation": "Link payment to overdue invoice"},
-                {"order": 5, "from_class": "Invoice", "rel": "CONTAINS", "to_class": "ChargingRecord", "explanation": "Get invoice line items"},
-                {"order": 6, "from_class": "Complaint", "rel": "DISPUTES", "to_class": "ChargingRecord", "explanation": "Find complaint disputing a charge"},
+                {"order": 1, "from_class": "PaymentFailure", "rel": "FAILED_ON", "to_class": "Invoice", "explanation": "Payment failed on an invoice"},
+                {"order": 2, "from_class": "Invoice", "rel": "BILLED_TO", "to_class": "Account", "explanation": "Invoice billed to account"},
+                {"order": 3, "from_class": "Account", "rel": "OWNED_BY", "to_class": "Customer", "explanation": "Account owned by customer"},
             ],
         },
         "sla_credit": {
-            "description": "SLA Credit — Customer → Account → Adjustment → ServiceProblem",
+            "description": "SLA Credit → COMPENSATES → Incident → CAUSED_CHARGE → Chain B",
             "cypher": (
-                "MATCH (c:Customer {canonical_id: $cid})-[:HAS_ACCOUNT]->(ba:BillingAccount)\n"
-                "MATCH (ba)-[:HAS_ADJUSTMENT]->(adj:Adjustment)\n"
-                "OPTIONAL MATCH (adj)-[:CREDITS_FOR]->(sp:ServiceProblem)\n"
-                "OPTIONAL MATCH (ba)-[:HAS_INVOICE]->(inv:Invoice)-[:CONTAINS]->(cr:ChargingRecord)"
+                "MATCH (sc:SlaCredit)-[:COMPENSATES]->(inc:Incident)\n"
+                "MATCH (inc)-[:CAUSED_CHARGE]->(ch:Charge)\n"
+                "MATCH (ch)-[:ON_INVOICE]->(inv:Invoice)-[:BILLED_TO]->(a:Account)-[:OWNED_BY]->(c:Customer)"
             ),
             "steps": [
-                {"order": 1, "from_class": "Customer", "rel": "HAS_ACCOUNT", "to_class": "BillingAccount", "explanation": "Anchor on the customer's billing account"},
-                {"order": 2, "from_class": "BillingAccount", "rel": "HAS_ADJUSTMENT", "to_class": "Adjustment", "explanation": "Retrieve SLA credit adjustments"},
-                {"order": 3, "from_class": "Adjustment", "rel": "CREDITS_FOR", "to_class": "ServiceProblem", "explanation": "Link credit to the incident it compensates"},
-                {"order": 4, "from_class": "BillingAccount", "rel": "HAS_INVOICE → CONTAINS", "to_class": "Invoice → ChargingRecord", "explanation": "Get charges during outage period"},
+                {"order": 1, "from_class": "SlaCredit", "rel": "COMPENSATES", "to_class": "Incident", "explanation": "SLA credit compensates an incident"},
+                {"order": 2, "from_class": "Incident", "rel": "CAUSED_CHARGE", "to_class": "Charge", "explanation": "Incident caused a billing charge"},
+                {"order": 3, "from_class": "Charge", "rel": "ON_INVOICE", "to_class": "Invoice", "explanation": "Charge on invoice"},
             ],
         },
         "system_error": {
-            "description": "System Error — Customer → Account → LogEvent → ServiceProblem → Billing",
+            "description": "LogEvent → CAUSED_CHARGE → Charge → Chain B + EMITTED_BY Service",
             "cypher": (
-                "MATCH (c:Customer {canonical_id: $cid})-[:HAS_ACCOUNT]->(ba:BillingAccount)\n"
-                "MATCH (ba)-[:HAS_LOG]->(log:LogEvent)\n"
-                "OPTIONAL MATCH (log)-[:EVIDENCES]->(sp:ServiceProblem)\n"
-                "OPTIONAL MATCH (ba)-[:HAS_INVOICE]->(inv:Invoice)-[:CONTAINS]->(cr:ChargingRecord)\n"
-                "OPTIONAL MATCH (ba)-[:HAS_ADJUSTMENT]->(adj:Adjustment)-[:CREDITS_FOR]->(sp)\n"
-                "OPTIONAL MATCH (ba)-[:HAS_COMPLAINT]->(comp:Complaint)"
+                "MATCH (l:LogEvent)-[:CAUSED_CHARGE]->(ch:Charge)\n"
+                "MATCH (ch)-[:ON_INVOICE]->(inv:Invoice)-[:BILLED_TO]->(a:Account)-[:OWNED_BY]->(c:Customer)\n"
+                "OPTIONAL MATCH (l)-[:EMITTED_BY]->(svc:Service)"
             ),
             "steps": [
-                {"order": 1, "from_class": "Customer", "rel": "HAS_ACCOUNT", "to_class": "BillingAccount", "explanation": "Anchor on the customer's billing account"},
-                {"order": 2, "from_class": "BillingAccount", "rel": "HAS_LOG", "to_class": "LogEvent", "explanation": "Retrieve system log events / errors"},
-                {"order": 3, "from_class": "LogEvent", "rel": "EVIDENCES", "to_class": "ServiceProblem", "explanation": "Link log errors to service disruptions"},
-                {"order": 4, "from_class": "BillingAccount", "rel": "HAS_INVOICE → CONTAINS", "to_class": "Invoice → ChargingRecord", "explanation": "Get billing impact"},
-                {"order": 5, "from_class": "BillingAccount", "rel": "HAS_ADJUSTMENT → CREDITS_FOR", "to_class": "Adjustment → ServiceProblem", "explanation": "Find credits issued for the incident"},
+                {"order": 1, "from_class": "LogEvent", "rel": "CAUSED_CHARGE", "to_class": "Charge", "explanation": "System error caused a billing charge"},
+                {"order": 2, "from_class": "LogEvent", "rel": "EMITTED_BY", "to_class": "Service", "explanation": "Log emitted by service"},
+                {"order": 3, "from_class": "Charge", "rel": "ON_INVOICE", "to_class": "Invoice", "explanation": "Charge on invoice"},
             ],
         },
         "complaint": {
-            "description": "Complaint — Customer → Account → Complaint → disputed ChargingRecord",
+            "description": "Dispute → DISPUTES → Charge → Chain B + find root cause",
             "cypher": (
-                "MATCH (c:Customer {canonical_id: $cid})-[:HAS_ACCOUNT]->(ba:BillingAccount)\n"
-                "MATCH (ba)-[:HAS_COMPLAINT]->(comp:Complaint)\n"
-                "OPTIONAL MATCH (comp)-[:DISPUTES]->(cr:ChargingRecord)"
+                "MATCH (d:Dispute)-[:DISPUTES]->(ch:Charge)\n"
+                "MATCH (ch)-[:ON_INVOICE]->(inv:Invoice)-[:BILLED_TO]->(a:Account)-[:OWNED_BY]->(c:Customer)\n"
+                "OPTIONAL MATCH (root:RootCause)-[:CAUSED_CHARGE]->(ch)"
             ),
             "steps": [
-                {"order": 1, "from_class": "Customer", "rel": "HAS_ACCOUNT", "to_class": "BillingAccount", "explanation": "Anchor on the customer's billing account"},
-                {"order": 2, "from_class": "BillingAccount", "rel": "HAS_COMPLAINT", "to_class": "Complaint", "explanation": "Retrieve complaints/disputes"},
-                {"order": 3, "from_class": "Complaint", "rel": "DISPUTES", "to_class": "ChargingRecord", "explanation": "Link complaint to the disputed charge"},
+                {"order": 1, "from_class": "Dispute", "rel": "DISPUTES", "to_class": "Charge", "explanation": "Customer disputes a charge"},
+                {"order": 2, "from_class": "Charge", "rel": "ON_INVOICE", "to_class": "Invoice", "explanation": "Charge on invoice"},
+                {"order": 3, "from_class": "RootCause", "rel": "CAUSED_CHARGE", "to_class": "Charge", "explanation": "Root cause that created the disputed charge"},
             ],
         },
         "financial_impact": {
-            "description": "Financial Impact — Customer → Account → Invoices, Charges, Credits",
+            "description": "Charge → ON_INVOICE → Invoice → BILLED_TO → Account + root causes",
             "cypher": (
-                "MATCH (c:Customer {canonical_id: $cid})-[:HAS_ACCOUNT]->(ba:BillingAccount)\n"
-                "OPTIONAL MATCH (ba)-[:HAS_INVOICE]->(inv:Invoice)-[:CONTAINS]->(cr:ChargingRecord)\n"
-                "OPTIONAL MATCH (ba)-[:HAS_ADJUSTMENT]->(adj:Adjustment)\n"
-                "OPTIONAL MATCH (ba)-[:HAS_COMPLAINT]->(comp:Complaint)\n"
-                "OPTIONAL MATCH (ba)-[:HAS_PAYMENT]->(pay:Payment)"
+                "MATCH (ch:Charge)-[:ON_INVOICE]->(inv:Invoice)-[:BILLED_TO]->(a:Account)-[:OWNED_BY]->(c:Customer)\n"
+                "OPTIONAL MATCH (root:RootCause)-[:CAUSED_CHARGE]->(ch)"
             ),
             "steps": [
-                {"order": 1, "from_class": "Customer", "rel": "HAS_ACCOUNT", "to_class": "BillingAccount", "explanation": "Anchor on the customer's billing account"},
-                {"order": 2, "from_class": "BillingAccount", "rel": "HAS_INVOICE → CONTAINS", "to_class": "Invoice → ChargingRecord", "explanation": "Retrieve all invoices and charges"},
-                {"order": 3, "from_class": "BillingAccount", "rel": "HAS_ADJUSTMENT", "to_class": "Adjustment", "explanation": "Retrieve credit adjustments"},
-                {"order": 4, "from_class": "BillingAccount", "rel": "HAS_COMPLAINT", "to_class": "Complaint", "explanation": "Retrieve related complaints"},
-                {"order": 5, "from_class": "BillingAccount", "rel": "HAS_PAYMENT", "to_class": "Payment", "explanation": "Retrieve payment records"},
+                {"order": 1, "from_class": "Charge", "rel": "ON_INVOICE", "to_class": "Invoice", "explanation": "Charges grouped into invoices"},
+                {"order": 2, "from_class": "Invoice", "rel": "BILLED_TO", "to_class": "Account", "explanation": "Invoice billed to account"},
+                {"order": 3, "from_class": "RootCause", "rel": "CAUSED_CHARGE", "to_class": "Charge", "explanation": "Root causes behind the charges"},
             ],
         },
     }
@@ -871,24 +949,22 @@ Include the specific traversal path through the knowledge graph nodes."""
         """Build traversal metadata showing how the KG was traversed."""
         meta = self._INTENT_CYPHER.get(intent, self._INTENT_CYPHER["full_chain"])
 
-        # Count evidence nodes retrieved at each step
         steps_with_counts = []
         for step in meta["steps"]:
             s = dict(step)
-            cls_lower = step["to_class"].split(" → ")[0].lower()
+            cls_lower = step["to_class"].lower()
             count_map = {
-                "billingaccount": 1,
-                "alarm": len(evidence.get("alarms", [])),
-                "pmcounter": len(evidence.get("pm_counters", [])),
-                "kpiobservation": len(evidence.get("kpi_observations", evidence.get("kpi_breaches", []))),
-                "serviceproblem": len(evidence.get("service_problems", [])),
-                "logevent": len(evidence.get("log_events", evidence.get("system_errors", []))),
-                "invoice": len(evidence.get("billing", [])),
-                "chargingrecord": len(evidence.get("billing", [])),
-                "complaint": len(evidence.get("complaints", [])),
-                "adjustment": len(evidence.get("adjustments", evidence.get("sla_credits", []))),
-                "payment": len(evidence.get("payments", evidence.get("dunning_chain", []))),
-                "dunning": len(evidence.get("payments", evidence.get("dunning_chain", []))),
+                "charge": len(evidence.get("charges", [])),
+                "invoice": 1 if evidence.get("invoice") else 0,
+                "account": 1 if evidence.get("account") else 0,
+                "customer": 1 if evidence.get("customer") else 0,
+                "networkfailure": len(evidence.get("roots", evidence.get("network_failures", []))),
+                "incident": len(evidence.get("roots", evidence.get("incidents", []))),
+                "pmcounter": len(evidence.get("pm_evidence", [])),
+                "apikpibreach": len(evidence.get("api_evidence", [])),
+                "dispute": len(evidence.get("disputes", [])),
+                "slacredit": len(evidence.get("sla_credits", [])),
+                "service": 1 if evidence.get("service") else 0,
             }
             s["nodes_found"] = count_map.get(cls_lower, 0)
             steps_with_counts.append(s)

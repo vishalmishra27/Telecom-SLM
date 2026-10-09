@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Activity, AlertTriangle, ArrowLeft, BarChart3, CheckCircle2, CircleDot, Database, FileSpreadsheet, Focus, Folder, Home, Info, Layers, Network, PanelRightOpen, RotateCcw, Search, Upload, Users, X } from 'lucide-react'
+import { Activity, AlertTriangle, ArrowLeft, BarChart3, CheckCircle2, CircleDot, Compass, Database, FileSpreadsheet, Focus, Folder, Home, Info, Layers, Network, PanelRightOpen, RotateCcw, Search, Shield, Upload, Users, X } from 'lucide-react'
 import { api } from './api'
 import LandingPage from './components/LandingPage'
 import CustomerExplorer from './components/CustomerExplorer'
@@ -7,50 +7,27 @@ import NLQueryPanel from './components/NLQueryPanel'
 import CSVIngestionPanel from './components/CSVIngestionPanel'
 import ForceGraph, { classColors } from './components/ForceGraph'
 import OntologyTab from './components/ontology/OntologyTab'
+import KGExplorerPanel from './components/KGExplorerPanel'
+// RCA Pipeline is now integrated into NLQueryPanel
+import TriageDashboard from './components/TriageDashboard'
 
 const legendItems = [
-  ['Incident', 'Incident'],
-  ['Alarm', 'Alarm'],
-  ['AlarmProbableCause', 'Cause'],
-  ['KPIObservation', 'KPI'],
-  ['Threshold', 'Threshold'],
-  ['Service', 'Service'],
-  ['FiberSpan', 'Fiber'],
-  ['Router', 'Router'],
-  ['CellSite', 'Site'],
-  ['gNodeB', 'gNodeB'],
-  ['Cell', 'Cell'],
-  ['PowerSystem', 'Power'],
-  ['BatteryBackup', 'Battery'],
-  ['Generator', 'Generator'],
-  ['Subscriber', 'Subscriber'],
-  ['Complaint', 'Complaint'],
-  ['Product', 'Product'],
-  ['Runbook', 'Runbook'],
-  ['ChangeRecord', 'Change'],
-  ['System', 'System'],
-  ['CustomerFacingService', 'Customer service'],
-  ['Device', 'Device'],
-  ['IPInterface', 'Interface'],
-  ['ProcessStep', 'Process step'],
-  ['Employee', 'Engineer'],
-  ['Vendor', 'Vendor'],
-  ['DeviceModel', 'Model'],
-  ['DeviceFirmware', 'Firmware'],
-  ['CommonPolicy', 'Policy'],
-  ['RootCauseAnalysis', 'RCA'],
-  ['Resolution', 'Resolution'],
-  ['Tower', 'Tower'],
   ['Customer', 'Customer'],
-  ['BillingAccount', 'Account'],
+  ['Account', 'Account'],
   ['Invoice', 'Invoice'],
-  ['ChargingRecord', 'Charge'],
-  ['Payment', 'Payment'],
-  ['Dunning', 'Dunning'],
-  ['Adjustment', 'Adjustment'],
-  ['LogEvent', 'Log'],
-  ['PMCounter', 'PM Counter'],
-  ['ServiceProblem', 'Problem'],
+  ['Charge', 'Charge'],
+  ['NetworkFailure', 'Network Failure'],
+  ['PaymentFailure', 'Payment Failure'],
+  ['Incident', 'Incident'],
+  ['LogEvent', 'Log Event'],
+  ['ApiKpiBreach', 'KPI Breach'],
+  ['PmCounter', 'PM Counter'],
+  ['Dispute', 'Dispute'],
+  ['SlaCredit', 'SLA Credit'],
+  ['Site', 'Site'],
+  ['Service', 'Service'],
+  ['RootCause', 'Root Cause'],
+  ['Evidence', 'Evidence'],
 ]
 
 const emptyGraph = { nodes: [], relationships: [], source: 'demo' }
@@ -407,9 +384,60 @@ function GraphPanel({ graph, selected, focusedId, query, showLegend, highlightId
   )
 }
 
+function WorkspaceDivider({ containerRef }) {
+  const dividerRef = useRef(null)
+  const [dragging, setDragging] = useState(false)
+
+  useEffect(() => {
+    if (!dragging) return
+    const container = containerRef.current
+    if (!container) return
+
+    const onMove = (e) => {
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX
+      const rect = container.getBoundingClientRect()
+      const offsetX = clientX - rect.left
+      const totalW = rect.width
+      const leftPct = Math.max(20, Math.min(80, (offsetX / totalW) * 100))
+      const rightPct = 100 - leftPct
+      const children = container.children
+      // children[0] = chat, children[1] = divider, children[2] = graph
+      if (children[0]) children[0].style.flex = `${leftPct} 0 0`
+      if (children[2]) children[2].style.flex = `${rightPct} 0 0`
+    }
+    const onUp = () => setDragging(false)
+
+    document.addEventListener('mousemove', onMove)
+    document.addEventListener('mouseup', onUp)
+    document.addEventListener('touchmove', onMove)
+    document.addEventListener('touchend', onUp)
+    document.body.style.cursor = 'col-resize'
+    document.body.style.userSelect = 'none'
+
+    return () => {
+      document.removeEventListener('mousemove', onMove)
+      document.removeEventListener('mouseup', onUp)
+      document.removeEventListener('touchmove', onMove)
+      document.removeEventListener('touchend', onUp)
+      document.body.style.cursor = ''
+      document.body.style.userSelect = ''
+    }
+  }, [dragging, containerRef])
+
+  return (
+    <div
+      ref={dividerRef}
+      className={`workspace-divider ${dragging ? 'dragging' : ''}`}
+      onMouseDown={() => setDragging(true)}
+      onTouchStart={() => setDragging(true)}
+    />
+  )
+}
+
 export default function App() {
   const [health, setHealth] = useState(null)
   const [page, setPage] = useState('landing')
+  const workspaceRef = useRef(null)
 
   // RCA graph state
   const [nlGraph, setNlGraph] = useState(emptyGraph)
@@ -462,13 +490,13 @@ export default function App() {
 
   useEffect(() => {
     api.health().then(setHealth).catch(() => setHealth({ neo4j: 'offline', openai: 'unconfigured', ollama: 'unconfigured', llm_provider: 'kg', data: 'unavailable' }))
-    // Load the ontology graph (entity types + relationship types) for the RCA page default view
-    api.graphBase({ limit: 60 }).then((data) => {
+    // Load causal ontology overview graph for the RCA page default view
+    api.graphOverview({ limit: 60 }).then((data) => {
       const normalized = {
         nodes: (data.nodes || []).map((n) => ({
           id: n.id, name: n.name || n.id,
           ontology_class: n.ontology_class || 'Entity',
-          properties: n.properties || {}, source_system: n.source_system || 'neo4j',
+          properties: n.properties || {}, source_system: 'neo4j',
         })),
         relationships: (data.relationships || []).map((r) => ({
           id: r.id, source: r.source, target: r.target, type: r.type, ontology_property: r.type,
@@ -490,6 +518,8 @@ export default function App() {
           <button type="button" className={page === 'customers' ? 'active' : ''} onClick={() => setPage('customers')}><Users size={15} />Customer 360</button>
           <button type="button" className={page === 'nlquery' ? 'active' : ''} onClick={() => setPage('nlquery')}><Database size={15} />RCA</button>
           <button type="button" className={page === 'evaluation' ? 'active' : ''} onClick={() => setPage('evaluation')}><BarChart3 size={15} />Benchmark</button>
+          <button type="button" className={page === 'kg-explorer' ? 'active' : ''} onClick={() => setPage('kg-explorer')}><Compass size={15} />KG Explorer</button>
+          <button type="button" className={page === 'triage' ? 'active' : ''} onClick={() => setPage('triage')}><Shield size={15} />Triage</button>
           <button type="button" className={page === 'csv-ingestion' ? 'active' : ''} onClick={() => setPage('csv-ingestion')}><Upload size={15} />Ingestion</button>
           <button type="button" className={page === 'ontology' ? 'active' : ''} onClick={() => setPage('ontology')}><Layers size={15} />Ontology</button>
         </nav>
@@ -511,7 +541,7 @@ export default function App() {
       </div>
 
       {/* RCA — always mounted, hidden when not active */}
-      <div className="workspace" style={{ display: page === 'nlquery' ? undefined : 'none' }}>
+      <div className="workspace" ref={workspaceRef} style={{ display: page === 'nlquery' ? undefined : 'none' }}>
         <NLQueryPanel
           ref={nlPanelRef}
           preselectedCustomerId={rcaCustomerId}
@@ -523,12 +553,12 @@ export default function App() {
               setNlHighlightIds(null)
               setNlSelected(null)
               setNlFocusedId('')
-              api.graphBase({ limit: 60 }).then((data) => {
+              api.graphOverview({ limit: 60 }).then((data) => {
                 setNlGraph({
                   nodes: (data.nodes || []).map((n) => ({
                     id: n.id, name: n.name || n.id,
                     ontology_class: n.ontology_class || 'Entity',
-                    properties: n.properties || {}, source_system: n.source_system || 'neo4j',
+                    properties: n.properties || {}, source_system: 'neo4j',
                   })),
                   relationships: (data.relationships || []).map((r) => ({
                     id: r.id, source: r.source, target: r.target, type: r.type, ontology_property: r.type,
@@ -569,6 +599,7 @@ export default function App() {
           }}
           onQuickEvaluate={handleQuickEvaluate}
         />
+        <WorkspaceDivider containerRef={workspaceRef} />
         <GraphPanel
           graph={nlGraph}
           selected={nlSelected}
@@ -598,6 +629,16 @@ export default function App() {
       {/* Ontology */}
       <div style={{ display: page === 'ontology' ? undefined : 'none' }}>
         <OntologyTab />
+      </div>
+
+      {/* KG Explorer */}
+      <div className="kg-explorer-outer" style={{ display: page === 'kg-explorer' ? undefined : 'none' }}>
+        <KGExplorerPanel />
+      </div>
+
+      {/* Triage & Incidents */}
+      <div className="triage-workspace" style={{ display: page === 'triage' ? undefined : 'none' }}>
+        <TriageDashboard />
       </div>
 
       {/* Excel Ingestion */}

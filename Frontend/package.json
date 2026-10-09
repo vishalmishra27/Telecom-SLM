@@ -14,15 +14,17 @@
   "dependencies": {
     "@vitejs/plugin-react": "latest",
     "d3": "latest",
+    "docx": "^9.9.0",
+    "file-saver": "^2.0.5",
     "lucide-react": "latest",
     "react": "latest",
     "react-dom": "latest",
     "react-markdown": "latest",
     "rehype-raw": "^7.0.0",
-    "vite": "latest"
+    "vite": "latest",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "playwright": "^1.62.1",
-    "xlsx": "^0.18.5"
+    "playwright": "^1.62.1"
   }
 }

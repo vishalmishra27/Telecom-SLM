@@ -1,22 +1,51 @@
 """
-RCA Retrieval Service — Pre-built Cypher Queries
+RCA Retrieval Service — Causal Ontology Traversals
 
-Implements Ontology Spec Section 4 (7 query patterns) adapted for the
-account-centric graph shape used by the CSV ingestion pipeline.
+Routing by ID prefix:
+  NF-  → NetworkFailure → CAUSED_CHARGE → Chain B + AT_SITE + PM/API CORROBORATES
+  PF-  → PaymentFailure → FAILED_ON → Invoice, Charge ON_INVOICE → Chain B
+  SD-  → Incident → CAUSED_CHARGE → Chain B + SlaCredit COMPENSATES + API CORROBORATES
+  LOG- → LogEvent → CAUSED_CHARGE → Chain B + EMITTED_BY Service
+  KPI- → ApiKpiBreach → root: CAUSED_CHARGE→B; evidence: CORROBORATES→root→B
+  PM-  → PmCounter → CORROBORATES → NF → B + MEASURED_AT Site
+  DSP- → Dispute → DISPUTES → Charge → Chain B + root + evidence
+  ADJ- → SlaCredit → COMPENSATES → Incident → Chain B
+  CUST-→ Customer ← Account ← Invoice ← Charge, then root per charge
 
-These are deterministic, parameterized queries — no LLM involved in
-graph retrieval. The LLM is only used for narration (Section 9.3).
+Chain B = Charge → ON_INVOICE → Invoice → BILLED_TO → Account → OWNED_BY → Customer
 """
 
 from __future__ import annotations
 
+import re
 from typing import Any
 
 from neo4j import GraphDatabase
 
+# Billing chain suffix used in most traversals
+_CHAIN_B = """
+    (ch)-[:ON_INVOICE]->(inv:Invoice)-[:BILLED_TO]->(acct:Account)-[:OWNED_BY]->(cust:Customer)
+"""
+
+_PREFIX_LABEL = {
+    "NF-": "NetworkFailure",
+    "PF-": "PaymentFailure",
+    "SD-": "Incident",
+    "LOG-": "LogEvent",
+    "KPI-": "ApiKpiBreach",
+    "PM-": "PmCounter",
+    "DSP-": "Dispute",
+    "ADJ-": "SlaCredit",
+    "CUST-": "Customer",
+    "ACC-": "Account",
+    "INV-": "Invoice",
+    "CHG-": "Charge",
+    "SITE-": "Site",
+}
+
 
 class RCARetrievalService:
-    """Executes the 7 pre-built RCA retrieval query patterns against Neo4j."""
+    """Executes causal-chain RCA traversals against the new ontology."""
 
     def __init__(self, neo4j_uri: str, neo4j_user: str, neo4j_password: str, neo4j_database: str = "neo4j"):
         self._uri = neo4j_uri
@@ -38,733 +67,818 @@ class RCARetrievalService:
             self._driver.close()
             self._driver = None
 
+    def _run(self, query: str, **params) -> list[dict]:
+        with self.driver.session(database=self._database) as s:
+            return [dict(r) for r in s.run(query, **params)]
+
+    def _single(self, query: str, **params) -> dict | None:
+        rows = self._run(query, **params)
+        return rows[0] if rows else None
+
+    # ===================================================================
+    # ID-routed single-entity RCA
+    # ===================================================================
+    def rca_by_id(self, entity_id: str) -> dict[str, Any]:
+        """Route to the right traversal based on ID prefix."""
+        eid = entity_id.strip().upper()
+        if eid.startswith("NF-"):
+            return self._rca_nf(eid)
+        if eid.startswith("PF-"):
+            return self._rca_pf(eid)
+        if eid.startswith("SD-"):
+            return self._rca_sd(eid)
+        if eid.startswith("LOG-"):
+            return self._rca_log(eid)
+        if eid.startswith("KPI-"):
+            return self._rca_kpi(eid)
+        if eid.startswith("PM-"):
+            return self._rca_pm(eid)
+        if eid.startswith("DSP-"):
+            return self._rca_dsp(eid)
+        if eid.startswith("ADJ-"):
+            return self._rca_adj(eid)
+        if eid.startswith("CUST-"):
+            return self.rca_full_chain(eid)
+        if eid.startswith("CHG-"):
+            return self._rca_chg(eid)
+        if eid.startswith("SITE-"):
+            return self.site_impact(eid)
+        return {"error": f"Unknown ID prefix: {eid}", "entity_id": eid}
+
     # -------------------------------------------------------------------
-    # Q1: Full RCA Chain from Customer (adapted from Ontology Spec 4.1)
-    #
-    # Traversal: Customer → Alarms → KPI breaches → ServiceProblems
-    #            → Billing impact → Complaints → SLA Credits
+    # NF- : NetworkFailure → charges → billing chain + site + evidence
     # -------------------------------------------------------------------
+    def _rca_nf(self, nf_id: str) -> dict[str, Any]:
+        rows = self._run("""
+            MATCH (nf:NetworkFailure {id: $id})-[:CAUSED_CHARGE]->(ch:Charge)
+            MATCH """ + _CHAIN_B + """
+            OPTIONAL MATCH (nf)-[:AT_SITE]->(site:Site)
+            OPTIONAL MATCH (pm:PmCounter)-[corr:CORROBORATES]->(nf)
+            OPTIONAL MATCH (api:ApiKpiBreach)-[:CORROBORATES]->(nf)
+            OPTIONAL MATCH (d:Dispute)-[:DISPUTES]->(ch)
+            RETURN nf, ch, inv, acct, cust, site,
+                   collect(DISTINCT {pm: pm, breach_ratio: corr.breach_ratio,
+                           plausible: corr.plausible}) AS pm_evidence,
+                   collect(DISTINCT api) AS api_evidence,
+                   collect(DISTINCT d) AS disputes
+        """, id=nf_id)
+        return self._pack_nf(rows, nf_id)
+
+    def _pack_nf(self, rows, nf_id):
+        if not rows:
+            return {"entity_id": nf_id, "found": False}
+        r = rows[0]
+        nf = _props(r["nf"])
+        charges = []
+        disputes = []
+        pm_ev = []
+        api_ev = []
+        seen_ch = set()
+        for row in rows:
+            ch = _props(row["ch"])
+            if ch["id"] not in seen_ch:
+                charges.append(ch)
+                seen_ch.add(ch["id"])
+            for d in (row.get("disputes") or []):
+                if d:
+                    disputes.append(_props(d))
+            for p in (row.get("pm_evidence") or []):
+                pm = p.get("pm")
+                if pm:
+                    pm_ev.append({**_props(pm), "breach_ratio": p.get("breach_ratio"), "plausible": p.get("plausible")})
+            for a in (row.get("api_evidence") or []):
+                if a:
+                    api_ev.append(_props(a))
+
+        confidence = "High" if any(p.get("plausible") for p in pm_ev) else ("Medium" if pm_ev or api_ev else "Unconfirmed")
+        return {
+            "entity_id": nf_id, "found": True, "type": "NetworkFailure",
+            "root": nf,
+            "site": _props(rows[0].get("site")) if rows[0].get("site") else None,
+            "charges": _dedup(charges),
+            "invoice": _props(rows[0].get("inv")),
+            "account": _props(rows[0].get("acct")),
+            "customer": _props(rows[0].get("cust")),
+            "pm_evidence": _dedup(pm_ev),
+            "api_evidence": _dedup(api_ev),
+            "disputes": _dedup(disputes),
+            "confidence": confidence,
+        }
+
+    # -------------------------------------------------------------------
+    # PF- : PaymentFailure → FAILED_ON → Invoice, Charge ON_INVOICE
+    # -------------------------------------------------------------------
+    def _rca_pf(self, pf_id: str) -> dict[str, Any]:
+        rows = self._run("""
+            MATCH (pf:PaymentFailure {id: $id})-[:FAILED_ON]->(inv:Invoice)
+            MATCH (inv)-[:BILLED_TO]->(acct:Account)-[:OWNED_BY]->(cust:Customer)
+            OPTIONAL MATCH (ch:Charge)-[:ON_INVOICE]->(inv)
+            OPTIONAL MATCH (api:ApiKpiBreach)-[:CORROBORATES]->(pf)
+            RETURN pf, inv, acct, cust,
+                   collect(DISTINCT ch) AS charges,
+                   collect(DISTINCT api) AS api_evidence
+        """, id=pf_id)
+        if not rows:
+            return {"entity_id": pf_id, "found": False}
+        r = rows[0]
+        return {
+            "entity_id": pf_id, "found": True, "type": "PaymentFailure",
+            "root": _props(r["pf"]),
+            "invoice": _props(r["inv"]),
+            "account": _props(r["acct"]),
+            "customer": _props(r["cust"]),
+            "charges": [_props(c) for c in (r.get("charges") or []) if c],
+            "api_evidence": [_props(a) for a in (r.get("api_evidence") or []) if a],
+            "confidence": "Medium" if r.get("api_evidence") else "Unconfirmed",
+        }
+
+    # -------------------------------------------------------------------
+    # SD- : Incident → CAUSED_CHARGE → Chain B + SlaCredit + API
+    # -------------------------------------------------------------------
+    def _rca_sd(self, sd_id: str) -> dict[str, Any]:
+        rows = self._run("""
+            MATCH (inc:Incident {id: $id})-[:CAUSED_CHARGE]->(ch:Charge)
+            MATCH """ + _CHAIN_B + """
+            OPTIONAL MATCH (sc:SlaCredit)-[:COMPENSATES]->(inc)
+            OPTIONAL MATCH (api:ApiKpiBreach)-[:CORROBORATES]->(inc)
+            RETURN inc, ch, inv, acct, cust,
+                   collect(DISTINCT sc) AS sla_credits,
+                   collect(DISTINCT api) AS api_evidence
+        """, id=sd_id)
+        if not rows:
+            return {"entity_id": sd_id, "found": False}
+        r = rows[0]
+        return {
+            "entity_id": sd_id, "found": True, "type": "Incident",
+            "root": _props(r["inc"]),
+            "charges": _dedup([_props(row["ch"]) for row in rows]),
+            "invoice": _props(r["inv"]),
+            "account": _props(r["acct"]),
+            "customer": _props(r["cust"]),
+            "sla_credits": [_props(s) for s in (r.get("sla_credits") or []) if s],
+            "api_evidence": [_props(a) for a in (r.get("api_evidence") or []) if a],
+            "confidence": "Medium",
+        }
+
+    # -------------------------------------------------------------------
+    # LOG- : LogEvent → CAUSED_CHARGE → Chain B + EMITTED_BY Service
+    # -------------------------------------------------------------------
+    def _rca_log(self, log_id: str) -> dict[str, Any]:
+        rows = self._run("""
+            MATCH (l:LogEvent {id: $id})-[:CAUSED_CHARGE]->(ch:Charge)
+            MATCH """ + _CHAIN_B + """
+            OPTIONAL MATCH (l)-[:EMITTED_BY]->(svc:Service)
+            RETURN l, ch, inv, acct, cust, svc
+        """, id=log_id)
+        if not rows:
+            return {"entity_id": log_id, "found": False}
+        r = rows[0]
+        return {
+            "entity_id": log_id, "found": True, "type": "LogEvent",
+            "root": _props(r["l"]),
+            "service": _props(r.get("svc")) if r.get("svc") else None,
+            "charges": _dedup([_props(row["ch"]) for row in rows]),
+            "invoice": _props(r["inv"]),
+            "account": _props(r["acct"]),
+            "customer": _props(r["cust"]),
+            "confidence": "Medium",
+        }
+
+    # -------------------------------------------------------------------
+    # KPI- : ApiKpiBreach — root → CAUSED_CHARGE; evidence → CORROBORATES → root → B
+    # -------------------------------------------------------------------
+    def _rca_kpi(self, kpi_id: str) -> dict[str, Any]:
+        # Try as root first
+        rows = self._run("""
+            MATCH (k:ApiKpiBreach {id: $id})-[:CAUSED_CHARGE]->(ch:Charge)
+            MATCH """ + _CHAIN_B + """
+            RETURN k, ch, inv, acct, cust, 'root' AS role
+        """, id=kpi_id)
+        if rows:
+            r = rows[0]
+            return {
+                "entity_id": kpi_id, "found": True, "type": "ApiKpiBreach", "role": "root",
+                "root": _props(r["k"]),
+                "charges": _dedup([_props(row["ch"]) for row in rows]),
+                "invoice": _props(r["inv"]),
+                "account": _props(r["acct"]),
+                "customer": _props(r["cust"]),
+                "confidence": "Medium",
+            }
+        # Try as evidence
+        rows = self._run("""
+            MATCH (k:ApiKpiBreach {id: $id})-[:CORROBORATES]->(root)
+            OPTIONAL MATCH (root)-[:CAUSED_CHARGE]->(ch:Charge)
+            OPTIONAL MATCH """ + _CHAIN_B + """
+            RETURN k, root, labels(root) AS root_labels, ch, inv, acct, cust, 'evidence' AS role
+        """, id=kpi_id)
+        if rows:
+            r = rows[0]
+            return {
+                "entity_id": kpi_id, "found": True, "type": "ApiKpiBreach", "role": "evidence",
+                "evidence_node": _props(r["k"]),
+                "corroborates_root": _props(r["root"]),
+                "root_type": r["root_labels"][0] if r.get("root_labels") else "Unknown",
+                "charges": _dedup([_props(row["ch"]) for row in rows if row.get("ch")]),
+                "invoice": _props(r.get("inv")) if r.get("inv") else None,
+                "account": _props(r.get("acct")) if r.get("acct") else None,
+                "customer": _props(r.get("cust")) if r.get("cust") else None,
+                "confidence": "Medium",
+            }
+        return {"entity_id": kpi_id, "found": False}
+
+    # -------------------------------------------------------------------
+    # PM- : PmCounter → CORROBORATES → NF → Chain B + MEASURED_AT Site
+    # -------------------------------------------------------------------
+    def _rca_pm(self, pm_id: str) -> dict[str, Any]:
+        rows = self._run("""
+            MATCH (pm:PmCounter {id: $id})-[corr:CORROBORATES]->(nf:NetworkFailure)
+            OPTIONAL MATCH (nf)-[:CAUSED_CHARGE]->(ch:Charge)
+            OPTIONAL MATCH """ + _CHAIN_B + """
+            OPTIONAL MATCH (pm)-[:MEASURED_AT]->(site:Site)
+            RETURN pm, nf, corr.breach_ratio AS breach_ratio, corr.plausible AS plausible,
+                   ch, inv, acct, cust, site
+        """, id=pm_id)
+        if not rows:
+            return {"entity_id": pm_id, "found": False}
+        r = rows[0]
+        return {
+            "entity_id": pm_id, "found": True, "type": "PmCounter",
+            "evidence_node": _props(r["pm"]),
+            "corroborates_root": _props(r["nf"]),
+            "breach_ratio": r.get("breach_ratio"),
+            "plausible": r.get("plausible"),
+            "site": _props(r.get("site")) if r.get("site") else None,
+            "charges": _dedup([_props(row["ch"]) for row in rows if row.get("ch")]),
+            "invoice": _props(r.get("inv")) if r.get("inv") else None,
+            "account": _props(r.get("acct")) if r.get("acct") else None,
+            "customer": _props(r.get("cust")) if r.get("cust") else None,
+            "confidence": "High" if r.get("plausible") else "Medium",
+        }
+
+    # -------------------------------------------------------------------
+    # DSP- : Dispute → DISPUTES → Charge → Chain B + find root for charge
+    # -------------------------------------------------------------------
+    def _rca_dsp(self, dsp_id: str) -> dict[str, Any]:
+        rows = self._run("""
+            MATCH (d:Dispute {id: $id})-[:DISPUTES]->(ch:Charge)
+            MATCH """ + _CHAIN_B + """
+            OPTIONAL MATCH (root:RootCause)-[:CAUSED_CHARGE]->(ch)
+            OPTIONAL MATCH (pf:PaymentFailure)-[:FAILED_ON]->(inv)
+            RETURN d, ch, inv, acct, cust,
+                   collect(DISTINCT {root: root, labels: labels(root)}) AS roots,
+                   collect(DISTINCT pf) AS pf_roots
+        """, id=dsp_id)
+        if not rows:
+            return {"entity_id": dsp_id, "found": False}
+        r = rows[0]
+        roots = []
+        for rt in (r.get("roots") or []):
+            if rt.get("root"):
+                roots.append({**_props(rt["root"]), "type": rt["labels"][0] if rt.get("labels") else "Unknown"})
+        for pf in (r.get("pf_roots") or []):
+            if pf:
+                roots.append({**_props(pf), "type": "PaymentFailure"})
+        return {
+            "entity_id": dsp_id, "found": True, "type": "Dispute",
+            "dispute": _props(r["d"]),
+            "charge": _props(r["ch"]),
+            "roots": _dedup(roots),
+            "invoice": _props(r["inv"]),
+            "account": _props(r["acct"]),
+            "customer": _props(r["cust"]),
+            "confidence": "High" if roots else "Unconfirmed",
+        }
+
+    # -------------------------------------------------------------------
+    # ADJ- : SlaCredit → COMPENSATES → Incident → CAUSED_CHARGE → Chain B
+    # -------------------------------------------------------------------
+    def _rca_adj(self, adj_id: str) -> dict[str, Any]:
+        rows = self._run("""
+            MATCH (sc:SlaCredit {id: $id})-[:COMPENSATES]->(inc:Incident)
+            OPTIONAL MATCH (inc)-[:CAUSED_CHARGE]->(ch:Charge)
+            OPTIONAL MATCH """ + _CHAIN_B + """
+            RETURN sc, inc, ch, inv, acct, cust
+        """, id=adj_id)
+        if not rows:
+            return {"entity_id": adj_id, "found": False}
+        r = rows[0]
+        return {
+            "entity_id": adj_id, "found": True, "type": "SlaCredit",
+            "sla_credit": _props(r["sc"]),
+            "incident": _props(r["inc"]),
+            "charges": _dedup([_props(row["ch"]) for row in rows if row.get("ch")]),
+            "invoice": _props(r.get("inv")) if r.get("inv") else None,
+            "account": _props(r.get("acct")) if r.get("acct") else None,
+            "customer": _props(r.get("cust")) if r.get("cust") else None,
+            "confidence": "Medium",
+        }
+
+    # -------------------------------------------------------------------
+    # CHG- : Charge → Chain B + find root
+    # -------------------------------------------------------------------
+    def _rca_chg(self, chg_id: str) -> dict[str, Any]:
+        rows = self._run("""
+            MATCH (ch:Charge {id: $id})
+            MATCH """ + _CHAIN_B + """
+            OPTIONAL MATCH (root:RootCause)-[:CAUSED_CHARGE]->(ch)
+            OPTIONAL MATCH (d:Dispute)-[:DISPUTES]->(ch)
+            RETURN ch, inv, acct, cust,
+                   collect(DISTINCT {root: root, labels: labels(root)}) AS roots,
+                   collect(DISTINCT d) AS disputes
+        """, id=chg_id)
+        if not rows:
+            return {"entity_id": chg_id, "found": False}
+        r = rows[0]
+        roots = []
+        for rt in (r.get("roots") or []):
+            if rt.get("root"):
+                roots.append({**_props(rt["root"]), "type": rt["labels"][0] if rt.get("labels") else "Unknown"})
+        return {
+            "entity_id": chg_id, "found": True, "type": "Charge",
+            "charge": _props(r["ch"]),
+            "roots": roots,
+            "invoice": _props(r["inv"]),
+            "account": _props(r["acct"]),
+            "customer": _props(r["cust"]),
+            "disputes": [_props(d) for d in (r.get("disputes") or []) if d],
+            "confidence": "High" if roots else "Unconfirmed",
+        }
+
+    # ===================================================================
+    # Customer-level full chain (CUST-)
+    # ===================================================================
     def rca_full_chain(self, customer_id: str) -> dict[str, Any]:
-        """Full RCA chain for a customer: alarm → KPI → incident → billing → complaint → credit."""
-        query = """
-        MATCH (c:Customer {canonical_id: $customer_id})-[:HAS_ACCOUNT]->(ba:BillingAccount)
-
-        OPTIONAL MATCH (ba)-[:HAS_ALARM]->(alarm:Alarm)
-        OPTIONAL MATCH (ba)-[:HAS_PM_COUNTER]->(pm:PMCounter)
-        OPTIONAL MATCH (ba)-[:HAS_KPI_OBSERVATION]->(kpi:KPIObservation)
-        OPTIONAL MATCH (ba)-[:HAS_DISRUPTION]->(sp:ServiceProblem)
-        OPTIONAL MATCH (ba)-[:HAS_LOG]->(log:LogEvent)
-        OPTIONAL MATCH (ba)-[:HAS_INVOICE]->(inv:Invoice)-[:CONTAINS]->(cr:ChargingRecord)
-        OPTIONAL MATCH (ba)-[:HAS_COMPLAINT]->(comp:Complaint)
-        OPTIONAL MATCH (comp)-[:DISPUTES]->(disputed_cr:ChargingRecord)
-        OPTIONAL MATCH (ba)-[:HAS_ADJUSTMENT]->(adj:Adjustment)
-        OPTIONAL MATCH (adj)-[:CREDITS_FOR]->(credited_sp:ServiceProblem)
-        OPTIONAL MATCH (ba)-[:HAS_PAYMENT]->(pay:Payment)
-        OPTIONAL MATCH (pay)-[:PAYMENT_FOR]->(paid_inv:Invoice)
-        OPTIONAL MATCH (pay)-[:HAS_DUNNING]->(dun:Dunning)
-
-        RETURN c.canonical_id AS customer_id,
-               ba.canonical_id AS account_id,
-               collect(DISTINCT {
-                 id: alarm.canonical_id, type: alarm.alarm_type,
-                 severity: alarm.severity, site: alarm.affected_site,
-                 service: alarm.affected_service, raised_at: alarm.raised_at,
-                 duration: alarm.duration_minutes, description: alarm.description
-               }) AS alarms,
-               collect(DISTINCT {
-                 id: pm.canonical_id, kpi: pm.counter_name,
-                 value: pm.value, threshold: pm.threshold_value,
-                 site: pm.site_id, severity: pm.severity
-               }) AS pm_counters,
-               collect(DISTINCT {
-                 id: kpi.canonical_id, kpi: kpi.kpi_name,
-                 value: kpi.kpi_value, threshold: kpi.threshold_value,
-                 severity: kpi.severity, unit: kpi.unit
-               }) AS kpi_observations,
-               collect(DISTINCT {
-                 id: sp.canonical_id, service: sp.service_type,
-                 reason: sp.description, severity: sp.severity,
-                 opened: sp.opened_at, resolved: sp.resolved_at,
-                 impact: sp.impact_description
-               }) AS service_problems,
-               collect(DISTINCT {
-                 id: log.canonical_id, source: log.log_source,
-                 service: log.service_name, level: log.level,
-                 message: log.message, trace: log.trace_id
-               }) AS log_events,
-               collect(DISTINCT {
-                 invoice_id: inv.canonical_id, amount: inv.amount,
-                 status: inv.status, period: inv.billing_period,
-                 charge_id: cr.canonical_id, charge_category: cr.charge_category,
-                 charge_amount: cr.amount, charge_desc: cr.description
-               }) AS billing,
-               collect(DISTINCT {
-                 id: comp.canonical_id, reason: comp.complaint_type,
-                 status: comp.status, opened: comp.opened_at,
-                 resolution: comp.resolution_text,
-                 disputed_charge: disputed_cr.canonical_id
-               }) AS complaints,
-               collect(DISTINCT {
-                 id: adj.canonical_id, type: adj.adjustment_type,
-                 amount: adj.amount, reason: adj.reason,
-                 incident: credited_sp.canonical_id
-               }) AS adjustments,
-               collect(DISTINCT {
-                 id: pay.canonical_id, amount: pay.amount,
-                 status: pay.status, invoice: paid_inv.canonical_id,
-                 dunning_id: dun.canonical_id, failure_type: dun.failure_type,
-                 failure_reason: dun.reason
-               }) AS payments
-        """
-        with self.driver.session(database=self._database) as session:
-            record = session.run(query, customer_id=customer_id).single()
-        if not record:
+        rows = self._run("""
+            MATCH (a:Account)-[:OWNED_BY]->(c:Customer {id: $cid})
+            MATCH (ch:Charge)-[:ON_INVOICE]->(inv:Invoice)-[:BILLED_TO]->(a)
+            OPTIONAL MATCH (root:RootCause)-[:CAUSED_CHARGE]->(ch)
+            OPTIONAL MATCH (pf:PaymentFailure)-[:FAILED_ON]->(inv)
+            OPTIONAL MATCH (d:Dispute)-[:DISPUTES]->(ch)
+            OPTIONAL MATCH (sc:SlaCredit)-[:COMPENSATES]->(inc:Incident)-[:CAUSED_CHARGE]->(ch)
+            OPTIONAL MATCH (pm:PmCounter)-[corr:CORROBORATES]->(nf:NetworkFailure)-[:CAUSED_CHARGE]->(ch)
+            OPTIONAL MATCH (api:ApiKpiBreach)-[:CORROBORATES]->(root)
+            RETURN c, a, ch, inv, root, labels(root) AS root_labels,
+                   pf, d, sc, inc,
+                   pm, corr.breach_ratio AS breach_ratio, corr.plausible AS plausible,
+                   api, nf
+        """, cid=customer_id)
+        if not rows:
             return {"customer_id": customer_id, "found": False}
 
-        # Clean up null entries from OPTIONAL MATCHes
-        def clean_list(items: list) -> list:
-            return [item for item in items if item.get("id")]
+        charges = []
+        roots = []
+        disputes = []
+        sla_credits = []
+        pm_evidence = []
+        api_evidence = []
+        pf_list = []
+        seen = {"ch": set(), "root": set(), "d": set(), "sc": set(), "pm": set(), "api": set(), "pf": set()}
+        # Build traversal paths: entity_id → path string with real IDs
+        traversals: dict[str, str] = {}
 
+        for r in rows:
+            cust = _props(r["c"]) if r.get("c") else {}
+            acct = _props(r["a"]) if r.get("a") else {}
+            inv = _props(r["inv"]) if r.get("inv") else {}
+            ch = _props(r["ch"])
+            cid = cust.get("id", customer_id)
+            aid = acct.get("id", "?")
+            iid = inv.get("id", "?")
+            chid = ch.get("id", "?")
+            base_path = f"{cid} → {aid} → {iid} → {chid}"
+
+            if chid not in seen["ch"]:
+                charges.append(ch)
+                seen["ch"].add(chid)
+                traversals[chid] = f"{cid} → {aid} → {iid} → {chid}"
+
+            if r.get("root"):
+                rt = _props(r["root"])
+                rt["type"] = r["root_labels"][0] if r.get("root_labels") else "Unknown"
+                if rt["id"] not in seen["root"]:
+                    roots.append(rt)
+                    seen["root"].add(rt["id"])
+                    traversals[rt["id"]] = f"{base_path} ← {rt['id']}"
+
+            if r.get("d"):
+                d = _props(r["d"])
+                if d["id"] not in seen["d"]:
+                    disputes.append(d)
+                    seen["d"].add(d["id"])
+                    traversals[d["id"]] = f"{base_path} ← {d['id']}"
+
+            if r.get("sc"):
+                sc = _props(r["sc"])
+                inc_node = _props(r["inc"]) if r.get("inc") else {}
+                if sc["id"] not in seen["sc"]:
+                    sla_credits.append(sc)
+                    seen["sc"].add(sc["id"])
+                    inc_id = inc_node.get("id", "?")
+                    traversals[sc["id"]] = f"{base_path} ← {inc_id} ← {sc['id']}"
+
+            if r.get("pm"):
+                pm = {**_props(r["pm"]), "breach_ratio": r.get("breach_ratio"), "plausible": r.get("plausible")}
+                nf_node = _props(r["nf"]) if r.get("nf") else {}
+                if pm["id"] not in seen["pm"]:
+                    pm_evidence.append(pm)
+                    seen["pm"].add(pm["id"])
+                    nf_id = nf_node.get("id", "?")
+                    traversals[pm["id"]] = f"{base_path} ← {nf_id} ← {pm['id']}"
+
+            if r.get("api"):
+                api = _props(r["api"])
+                root_node = _props(r["root"]) if r.get("root") else {}
+                if api["id"] not in seen["api"]:
+                    api_evidence.append(api)
+                    seen["api"].add(api["id"])
+                    root_id = root_node.get("id", "?")
+                    traversals[api["id"]] = f"{base_path} ← {root_id} ← {api['id']}"
+
+            if r.get("pf"):
+                pf = _props(r["pf"])
+                if pf["id"] not in seen["pf"]:
+                    pf_list.append(pf)
+                    seen["pf"].add(pf["id"])
+                    traversals[pf["id"]] = f"{cid} → {aid} → {iid} ← {pf['id']}"
+
+        has_plausible = any(p.get("plausible") for p in pm_evidence)
+        confidence = "High" if has_plausible else ("Medium" if pm_evidence or api_evidence else "Unconfirmed")
         return {
-            "customer_id": record["customer_id"],
-            "account_id": record["account_id"],
-            "found": True,
-            "alarms": clean_list(record["alarms"]),
-            "pm_counters": clean_list(record["pm_counters"]),
-            "kpi_observations": clean_list(record["kpi_observations"]),
-            "service_problems": clean_list(record["service_problems"]),
-            "log_events": clean_list(record["log_events"]),
-            "billing": [b for b in record["billing"] if b.get("invoice_id")],
-            "complaints": clean_list(record["complaints"]),
-            "adjustments": clean_list(record["adjustments"]),
-            "payments": clean_list(record["payments"]),
+            "customer_id": customer_id, "found": True,
+            "charges": charges,
+            "roots": roots,
+            "payment_failures": pf_list,
+            "disputes": disputes,
+            "sla_credits": sla_credits,
+            "pm_evidence": pm_evidence,
+            "api_evidence": api_evidence,
+            "traversals": traversals,
+            "confidence": confidence,
         }
 
-    # -------------------------------------------------------------------
-    # Q2: KPI Breach → Incident Path (Ontology Spec 4.4)
-    # -------------------------------------------------------------------
-    def kpi_breach_to_incident(self, customer_id: str) -> list[dict[str, Any]]:
-        """Trace KPI threshold breaches to correlated incidents for a customer."""
-        query = """
-        MATCH (c:Customer {canonical_id: $customer_id})-[:HAS_ACCOUNT]->(ba:BillingAccount)
-        MATCH (ba)-[:HAS_KPI_OBSERVATION]->(kpi:KPIObservation)
-        WHERE toFloat(kpi.kpi_value) > toFloat(kpi.threshold_value)
-        OPTIONAL MATCH (kpi)-[:CORRELATED_WITH]->(alarm:Alarm)
-        RETURN kpi.canonical_id AS kpi_id,
-               kpi.kpi_name AS kpi_name,
-               kpi.kpi_value AS kpi_value,
-               kpi.threshold_value AS threshold,
-               kpi.severity AS severity,
-               kpi.unit AS unit,
-               alarm.canonical_id AS alarm_id,
-               alarm.alarm_type AS alarm_type,
-               alarm.affected_site AS site
-        ORDER BY kpi.severity DESC
-        """
-        with self.driver.session(database=self._database) as session:
-            return [dict(r) for r in session.run(query, customer_id=customer_id)]
-
-    # -------------------------------------------------------------------
-    # Q3: Customer Impact Scope (Ontology Spec 4.5)
-    # -------------------------------------------------------------------
-    def customer_impact(self, customer_id: str) -> dict[str, Any]:
-        """Financial and service impact summary for a customer."""
-        query = """
-        MATCH (c:Customer {canonical_id: $customer_id})-[:HAS_ACCOUNT]->(ba:BillingAccount)
-
-        OPTIONAL MATCH (ba)-[:HAS_INVOICE]->(inv:Invoice)-[:CONTAINS]->(cr:ChargingRecord)
-        WITH c, ba, sum(toFloat(coalesce(cr.amount, '0'))) AS total_charges
-
-        OPTIONAL MATCH (ba)-[:HAS_ADJUSTMENT]->(adj:Adjustment)
-        WITH c, ba, total_charges, sum(toFloat(coalesce(adj.amount, '0'))) AS total_credits
-
-        OPTIONAL MATCH (ba)-[:HAS_COMPLAINT]->(comp:Complaint)
-        WITH c, ba, total_charges, total_credits,
-             count(comp) AS total_complaints,
-             count(CASE WHEN comp.status = 'OPEN' THEN 1 END) AS open_complaints
-
-        OPTIONAL MATCH (ba)-[:HAS_ALARM]->(alarm:Alarm)
-        WITH c, ba, total_charges, total_credits, total_complaints, open_complaints,
-             count(alarm) AS total_alarms
-
-        OPTIONAL MATCH (ba)-[:HAS_DISRUPTION]->(sp:ServiceProblem)
-        WITH c, ba, total_charges, total_credits, total_complaints, open_complaints,
-             total_alarms, count(sp) AS total_disruptions
-
-        OPTIONAL MATCH (ba)-[:HAS_PAYMENT]->(pay:Payment)
-        OPTIONAL MATCH (pay)-[:HAS_DUNNING]->(dun:Dunning)
-        RETURN c.canonical_id AS customer_id,
-               total_charges,
-               total_credits,
-               total_charges - total_credits AS net_charges,
-               total_complaints,
-               open_complaints,
-               total_alarms,
-               total_disruptions,
-               count(DISTINCT pay) AS total_payments,
-               count(DISTINCT dun) AS failed_payments
-        """
-        with self.driver.session(database=self._database) as session:
-            record = session.run(query, customer_id=customer_id).single()
-        return dict(record) if record else {"customer_id": customer_id, "found": False}
-
-    # -------------------------------------------------------------------
-    # Q4: Site Impact Analysis (adapted from Ontology Spec 4.2 blast radius)
-    # -------------------------------------------------------------------
+    # ===================================================================
+    # Site impact
+    # ===================================================================
     def site_impact(self, site_id: str) -> dict[str, Any]:
-        """All KPI breaches, alarms, and affected customers at a specific site."""
-        query = """
-        OPTIONAL MATCH (alarm:Alarm {affected_site: $site_id})
-        WITH collect(DISTINCT {
-          id: alarm.canonical_id, type: alarm.alarm_type,
-          severity: alarm.severity, service: alarm.affected_service,
-          raised_at: alarm.raised_at, duration: alarm.duration_minutes
-        }) AS alarms
-
-        OPTIONAL MATCH (pm:PMCounter {site_id: $site_id})
-        WITH alarms, collect(DISTINCT {
-          id: pm.canonical_id, kpi: pm.counter_name,
-          value: pm.value, threshold: pm.threshold_value,
-          severity: pm.severity
-        }) AS pm_counters
-
-        OPTIONAL MATCH (ba:BillingAccount)-[:HAS_ALARM]->(a:Alarm {affected_site: $site_id})
-        MATCH (c:Customer)-[:HAS_ACCOUNT]->(ba)
-        WITH alarms, pm_counters,
-             collect(DISTINCT c.canonical_id) AS affected_customers
-
-        RETURN $site_id AS site_id,
-               alarms, pm_counters, affected_customers,
-               size(alarms) AS alarm_count,
-               size(pm_counters) AS kpi_count,
-               size(affected_customers) AS customer_count
-        """
-        with self.driver.session(database=self._database) as session:
-            record = session.run(query, site_id=site_id).single()
-
-        if not record:
+        rows = self._run("""
+            MATCH (nf:NetworkFailure)-[:AT_SITE]->(s:Site {id: $sid})
+            OPTIONAL MATCH (nf)-[:CAUSED_CHARGE]->(ch:Charge)
+            OPTIONAL MATCH (ch)-[:ON_INVOICE]->(inv:Invoice)
+            OPTIONAL MATCH (pm:PmCounter)-[corr:CORROBORATES]->(nf)
+            RETURN nf, ch, inv,
+                   collect(DISTINCT {pm_id: pm.id, breach_ratio: corr.breach_ratio,
+                           plausible: corr.plausible}) AS pm_evidence
+        """, sid=site_id)
+        if not rows:
             return {"site_id": site_id, "found": False}
 
-        def clean_list(items):
-            return [i for i in items if i.get("id")]
+        failures = []
+        total_exposure = 0.0
+        past_due = 0
+        pm_backed = 0
+        seen_nf = set()
+        for r in rows:
+            nf = _props(r["nf"])
+            if nf["id"] not in seen_nf:
+                failures.append(nf)
+                seen_nf.add(nf["id"])
+            if r.get("ch"):
+                total_exposure += r["ch"].get("amount", 0) or 0
+            if r.get("inv") and (r["inv"].get("status") or "").upper() == "PAST_DUE":
+                past_due += 1
+            for pm in (r.get("pm_evidence") or []):
+                if pm.get("plausible"):
+                    pm_backed += 1
 
         return {
-            "site_id": site_id,
-            "found": True,
-            "alarms": clean_list(record["alarms"]),
-            "pm_counters": clean_list(record["pm_counters"]),
-            "affected_customers": record["affected_customers"],
-            "alarm_count": record["alarm_count"],
-            "kpi_count": record["kpi_count"],
-            "customer_count": record["customer_count"],
+            "site_id": site_id, "found": True,
+            "failure_count": len(failures),
+            "failures": failures,
+            "total_exposure": round(total_exposure, 2),
+            "past_due_invoices": past_due,
+            "pm_backed_count": pm_backed,
         }
 
-    # -------------------------------------------------------------------
-    # Q5: Dunning Chain (Payment failure → Invoice → Complaint)
-    # -------------------------------------------------------------------
-    def dunning_chain(self, customer_id: str) -> list[dict[str, Any]]:
-        """Trace payment failure → overdue invoice → complaint chain."""
-        query = """
-        MATCH (c:Customer {canonical_id: $customer_id})-[:HAS_ACCOUNT]->(ba:BillingAccount)
-        MATCH (ba)-[:HAS_PAYMENT]->(pay:Payment)
-        OPTIONAL MATCH (pay)-[:HAS_DUNNING]->(dun:Dunning)
-        OPTIONAL MATCH (pay)-[:PAYMENT_FOR]->(inv:Invoice)
-        RETURN pay.canonical_id AS payment_id,
-               pay.amount AS payment_amount,
-               pay.status AS payment_status,
-               dun.canonical_id AS dunning_id,
-               dun.failure_type AS failure_type,
-               dun.reason AS failure_reason,
-               inv.canonical_id AS invoice_id,
-               inv.amount AS invoice_amount,
-               inv.status AS invoice_status
-        """
-        with self.driver.session(database=self._database) as session:
-            return [dict(r) for r in session.run(query, customer_id=customer_id)]
+    # ===================================================================
+    # SLA leakage — incidents with CAUSED_CHARGE but no COMPENSATES
+    # ===================================================================
+    def sla_leakage(self) -> list[dict[str, Any]]:
+        rows = self._run("""
+            MATCH (inc:Incident)-[:CAUSED_CHARGE]->(ch:Charge)
+            WHERE NOT ()-[:COMPENSATES]->(inc)
+            MATCH (ch)-[:ON_INVOICE]->(inv:Invoice)-[:BILLED_TO]->(a:Account)-[:OWNED_BY]->(c:Customer)
+            RETURN inc.id AS incident_id, inc.disruption_reason AS reason,
+                   inc.severity AS severity, ch.id AS charge_id,
+                   ch.amount AS charge_amount, inv.status AS invoice_status,
+                   c.id AS customer_id
+        """)
+        return rows
 
-    # -------------------------------------------------------------------
-    # Q6: SLA Credit Verification
-    # -------------------------------------------------------------------
-    def sla_credit_chain(self, customer_id: str) -> list[dict[str, Any]]:
-        """Trace SLA credit → incident → billing charges during outage."""
-        query = """
-        MATCH (c:Customer {canonical_id: $customer_id})-[:HAS_ACCOUNT]->(ba:BillingAccount)
-        MATCH (ba)-[:HAS_ADJUSTMENT]->(adj:Adjustment)
-        OPTIONAL MATCH (adj)-[:CREDITS_FOR]->(sp:ServiceProblem)
-        RETURN adj.canonical_id AS adjustment_id,
-               adj.adjustment_type AS type,
-               adj.amount AS credit_amount,
-               adj.reason AS reason,
-               sp.canonical_id AS incident_id,
-               sp.service_type AS service_type,
-               sp.description AS incident_reason,
-               sp.severity AS severity,
-               sp.opened_at AS incident_start,
-               sp.resolved_at AS incident_end
-        """
-        with self.driver.session(database=self._database) as session:
-            return [dict(r) for r in session.run(query, customer_id=customer_id)]
+    # ===================================================================
+    # Service name lookup — LogEvent EMITTED_BY Service → charges → disputes
+    # ===================================================================
+    def service_impact(self, service_name: str) -> dict[str, Any]:
+        rows = self._run("""
+            MATCH (l:LogEvent)-[:EMITTED_BY]->(s:Service {id: $sn})
+            OPTIONAL MATCH (l)-[:CAUSED_CHARGE]->(ch:Charge)
+            OPTIONAL MATCH (d:Dispute)-[:DISPUTES]->(ch)
+            RETURN s, count(DISTINCT l) AS log_count,
+                   count(DISTINCT ch) AS charge_count,
+                   count(DISTINCT d) AS dispute_count
+        """, sn=service_name)
+        if not rows:
+            return {"service_name": service_name, "found": False}
+        r = rows[0]
+        return {
+            "service_name": service_name, "found": True,
+            "log_count": r["log_count"],
+            "charge_count": r["charge_count"],
+            "dispute_count": r["dispute_count"],
+        }
 
-    # -------------------------------------------------------------------
-    # Q7: System Error Chain (Log → Incident → Billing)
-    # -------------------------------------------------------------------
-    def system_error_chain(self, customer_id: str) -> list[dict[str, Any]]:
-        """Trace system log errors → service disruptions → billing impact."""
-        query = """
-        MATCH (c:Customer {canonical_id: $customer_id})-[:HAS_ACCOUNT]->(ba:BillingAccount)
-        MATCH (ba)-[:HAS_LOG]->(log:LogEvent)
-        OPTIONAL MATCH (log)-[:EVIDENCES]->(sp:ServiceProblem)
-        OPTIONAL MATCH (ba)-[:HAS_ADJUSTMENT]->(adj:Adjustment)-[:CREDITS_FOR]->(sp)
-        RETURN log.canonical_id AS log_id,
-               log.service_name AS service,
-               log.level AS level,
-               log.message AS message,
-               log.trace_id AS trace_id,
-               sp.canonical_id AS incident_id,
-               sp.description AS incident_reason,
-               sp.severity AS incident_severity,
-               adj.canonical_id AS credit_id,
-               adj.amount AS credit_amount
-        """
-        with self.driver.session(database=self._database) as session:
-            return [dict(r) for r in session.run(query, customer_id=customer_id)]
-
-    # -------------------------------------------------------------------
-    # Aggregate Queries
-    # -------------------------------------------------------------------
+    # ===================================================================
+    # Unresolved issues (open disputes + past-due invoices)
+    # ===================================================================
     def unresolved_issues(self) -> dict[str, Any]:
-        """Cross-domain view: open complaints + past-due invoices + failed payments."""
-        query = """
-        OPTIONAL MATCH (comp:Complaint)
-        WHERE comp.status IN ['OPEN', 'IN_REVIEW']
-        WITH collect(DISTINCT {
-          id: comp.canonical_id, reason: comp.complaint_type,
-          status: comp.status, opened: comp.opened_at
-        }) AS open_complaints
-
-        OPTIONAL MATCH (inv:Invoice)
-        WHERE inv.status = 'PAST_DUE'
-        WITH open_complaints, collect(DISTINCT {
-          id: inv.canonical_id, amount: inv.amount,
-          period: inv.billing_period, due_date: inv.due_date
-        }) AS past_due_invoices
-
-        OPTIONAL MATCH (dun:Dunning)
-        WITH open_complaints, past_due_invoices, collect(DISTINCT {
-          id: dun.canonical_id, type: dun.failure_type, reason: dun.reason
-        }) AS failed_payments
-
-        RETURN open_complaints, past_due_invoices, failed_payments,
-               size(open_complaints) AS open_complaint_count,
-               size(past_due_invoices) AS past_due_count,
-               size(failed_payments) AS failed_payment_count
-        """
-        with self.driver.session(database=self._database) as session:
-            record = session.run(query).single()
-
-        def clean(items):
-            return [i for i in items if i.get("id")]
-
+        disputes = self._run("""
+            MATCH (d:Dispute)-[:DISPUTES]->(ch:Charge)
+            WHERE d.status IN ['OPEN', 'IN_REVIEW', 'ESCALATED']
+            MATCH (ch)-[:ON_INVOICE]->(inv:Invoice)-[:BILLED_TO]->(a:Account)-[:OWNED_BY]->(c:Customer)
+            RETURN d.id AS dispute_id, d.reason AS reason, d.status AS status,
+                   ch.id AS charge_id, ch.amount AS charge_amount,
+                   inv.id AS invoice_id, inv.status AS invoice_status,
+                   c.id AS customer_id
+            ORDER BY ch.amount DESC LIMIT 50
+        """)
+        past_due = self._run("""
+            MATCH (inv:Invoice {status: 'PAST_DUE'})-[:BILLED_TO]->(a:Account)-[:OWNED_BY]->(c:Customer)
+            RETURN inv.id AS invoice_id, inv.amount AS amount,
+                   inv.due_date AS due_date, c.id AS customer_id
+            ORDER BY inv.amount DESC LIMIT 50
+        """)
         return {
-            "open_complaints": clean(record["open_complaints"]),
-            "past_due_invoices": [i for i in record["past_due_invoices"] if i.get("id")],
-            "failed_payments": clean(record["failed_payments"]),
-            "open_complaint_count": record["open_complaint_count"],
-            "past_due_count": record["past_due_count"],
-            "failed_payment_count": record["failed_payment_count"],
+            "open_disputes": disputes,
+            "past_due_invoices": past_due,
+            "total_open_disputes": len(disputes),
+            "total_past_due": len(past_due),
         }
 
-    # -------------------------------------------------------------------
-    # Cross-customer aggregate queries (no customer_id required)
-    # -------------------------------------------------------------------
-    def all_alarms(self, limit: int = 50) -> list[dict[str, Any]]:
-        """All alarms across all customers (network issues)."""
-        query = """
-        MATCH (ba:BillingAccount)-[:HAS_ALARM]->(alarm:Alarm)
-        OPTIONAL MATCH (c:Customer)-[:HAS_ACCOUNT]->(ba)
-        RETURN alarm.canonical_id AS alarm_id,
-               alarm.alarm_type AS type,
-               alarm.severity AS severity,
-               alarm.affected_site AS site,
-               alarm.affected_service AS service,
-               alarm.raised_at AS raised_at,
-               alarm.duration_minutes AS duration,
-               alarm.description AS description,
-               c.canonical_id AS customer_id
-        ORDER BY alarm.severity DESC, alarm.raised_at DESC
-        LIMIT $limit
-        """
-        with self.driver.session(database=self._database) as session:
-            return [dict(r) for r in session.run(query, limit=limit)]
+    # ===================================================================
+    # Cross-customer aggregate queries (for "all customers" mode)
+    # ===================================================================
+    def all_network_failures(self, limit: int = 50) -> list[dict]:
+        return self._run("""
+            MATCH (nf:NetworkFailure)-[:CAUSED_CHARGE]->(ch:Charge)
+            MATCH (ch)-[:ON_INVOICE]->(inv:Invoice)-[:BILLED_TO]->(a:Account)-[:OWNED_BY]->(c:Customer)
+            OPTIONAL MATCH (nf)-[:AT_SITE]->(s:Site)
+            RETURN nf.id AS failure_id, nf.failure_type AS failure_type,
+                   nf.severity AS severity, nf.affected_service AS service,
+                   s.id AS site_id, ch.amount AS charge_amount,
+                   inv.status AS invoice_status, c.id AS customer_id
+            ORDER BY ch.amount DESC LIMIT $limit
+        """, limit=limit)
 
-    def all_kpi_breaches(self, limit: int = 50) -> list[dict[str, Any]]:
-        """All KPI threshold breaches across all customers."""
-        query = """
-        MATCH (ba:BillingAccount)-[:HAS_KPI_OBSERVATION]->(kpi:KPIObservation)
-        WHERE toFloat(kpi.kpi_value) > toFloat(kpi.threshold_value)
-        OPTIONAL MATCH (c:Customer)-[:HAS_ACCOUNT]->(ba)
-        RETURN kpi.canonical_id AS kpi_id,
-               kpi.kpi_name AS kpi_name,
-               kpi.kpi_value AS value,
-               kpi.threshold_value AS threshold,
-               kpi.severity AS severity,
-               kpi.unit AS unit,
-               c.canonical_id AS customer_id
-        ORDER BY kpi.severity DESC
-        LIMIT $limit
-        """
-        with self.driver.session(database=self._database) as session:
-            return [dict(r) for r in session.run(query, limit=limit)]
+    def all_payment_failures(self, limit: int = 50) -> list[dict]:
+        return self._run("""
+            MATCH (pf:PaymentFailure)-[:FAILED_ON]->(inv:Invoice)
+            MATCH (inv)-[:BILLED_TO]->(a:Account)-[:OWNED_BY]->(c:Customer)
+            RETURN pf.id AS pf_id, pf.failure_type AS failure_type,
+                   pf.failure_reason AS reason, pf.payment_amount AS amount,
+                   inv.id AS invoice_id, inv.status AS invoice_status,
+                   c.id AS customer_id
+            ORDER BY pf.payment_amount DESC LIMIT $limit
+        """, limit=limit)
 
-    def all_complaints(self, limit: int = 50) -> list[dict[str, Any]]:
-        """All complaints across all customers."""
-        query = """
-        MATCH (ba:BillingAccount)-[:HAS_COMPLAINT]->(comp:Complaint)
-        OPTIONAL MATCH (c:Customer)-[:HAS_ACCOUNT]->(ba)
-        RETURN comp.canonical_id AS complaint_id,
-               comp.complaint_type AS type,
-               comp.status AS status,
-               comp.opened_at AS opened,
-               comp.resolution_text AS resolution,
-               c.canonical_id AS customer_id
-        ORDER BY comp.opened_at DESC
-        LIMIT $limit
-        """
-        with self.driver.session(database=self._database) as session:
-            return [dict(r) for r in session.run(query, limit=limit)]
+    def all_incidents(self, limit: int = 50) -> list[dict]:
+        return self._run("""
+            MATCH (inc:Incident)-[:CAUSED_CHARGE]->(ch:Charge)
+            MATCH (ch)-[:ON_INVOICE]->(inv:Invoice)-[:BILLED_TO]->(a:Account)-[:OWNED_BY]->(c:Customer)
+            OPTIONAL MATCH (sc:SlaCredit)-[:COMPENSATES]->(inc)
+            RETURN inc.id AS incident_id, inc.disruption_reason AS reason,
+                   inc.severity AS severity, ch.amount AS charge_amount,
+                   inv.status AS invoice_status, c.id AS customer_id,
+                   sc.id AS sla_credit_id
+            ORDER BY ch.amount DESC LIMIT $limit
+        """, limit=limit)
 
-    def all_billing(self, limit: int = 50) -> list[dict[str, Any]]:
-        """All invoices/charges across all customers."""
-        query = """
-        MATCH (ba:BillingAccount)-[:HAS_INVOICE]->(inv:Invoice)
-        OPTIONAL MATCH (inv)-[:CONTAINS]->(cr:ChargingRecord)
-        OPTIONAL MATCH (c:Customer)-[:HAS_ACCOUNT]->(ba)
-        RETURN inv.canonical_id AS invoice_id,
-               inv.amount AS amount,
-               inv.status AS status,
-               inv.billing_period AS period,
-               cr.canonical_id AS charge_id,
-               cr.charge_category AS charge_category,
-               cr.amount AS charge_amount,
-               c.canonical_id AS customer_id
-        ORDER BY inv.status, inv.amount DESC
-        LIMIT $limit
-        """
-        with self.driver.session(database=self._database) as session:
-            return [dict(r) for r in session.run(query, limit=limit)]
+    def all_disputes(self, limit: int = 50) -> list[dict]:
+        return self._run("""
+            MATCH (d:Dispute)-[:DISPUTES]->(ch:Charge)
+            MATCH (ch)-[:ON_INVOICE]->(inv:Invoice)-[:BILLED_TO]->(a:Account)-[:OWNED_BY]->(c:Customer)
+            RETURN d.id AS dispute_id, d.reason AS reason, d.status AS status,
+                   ch.id AS charge_id, ch.amount AS amount, c.id AS customer_id
+            ORDER BY ch.amount DESC LIMIT $limit
+        """, limit=limit)
 
-    def all_dunning(self, limit: int = 50) -> list[dict[str, Any]]:
-        """All payment failures / dunning events across all customers."""
-        query = """
-        MATCH (ba:BillingAccount)-[:HAS_PAYMENT]->(pay:Payment)
-        OPTIONAL MATCH (pay)-[:HAS_DUNNING]->(dun:Dunning)
-        OPTIONAL MATCH (c:Customer)-[:HAS_ACCOUNT]->(ba)
-        RETURN pay.canonical_id AS payment_id,
-               pay.amount AS amount,
-               pay.status AS status,
-               dun.canonical_id AS dunning_id,
-               dun.failure_type AS failure_type,
-               dun.reason AS failure_reason,
-               c.canonical_id AS customer_id
-        ORDER BY pay.status, pay.amount DESC
-        LIMIT $limit
-        """
-        with self.driver.session(database=self._database) as session:
-            return [dict(r) for r in session.run(query, limit=limit)]
+    def all_log_errors(self, limit: int = 50) -> list[dict]:
+        return self._run("""
+            MATCH (l:LogEvent)-[:CAUSED_CHARGE]->(ch:Charge)
+            MATCH (ch)-[:ON_INVOICE]->(inv:Invoice)-[:BILLED_TO]->(a:Account)-[:OWNED_BY]->(c:Customer)
+            OPTIONAL MATCH (l)-[:EMITTED_BY]->(svc:Service)
+            RETURN l.id AS log_id, l.log_level AS level, l.message AS message,
+                   svc.id AS service, ch.amount AS charge_amount, c.id AS customer_id
+            ORDER BY ch.amount DESC LIMIT $limit
+        """, limit=limit)
 
-    def all_service_disruptions(self, limit: int = 50) -> list[dict[str, Any]]:
-        """All service disruptions / SLA events across all customers."""
-        query = """
-        MATCH (ba:BillingAccount)-[:HAS_DISRUPTION]->(sp:ServiceProblem)
-        OPTIONAL MATCH (ba)-[:HAS_ADJUSTMENT]->(adj:Adjustment)-[:CREDITS_FOR]->(sp)
-        OPTIONAL MATCH (c:Customer)-[:HAS_ACCOUNT]->(ba)
-        RETURN sp.canonical_id AS disruption_id,
-               sp.service_type AS service,
-               sp.severity AS severity,
-               sp.description AS reason,
-               sp.opened_at AS opened,
-               sp.resolved_at AS resolved,
-               adj.canonical_id AS credit_id,
-               adj.amount AS credit_amount,
-               c.canonical_id AS customer_id
-        ORDER BY sp.severity DESC
-        LIMIT $limit
-        """
-        with self.driver.session(database=self._database) as session:
-            return [dict(r) for r in session.run(query, limit=limit)]
-
-    def all_system_errors(self, limit: int = 50) -> list[dict[str, Any]]:
-        """All system error / log events across all customers."""
-        query = """
-        MATCH (ba:BillingAccount)-[:HAS_LOG]->(log:LogEvent)
-        OPTIONAL MATCH (c:Customer)-[:HAS_ACCOUNT]->(ba)
-        RETURN log.canonical_id AS log_id,
-               log.log_source AS source,
-               log.service_name AS service,
-               log.level AS level,
-               log.message AS message,
-               log.trace_id AS trace_id,
-               c.canonical_id AS customer_id
-        ORDER BY log.level DESC
-        LIMIT $limit
-        """
-        with self.driver.session(database=self._database) as session:
-            return [dict(r) for r in session.run(query, limit=limit)]
-
-    def all_customers_summary(self, limit: int = 50) -> list[dict[str, Any]]:
-        """Summary of all customers with event counts."""
-        query = """
-        MATCH (c:Customer)-[:HAS_ACCOUNT]->(ba:BillingAccount)
-        OPTIONAL MATCH (ba)-[:HAS_ALARM]->(alarm:Alarm)
-        OPTIONAL MATCH (ba)-[:HAS_COMPLAINT]->(comp:Complaint)
-        OPTIONAL MATCH (ba)-[:HAS_INVOICE]->(inv:Invoice)
-        OPTIONAL MATCH (ba)-[:HAS_DISRUPTION]->(sp:ServiceProblem)
-        RETURN c.canonical_id AS customer_id,
-               c.customer_type AS customer_type,
-               count(DISTINCT alarm) AS alarm_count,
-               count(DISTINCT comp) AS complaint_count,
-               count(DISTINCT inv) AS invoice_count,
-               count(DISTINCT sp) AS disruption_count
-        ORDER BY alarm_count + complaint_count + invoice_count + disruption_count DESC
-        LIMIT $limit
-        """
-        with self.driver.session(database=self._database) as session:
-            return [dict(r) for r in session.run(query, limit=limit)]
-
+    # ===================================================================
+    # Graph payloads for visualization
+    # ===================================================================
     def overview_graph(self, limit: int = 30) -> dict[str, Any]:
-        """Return a sampled overview of the full KG: top customers + their connected entities.
+        """Sampled overview of the causal graph."""
+        rows = self._run("""
+            MATCH (root:RootCause)-[:CAUSED_CHARGE]->(ch:Charge)
+            MATCH (ch)-[:ON_INVOICE]->(inv:Invoice)-[:BILLED_TO]->(a:Account)-[:OWNED_BY]->(c:Customer)
+            WITH root, ch, inv, a, c, rand() AS r
+            ORDER BY r LIMIT $limit
+            RETURN root, labels(root) AS root_labels, ch, inv, a, c
+        """, limit=limit)
 
-        Picks customers with the most events so the overview is representative.
-        Caps at ~300 nodes to keep the force-directed graph performant.
-        """
-        query = """
-        MATCH (c:Customer)-[:HAS_ACCOUNT]->(ba:BillingAccount)
-        OPTIONAL MATCH (ba)-[r]->(n)
-        WITH c, ba, count(n) AS event_count, collect(DISTINCT n) AS related, collect(DISTINCT r) AS rels
-        ORDER BY event_count DESC
-        LIMIT $limit
-        WITH collect(c) + collect(ba) AS cb_nodes,
-             reduce(acc = [], items IN collect(related) | acc + items) AS all_related,
-             reduce(acc = [], items IN collect(rels) | acc + items) AS all_rels
-        WITH cb_nodes + all_related AS all_nodes, all_rels
-        RETURN all_nodes AS nodes, all_rels AS relationships
-        """
-        with self.driver.session(database=self._database) as session:
-            record = session.run(query, limit=limit).single()
-        if not record:
-            return {"nodes": [], "relationships": []}
+        nodes = {}
+        rels = []
+        for r in rows:
+            for key, lbl_override in [("root", r["root_labels"][0] if r.get("root_labels") else "RootCause"),
+                                       ("ch", "Charge"), ("inv", "Invoice"),
+                                       ("a", "Account"), ("c", "Customer")]:
+                n = r.get(key)
+                if n:
+                    props = _props(n)
+                    nid = props.get("id", "")
+                    if nid and nid not in nodes:
+                        nodes[nid] = {
+                            "id": nid, "name": nid,
+                            "ontology_class": lbl_override,
+                            "properties": props,
+                        }
 
-        nodes = []
-        seen_ids = set()
-        for node in (record["nodes"] or []):
-            nid = node.get("canonical_id")
-            if nid and nid not in seen_ids:
-                seen_ids.add(nid)
-                labels = list(node.labels) if hasattr(node, "labels") else []
-                props = dict(node)
-                nodes.append({
-                    "id": nid,
-                    "name": props.get("name", nid),
-                    "labels": labels,
-                    "properties": props,
-                })
+        # Build rels from the known chain
+        for r in rows:
+            root_id = _props(r.get("root")).get("id", "")
+            ch_id = _props(r.get("ch")).get("id", "")
+            inv_id = _props(r.get("inv")).get("id", "")
+            acc_id = _props(r.get("a")).get("id", "")
+            cust_id = _props(r.get("c")).get("id", "")
+            if root_id and ch_id:
+                rels.append({"id": f"r-{root_id}-{ch_id}", "source": root_id, "target": ch_id, "type": "CAUSED_CHARGE"})
+            if ch_id and inv_id:
+                rels.append({"id": f"r-{ch_id}-{inv_id}", "source": ch_id, "target": inv_id, "type": "ON_INVOICE"})
+            if inv_id and acc_id:
+                rels.append({"id": f"r-{inv_id}-{acc_id}", "source": inv_id, "target": acc_id, "type": "BILLED_TO"})
+            if acc_id and cust_id:
+                rels.append({"id": f"r-{acc_id}-{cust_id}", "source": acc_id, "target": cust_id, "type": "OWNED_BY"})
 
-        relationships = []
+        # Dedup rels
         seen_rels = set()
-        for rel in (record["relationships"] or []):
-            rid = str(rel.element_id)
-            if rid not in seen_rels:
-                seen_rels.add(rid)
-                src = rel.start_node.get("canonical_id")
-                tgt = rel.end_node.get("canonical_id")
-                if src in seen_ids and tgt in seen_ids:
-                    relationships.append({
-                        "id": rid,
-                        "source": src,
-                        "target": tgt,
-                        "type": rel.type,
-                    })
+        unique_rels = []
+        for rel in rels:
+            if rel["id"] not in seen_rels:
+                unique_rels.append(rel)
+                seen_rels.add(rel["id"])
 
-        return {"nodes": nodes, "relationships": relationships}
+        return {
+            "nodes": list(nodes.values()),
+            "relationships": unique_rels,
+            "source": "neo4j",
+            "total_nodes": len(nodes),
+            "total_relationships": len(unique_rels),
+        }
 
     def customer_graph_payload(self, customer_id: str) -> dict[str, Any]:
-        """Return raw graph nodes and relationships for a customer (for visualization)."""
-        query = """
-        MATCH (c:Customer {canonical_id: $customer_id})-[:HAS_ACCOUNT]->(ba:BillingAccount)
-        OPTIONAL MATCH path = (ba)-[*1..2]->(n)
-        WITH c, ba, collect(DISTINCT n) AS related, collect(DISTINCT relationships(path)) AS rel_lists
-        WITH [c, ba] + related AS all_nodes, rel_lists
-        UNWIND CASE WHEN rel_lists = [] THEN [null] ELSE rel_lists END AS rel_list
-        UNWIND CASE WHEN rel_list IS NULL OR rel_list = [] THEN [null] ELSE rel_list END AS r
-        RETURN all_nodes AS nodes,
-               [rel IN collect(DISTINCT r) WHERE rel IS NOT NULL] AS relationships
-        """
-        with self.driver.session(database=self._database) as session:
-            record = session.run(query, customer_id=customer_id).single()
-        if not record:
-            return {"nodes": [], "relationships": []}
+        """Full causal graph for a single customer."""
+        rows = self._run("""
+            MATCH (a:Account)-[:OWNED_BY]->(c:Customer {id: $cid})
+            MATCH (ch:Charge)-[:ON_INVOICE]->(inv:Invoice)-[:BILLED_TO]->(a)
+            OPTIONAL MATCH (root)-[:CAUSED_CHARGE]->(ch) WHERE root:RootCause
+            OPTIONAL MATCH (pf:PaymentFailure)-[:FAILED_ON]->(inv)
+            OPTIONAL MATCH (d:Dispute)-[:DISPUTES]->(ch)
+            OPTIONAL MATCH (sc:SlaCredit)-[:COMPENSATES]->(inc:Incident)-[:CAUSED_CHARGE]->(ch)
+            OPTIONAL MATCH (pm:PmCounter)-[:CORROBORATES]->(nf:NetworkFailure)-[:CAUSED_CHARGE]->(ch)
+            OPTIONAL MATCH (pm)-[:MEASURED_AT]->(site:Site)
+            OPTIONAL MATCH (nf2:NetworkFailure)-[:AT_SITE]->(site2:Site) WHERE nf2.id IN [root.id]
+            OPTIONAL MATCH (api:ApiKpiBreach)-[:CORROBORATES]->(root)
+            OPTIONAL MATCH (le:LogEvent)-[:EMITTED_BY]->(svc:Service) WHERE le.id IN [root.id]
+            RETURN c, a, ch, inv, root, labels(root) AS root_labels,
+                   pf, d, sc, inc, pm, site, nf2, site2, api, le, svc
+        """, cid=customer_id)
 
-        nodes = []
-        seen_ids = set()
-        for node in (record["nodes"] or []):
-            nid = node.get("canonical_id")
-            if nid and nid not in seen_ids:
-                seen_ids.add(nid)
-                labels = list(node.labels) if hasattr(node, "labels") else []
-                props = dict(node)
-                nodes.append({
-                    "id": nid,
-                    "name": props.get("name", nid),
-                    "labels": labels,
-                    "properties": props,
-                })
+        nodes = {}
+        rels = []
 
-        relationships = []
-        for rel in (record["relationships"] or []):
-            relationships.append({
-                "id": str(rel.element_id),
-                "source": rel.start_node.get("canonical_id"),
-                "target": rel.end_node.get("canonical_id"),
-                "type": rel.type,
-            })
+        def add_node(obj, label):
+            if not obj:
+                return
+            props = _props(obj)
+            nid = props.get("id", "")
+            if nid and nid not in nodes:
+                nodes[nid] = {"id": nid, "name": nid, "ontology_class": label, "properties": props}
 
-        return {"nodes": nodes, "relationships": relationships}
+        def add_rel(src, tgt, rtype):
+            if src and tgt:
+                sid = _props(src).get("id", "") if not isinstance(src, str) else src
+                tid = _props(tgt).get("id", "") if not isinstance(tgt, str) else tgt
+                if sid and tid:
+                    rels.append({"id": f"r-{sid}-{tid}-{rtype}", "source": sid, "target": tid, "type": rtype})
 
-    # -------------------------------------------------------------------
-    # Intent-specific graph traversal (for NL Query KG visualization)
-    # -------------------------------------------------------------------
+        for r in rows:
+            add_node(r.get("c"), "Customer")
+            add_node(r.get("a"), "Account")
+            add_node(r.get("ch"), "Charge")
+            add_node(r.get("inv"), "Invoice")
+            root_label = r["root_labels"][0] if r.get("root_labels") else "RootCause"
+            add_node(r.get("root"), root_label)
+            add_node(r.get("pf"), "PaymentFailure")
+            add_node(r.get("d"), "Dispute")
+            add_node(r.get("sc"), "SlaCredit")
+            add_node(r.get("inc"), "Incident")
+            add_node(r.get("pm"), "PmCounter")
+            add_node(r.get("site"), "Site")
+            add_node(r.get("site2"), "Site")
+            add_node(r.get("api"), "ApiKpiBreach")
+            add_node(r.get("svc"), "Service")
 
-    _INTENT_GRAPH_QUERIES = {
-        "network_rca": """
-            MATCH (c:Customer {canonical_id: $customer_id})-[:HAS_ACCOUNT]->(ba:BillingAccount)
-            OPTIONAL MATCH p1 = (ba)-[:HAS_ALARM]->(alarm:Alarm)
-            OPTIONAL MATCH p2 = (ba)-[:HAS_PM_COUNTER]->(pm:PMCounter)
-            OPTIONAL MATCH p3 = (ba)-[:HAS_KPI_OBSERVATION]->(kpi:KPIObservation)
-            WITH c, ba,
-                 collect(DISTINCT alarm) + collect(DISTINCT pm) + collect(DISTINCT kpi) AS related,
-                 collect(DISTINCT relationships(p1)) + collect(DISTINCT relationships(p2)) + collect(DISTINCT relationships(p3)) AS rel_lists
-            WITH [c, ba] + [n IN related WHERE n IS NOT NULL] AS all_nodes, rel_lists
-            UNWIND CASE WHEN rel_lists = [] THEN [null] ELSE rel_lists END AS rel_list
-            UNWIND CASE WHEN rel_list IS NULL OR rel_list = [] THEN [null] ELSE rel_list END AS r
-            RETURN all_nodes AS nodes,
-                   [rel IN collect(DISTINCT r) WHERE rel IS NOT NULL] AS relationships
-        """,
-        "kpi_breach": """
-            MATCH (c:Customer {canonical_id: $customer_id})-[:HAS_ACCOUNT]->(ba:BillingAccount)
-            MATCH p1 = (ba)-[:HAS_KPI_OBSERVATION]->(kpi:KPIObservation)
-            OPTIONAL MATCH p2 = (kpi)-[:CORRELATED_WITH]->(alarm:Alarm)
-            WITH c, ba,
-                 collect(DISTINCT kpi) + collect(DISTINCT alarm) AS related,
-                 collect(DISTINCT relationships(p1)) + collect(DISTINCT relationships(p2)) AS rel_lists
-            WITH [c, ba] + [n IN related WHERE n IS NOT NULL] AS all_nodes, rel_lists
-            UNWIND CASE WHEN rel_lists = [] THEN [null] ELSE rel_lists END AS rel_list
-            UNWIND CASE WHEN rel_list IS NULL OR rel_list = [] THEN [null] ELSE rel_list END AS r
-            RETURN all_nodes AS nodes,
-                   [rel IN collect(DISTINCT r) WHERE rel IS NOT NULL] AS relationships
-        """,
-        "dunning_chain": """
-            MATCH (c:Customer {canonical_id: $customer_id})-[:HAS_ACCOUNT]->(ba:BillingAccount)
-            OPTIONAL MATCH p1 = (ba)-[:HAS_PAYMENT]->(pay:Payment)
-            OPTIONAL MATCH p2 = (pay)-[:HAS_DUNNING]->(dun:Dunning)
-            OPTIONAL MATCH p3 = (pay)-[:PAYMENT_FOR]->(inv:Invoice)
-            WITH c, ba,
-                 collect(DISTINCT pay) + collect(DISTINCT dun) + collect(DISTINCT inv) AS related,
-                 collect(DISTINCT relationships(p1)) + collect(DISTINCT relationships(p2)) + collect(DISTINCT relationships(p3)) AS rel_lists
-            WITH [c, ba] + [n IN related WHERE n IS NOT NULL] AS all_nodes, rel_lists
-            UNWIND CASE WHEN rel_lists = [] THEN [null] ELSE rel_lists END AS rel_list
-            UNWIND CASE WHEN rel_list IS NULL OR rel_list = [] THEN [null] ELSE rel_list END AS r
-            RETURN all_nodes AS nodes,
-                   [rel IN collect(DISTINCT r) WHERE rel IS NOT NULL] AS relationships
-        """,
-        "sla_credit": """
-            MATCH (c:Customer {canonical_id: $customer_id})-[:HAS_ACCOUNT]->(ba:BillingAccount)
-            OPTIONAL MATCH p1 = (ba)-[:HAS_ADJUSTMENT]->(adj:Adjustment)
-            OPTIONAL MATCH p2 = (adj)-[:CREDITS_FOR]->(sp:ServiceProblem)
-            OPTIONAL MATCH p3 = (ba)-[:HAS_DISRUPTION]->(sp2:ServiceProblem)
-            WITH c, ba,
-                 collect(DISTINCT adj) + collect(DISTINCT sp) + collect(DISTINCT sp2) AS related,
-                 collect(DISTINCT relationships(p1)) + collect(DISTINCT relationships(p2)) + collect(DISTINCT relationships(p3)) AS rel_lists
-            WITH [c, ba] + [n IN related WHERE n IS NOT NULL] AS all_nodes, rel_lists
-            UNWIND CASE WHEN rel_lists = [] THEN [null] ELSE rel_lists END AS rel_list
-            UNWIND CASE WHEN rel_list IS NULL OR rel_list = [] THEN [null] ELSE rel_list END AS r
-            RETURN all_nodes AS nodes,
-                   [rel IN collect(DISTINCT r) WHERE rel IS NOT NULL] AS relationships
-        """,
-        "system_error": """
-            MATCH (c:Customer {canonical_id: $customer_id})-[:HAS_ACCOUNT]->(ba:BillingAccount)
-            OPTIONAL MATCH p1 = (ba)-[:HAS_LOG]->(log:LogEvent)
-            OPTIONAL MATCH p2 = (ba)-[:HAS_DISRUPTION]->(sp:ServiceProblem)
-            WITH c, ba,
-                 collect(DISTINCT log) + collect(DISTINCT sp) AS related,
-                 collect(DISTINCT relationships(p1)) + collect(DISTINCT relationships(p2)) AS rel_lists
-            WITH [c, ba] + [n IN related WHERE n IS NOT NULL] AS all_nodes, rel_lists
-            UNWIND CASE WHEN rel_lists = [] THEN [null] ELSE rel_lists END AS rel_list
-            UNWIND CASE WHEN rel_list IS NULL OR rel_list = [] THEN [null] ELSE rel_list END AS r
-            RETURN all_nodes AS nodes,
-                   [rel IN collect(DISTINCT r) WHERE rel IS NOT NULL] AS relationships
-        """,
-        "complaint": """
-            MATCH (c:Customer {canonical_id: $customer_id})-[:HAS_ACCOUNT]->(ba:BillingAccount)
-            OPTIONAL MATCH p1 = (ba)-[:HAS_COMPLAINT]->(comp:Complaint)
-            OPTIONAL MATCH p2 = (comp)-[:DISPUTES]->(cr:ChargingRecord)
-            WITH c, ba,
-                 collect(DISTINCT comp) + collect(DISTINCT cr) AS related,
-                 collect(DISTINCT relationships(p1)) + collect(DISTINCT relationships(p2)) AS rel_lists
-            WITH [c, ba] + [n IN related WHERE n IS NOT NULL] AS all_nodes, rel_lists
-            UNWIND CASE WHEN rel_lists = [] THEN [null] ELSE rel_lists END AS rel_list
-            UNWIND CASE WHEN rel_list IS NULL OR rel_list = [] THEN [null] ELSE rel_list END AS r
-            RETURN all_nodes AS nodes,
-                   [rel IN collect(DISTINCT r) WHERE rel IS NOT NULL] AS relationships
-        """,
-        "financial_impact": """
-            MATCH (c:Customer {canonical_id: $customer_id})-[:HAS_ACCOUNT]->(ba:BillingAccount)
-            OPTIONAL MATCH p1 = (ba)-[:HAS_INVOICE]->(inv:Invoice)
-            OPTIONAL MATCH p2 = (inv)-[:CONTAINS]->(cr:ChargingRecord)
-            OPTIONAL MATCH p3 = (ba)-[:HAS_ADJUSTMENT]->(adj:Adjustment)
-            WITH c, ba,
-                 collect(DISTINCT inv) + collect(DISTINCT cr) + collect(DISTINCT adj) AS related,
-                 collect(DISTINCT relationships(p1)) + collect(DISTINCT relationships(p2)) + collect(DISTINCT relationships(p3)) AS rel_lists
-            WITH [c, ba] + [n IN related WHERE n IS NOT NULL] AS all_nodes, rel_lists
-            UNWIND CASE WHEN rel_lists = [] THEN [null] ELSE rel_lists END AS rel_list
-            UNWIND CASE WHEN rel_list IS NULL OR rel_list = [] THEN [null] ELSE rel_list END AS r
-            RETURN all_nodes AS nodes,
-                   [rel IN collect(DISTINCT r) WHERE rel IS NOT NULL] AS relationships
-        """,
-    }
+            add_rel(r.get("a"), r.get("c"), "OWNED_BY")
+            add_rel(r.get("inv"), r.get("a"), "BILLED_TO")
+            add_rel(r.get("ch"), r.get("inv"), "ON_INVOICE")
+            add_rel(r.get("root"), r.get("ch"), "CAUSED_CHARGE")
+            add_rel(r.get("pf"), r.get("inv"), "FAILED_ON")
+            add_rel(r.get("d"), r.get("ch"), "DISPUTES")
+            add_rel(r.get("sc"), r.get("inc"), "COMPENSATES")
+            if r.get("pm") and r.get("nf2"):
+                add_rel(r.get("pm"), r["nf2"], "CORROBORATES")
+            add_rel(r.get("pm"), r.get("site"), "MEASURED_AT")
+            add_rel(r.get("nf2"), r.get("site2"), "AT_SITE")
+            add_rel(r.get("api"), r.get("root"), "CORROBORATES")
+            if r.get("le") and r.get("svc"):
+                add_rel(r["le"], r["svc"], "EMITTED_BY")
+
+        # Dedup rels
+        seen_rels = set()
+        unique_rels = []
+        for rel in rels:
+            if rel["id"] not in seen_rels:
+                unique_rels.append(rel)
+                seen_rels.add(rel["id"])
+
+        return {
+            "nodes": list(nodes.values()),
+            "relationships": unique_rels,
+            "source": "neo4j",
+            "total_nodes": len(nodes),
+            "total_relationships": len(unique_rels),
+        }
+
+    # Aliases for backward compatibility
+    def customer_impact(self, customer_id: str) -> dict[str, Any]:
+        return self.rca_full_chain(customer_id)
+
+    def dunning_chain(self, customer_id: str) -> list[dict]:
+        chain = self.rca_full_chain(customer_id)
+        return chain.get("payment_failures", [])
+
+    def sla_credit_chain(self, customer_id: str) -> list[dict]:
+        chain = self.rca_full_chain(customer_id)
+        return chain.get("sla_credits", [])
+
+    def system_error_chain(self, customer_id: str) -> list[dict]:
+        return self._run("""
+            MATCH (l:LogEvent)-[:CAUSED_CHARGE]->(ch:Charge)
+            MATCH (ch)-[:ON_INVOICE]->(inv:Invoice)-[:BILLED_TO]->(a:Account)-[:OWNED_BY]->(c:Customer {id: $cid})
+            OPTIONAL MATCH (l)-[:EMITTED_BY]->(svc:Service)
+            RETURN l.id AS log_id, l.log_level AS level, l.message AS message,
+                   svc.id AS service, ch.id AS charge_id, ch.amount AS charge_amount
+        """, cid=customer_id)
+
+    def kpi_breach_to_incident(self, customer_id: str) -> list[dict]:
+        return self._run("""
+            MATCH (ch:Charge)-[:ON_INVOICE]->(inv:Invoice)-[:BILLED_TO]->(a:Account)-[:OWNED_BY]->(c:Customer {id: $cid})
+            MATCH (k:ApiKpiBreach)-[:CAUSED_CHARGE]->(ch)
+            RETURN k.id AS kpi_id, k.kpi_name AS kpi_name,
+                   k.kpi_value AS kpi_value, k.threshold_value AS threshold,
+                   ch.id AS charge_id, ch.amount AS charge_amount
+        """, cid=customer_id)
 
     def intent_graph_payload(self, customer_id: str, intent: str) -> dict[str, Any]:
-        """Return graph nodes/relationships scoped to a specific intent (not the full customer subgraph)."""
-        query = self._INTENT_GRAPH_QUERIES.get(intent)
-        if not query:
-            return self.customer_graph_payload(customer_id)
+        return self.customer_graph_payload(customer_id)
 
-        with self.driver.session(database=self._database) as session:
-            record = session.run(query, customer_id=customer_id).single()
-        if not record:
-            return {"nodes": [], "relationships": []}
 
-        nodes = []
-        seen_ids = set()
-        for node in (record["nodes"] or []):
-            nid = node.get("canonical_id")
-            if nid and nid not in seen_ids:
-                seen_ids.add(nid)
-                labels = list(node.labels) if hasattr(node, "labels") else []
-                props = dict(node)
-                nodes.append({
-                    "id": nid,
-                    "name": props.get("name", nid),
-                    "labels": labels,
-                    "properties": props,
-                })
+def _props(node) -> dict[str, Any]:
+    """Safely extract properties from a Neo4j node or return empty dict."""
+    if node is None:
+        return {}
+    if hasattr(node, "items"):
+        return dict(node)
+    return {}
 
-        relationships = []
-        for rel in (record["relationships"] or []):
-            relationships.append({
-                "id": str(rel.element_id),
-                "source": rel.start_node.get("canonical_id"),
-                "target": rel.end_node.get("canonical_id"),
-                "type": rel.type,
-            })
 
-        return {"nodes": nodes, "relationships": relationships}
+def _dedup(items: list[dict]) -> list[dict]:
+    """Deduplicate list of dicts by 'id' key."""
+    seen = set()
+    out = []
+    for item in items:
+        iid = item.get("id")
+        if iid and iid not in seen:
+            out.append(item)
+            seen.add(iid)
+        elif not iid:
+            out.append(item)
+    return out

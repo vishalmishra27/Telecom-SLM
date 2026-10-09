@@ -82,6 +82,12 @@ export const api = {
   clearGraph: () => request('/api/v1/graph/clear', { method: 'DELETE' }),
   verify: () => request('/api/v1/verify'),
 
+  // Synthetic data
+  generateAndIngest: ({ numCustomers = 10, eventsPerCustomer = 5 } = {}) =>
+    request(`/api/v1/synthetic/generate-and-ingest?num_customers=${numCustomers}&events_per_customer=${eventsPerCustomer}`, { method: 'POST' }),
+  downloadSyntheticZip: ({ numCustomers = 10, eventsPerCustomer = 5 } = {}) =>
+    `${API_BASE}/api/v1/synthetic/generate?num_customers=${numCustomers}&events_per_customer=${eventsPerCustomer}`,
+
   // Customer queries
   customers: ({ limit = 100 } = {}) => request(`/api/v1/customers?limit=${limit}`),
   customerRCA: (id) => request(`/api/v1/customers/${encodeURIComponent(id)}/rca`),
@@ -109,4 +115,80 @@ export const api = {
     }),
     signal,
   }),
+
+  // --- RCA Pipeline (Retrieval Pipeline Spec Section 8, 14.2) ---
+  rca: ({ customerId, description, billingPeriod, debug = false }) => request('/api/v1/rca', {
+    method: 'POST',
+    body: JSON.stringify({
+      customer_id: customerId,
+      billing_issue_description: description || '',
+      billing_period: billingPeriod || null,
+      debug,
+    }),
+  }),
+  rcaHistory: ({ mode, customerId, limit = 50 } = {}) => {
+    const params = new URLSearchParams()
+    if (mode) params.set('mode', mode)
+    if (customerId) params.set('customer_id', customerId)
+    params.set('limit', String(limit))
+    return request(`/api/v1/rca/history?${params}`)
+  },
+  rcaHistoryDetail: (requestId) => request(`/api/v1/rca/history/${encodeURIComponent(requestId)}`),
+  rcaEvidence: (requestId, entityId) => request(`/api/v1/rca/${encodeURIComponent(requestId)}/evidence/${encodeURIComponent(entityId)}`),
+  rcaCompareModels: ({ customerId, description }) => request('/api/v1/rca/compare-models', {
+    method: 'POST',
+    body: JSON.stringify({
+      customer_id: customerId,
+      billing_issue_description: description || '',
+    }),
+  }),
+
+  // --- Assistant Chat (Retrieval Pipeline Spec Section 12.4) ---
+  assistantChat: ({ question, customerId, model, conversationHistory, signal }) => request('/api/v1/assistant/chat', {
+    method: 'POST',
+    body: JSON.stringify({
+      question,
+      customer_id: customerId || null,
+      model: model || null,
+      conversation_history: conversationHistory || [],
+    }),
+    signal,
+  }),
+
+  // --- KG Explorer (Retrieval Pipeline Spec Section 10) ---
+  kgSearch: ({ query = '', categories = '', customerId, limit = 50 } = {}) => {
+    const params = new URLSearchParams()
+    if (query) params.set('query', query)
+    if (categories) params.set('categories', categories)
+    if (customerId) params.set('customer_id', customerId)
+    params.set('limit', String(limit))
+    return request(`/api/v1/kg/search?${params}`)
+  },
+  kgNeighborhood: (nodeId, { limit = 50 } = {}) =>
+    request(`/api/v1/kg/neighborhood?node_id=${encodeURIComponent(nodeId)}&limit=${limit}`),
+  kgSubgraph: (entityIds, { limit = 100 } = {}) =>
+    request(`/api/v1/kg/subgraph?entity_ids=${encodeURIComponent(entityIds.join(','))}&limit=${limit}`),
+  kgCategorySubgraph: ({ categories, customerId, depth = 1, limitPerRoot = 15, maxRoots = 40 }) => {
+    const params = new URLSearchParams()
+    params.set('categories', categories.join(','))
+    if (customerId) params.set('customer_id', customerId)
+    params.set('depth', String(depth))
+    params.set('limit_per_root', String(limitPerRoot))
+    params.set('max_roots', String(maxRoots))
+    return request(`/api/v1/kg/category-subgraph?${params}`)
+  },
+  kgFilterCategories: () => request('/api/v1/kg/filter-categories'),
+
+  // --- Triage & Incidents (Retrieval Pipeline Spec Section 14) ---
+  triageScan: ({ limit = 10 } = {}) => request(`/api/v1/triage/scan?limit=${limit}`, { method: 'POST' }),
+  incidents: ({ limit = 50 } = {}) => request(`/api/v1/incidents?limit=${limit}`),
+
+  // --- Schema Registry & Semantic Search ---
+  schemaRegistry: () => request('/api/v1/schema/registry'),
+  semanticSearch: ({ query, customerId, limit = 10 }) => {
+    const params = new URLSearchParams({ query })
+    if (customerId) params.set('customer_id', customerId)
+    params.set('limit', String(limit))
+    return request(`/api/v1/semantic-search?${params}`)
+  },
 }
