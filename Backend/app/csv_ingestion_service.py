@@ -24,7 +24,10 @@ from typing import Any
 
 from neo4j import GraphDatabase
 
-from .vector_service import VectorService
+try:
+    from .vector_service import VectorService
+except ImportError:
+    VectorService = None
 
 # ---------------------------------------------------------------------------
 # Regex patterns for extracting IDs from free-text columns
