@@ -517,9 +517,9 @@ export default function App() {
           <button type="button" className={page === 'landing' ? 'active' : ''} onClick={() => setPage('landing')}><Home size={15} />Home</button>
           <button type="button" className={page === 'customers' ? 'active' : ''} onClick={() => setPage('customers')}><Users size={15} />Customer 360</button>
           <button type="button" className={page === 'nlquery' ? 'active' : ''} onClick={() => setPage('nlquery')}><Database size={15} />RCA</button>
-          <button type="button" className={page === 'evaluation' ? 'active' : ''} onClick={() => setPage('evaluation')}><BarChart3 size={15} />Benchmark</button>
+          {/* <button type="button" className={page === 'evaluation' ? 'active' : ''} onClick={() => setPage('evaluation')}><BarChart3 size={15} />Benchmark</button> */}
           <button type="button" className={page === 'kg-explorer' ? 'active' : ''} onClick={() => setPage('kg-explorer')}><Compass size={15} />KG Explorer</button>
-          <button type="button" className={page === 'triage' ? 'active' : ''} onClick={() => setPage('triage')}><Shield size={15} />Triage</button>
+          {/* <button type="button" className={page === 'triage' ? 'active' : ''} onClick={() => setPage('triage')}><Shield size={15} />Triage</button> */}
           <button type="button" className={page === 'csv-ingestion' ? 'active' : ''} onClick={() => setPage('csv-ingestion')}><Upload size={15} />Ingestion</button>
           <button type="button" className={page === 'ontology' ? 'active' : ''} onClick={() => setPage('ontology')}><Layers size={15} />Ontology</button>
         </nav>
