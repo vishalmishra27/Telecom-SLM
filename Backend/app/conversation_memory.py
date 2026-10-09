@@ -18,7 +18,11 @@ class ConversationMemory:
         self.fallback_path = self.path / "conversation_memory.jsonl"
         if not self.enabled:
             return
-        self.path.mkdir(parents=True, exist_ok=True)
+        try:
+            self.path.mkdir(parents=True, exist_ok=True)
+        except OSError:
+            self.enabled = False
+            return
         try:
             import chromadb
 
